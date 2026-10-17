@@ -6,7 +6,7 @@ Maqsad is a trust and case-management platform for students, job seekers, and ov
 - A public website in English and Urdu (right-to-left), with a pricing page read from `src/lib/plans.ts`.
 - Student and agent profiles, an agent directory, student discovery for agents, matching suggestions with reasons, and connection requests.
 - Agent credential submission with an optional document, and admin review that sets the status students see.
-- The document checker at `/check`, described below.
+- The document checker at `/check`, described below, and saved verification reports for students.
 
 Features that are not built yet are listed in `src/lib/features.ts` as `false`. Public pages, pricing and dashboard menus read that file and label those features "Coming soon", so nothing is advertised before it works.
 
@@ -36,9 +36,9 @@ pnpm test:e2e                # with supabase and the app running: auth, role rou
 - **Connections.** Rows in `public.connections` change only through the database functions `request_connection`, `respond_connection` and `withdraw_connection`, because the Supabase API is reachable from the browser. They allow one open request per pair, only the recipient can accept, and an agent can have at most 20 requests waiting (an anti-spam cap until plan limits arrive in milestone 5).
 - **Matching.** `src/lib/matching.ts` scores shared destinations, field, education level, goal and a verified credential, with fixed weights and no model. Every suggestion lists its reasons, and the page says a match is not a guarantee.
 - **Credentials.** Agents can insert credentials but cannot set their status (column grants). Only `review_credential()`, which checks `is_admin()`, changes it. "Verified" means an admin verified at least one credential; plans and payments play no part. Documents go to the private `credentials` storage bucket under the agent's own folder; only that agent and admins can read them, through 5-minute signed links.
-- **Languages.** URLs start with the locale (`/en/...`, `/ur/...`) so pages can be prerendered with Cache Components. Strings live in `messages/en.json` and `messages/ur.json`, loaded by next-intl from the `[locale]` root parameter. `pnpm test` fails if the two files have different keys. Report findings and the action plan steps from `src/lib` are still English only, and are marked `lang="en"` so they stay left-to-right on Urdu pages.
+- **Languages.** URLs start with the locale (`/en/...`, `/ur/...`) so pages can be prerendered with Cache Components. Strings live in `messages/en.json` and `messages/ur.json`, loaded by next-intl from the `[locale]` root parameter. `pnpm test` fails if the two files have different keys. Findings made by code carry a stable `code` and parameters and are shown from `reportFindings` in `messages/<lang>/m4.json`. Findings written by the model, warnings and the action plan steps are still English only, and are marked `lang="en"` so they stay left-to-right on Urdu pages.
 
-To work on the UI without using model quota, set `MOCK_AI=1` in `.env.local`. The API then returns sample reports from `src/lib/mock.ts`, built with the real rule checks and risk level but no Gemini or Groq calls. Paste `high`, `medium`, `low`, `incomplete` or `error` to pick one. An uploaded file gives the high-risk report, or the low-risk one if its name contains "real" or "flinders". Production builds ignore the flag.
+To work on the UI without using model quota, set `MOCK_AI=1` in `.env.local`. The API then returns sample reports from `src/lib/mock.ts`, built with the real rule checks and risk level but no Gemini or Groq calls. Paste `high`, `medium`, `low`, `incomplete` or `error` to pick one (only the first word counts). `scripts/e2e-reports.mjs` tests saving reports through the API only with `E2E_MOCK=1` against such a dev server; without it, it never calls the checker. An uploaded file gives the high-risk report, or the low-risk one if its name contains "real" or "flinders". Production builds ignore the flag.
 
 ## How a check works
 
@@ -55,16 +55,20 @@ To work on the UI without using model quota, set `MOCK_AI=1` in `.env.local`. Th
    - internships that give payment instructions (real internships don't charge fees)
    - National CERT's [fake notifications](https://pkcert.gov.pk/fake-notifications.asp) list, matched on a shared domain or phone, or the same notice subject. A name match alone counts for nothing, because the notices name the real body being impersonated
    - live student visa registers: the UKVI sponsor register (UK), the designated learning institutions list (Canada) and CRICOS (Australia). A DLI number or CRICOS code in the document must exist and belong to the issuer, and CRICOS also gives the official website to compare with the document's domains
+   - look-alike domains: once an official domain is known (the CRICOS website, or the official contact found by web research), a document domain that is one or two letters off, contains the official name, or has the same name with another ending is a red flag quoting both domains
+
+   Findings about the document quote the exact text they rest on (payment channel, payee, sender email, pressure, hidden instructions, reference numbers), taken only from the extraction. A check or source that fails is reported as "could not be verified", never as a red flag.
 3. **Web research** (`src/lib/groq.ts`). `openai/gpt-oss-120b` on Groq searches with `browser_search` for official sites, registers (HEC, Bureau of Emigration, approved agent lists) and scam reports.
 4. **Report**. A second Groq call, on `openai/gpt-oss-20b` so it uses a separate free quota, turns the research notes into findings with source URLs and writes the English and Urdu summary.
 
-The risk level comes from `riskLevel()`, which counts red flags. A model can add red flags but cannot remove one. Text injected into a document therefore can't lower the risk. "No red flags found" needs every check to have run and at least one fact confirmed by an official source; otherwise the report says the checks are incomplete.
+The risk level comes from `riskLevel()` in `src/lib/scoring.ts`, which counts red flags, and `explainRisk()` there writes the "Why this result" line from the same findings (for example the serious red flags, or the checks that didn't run). A model can add red flags but cannot remove one. Text injected into a document therefore can't lower the risk. "No red flags found" needs every check to have run and at least one fact confirmed by an official source; otherwise the report says the checks are incomplete.
 
 ## After the report
 
 - **Connections** (`src/lib/network.ts`). The domains, issuer emails, phones, payee and account numbers in each checked document are stored as SHA-256 hashes. A later document that shares one lists the earlier checks it matched (risk, type, issuer, date). Anyone can put a real university's phone in a fake letter, so connections never add red flags or change the risk.
 - **Already paid or shared something?** (`src/lib/actions.ts`). The student ticks what they already gave away (bank transfer, JazzCash or Easypaisa, card, password or OTP, CNIC, passport, transcripts) and gets steps in order of urgency: helplines (NCCIA 1799, wallets, Sunwai, PTA, DGI&P), a complaint draft built from the report, and a verification email addressed only to the official contact found by web research. Nothing is sent; the student copies the text or opens their own email app.
 - **Official channels** (`src/lib/alternatives.ts`). For any result other than "no red flags found", a fixed list of official places to find the same kind of opportunity (HEC, Chevening, USEFP, DAAD, UCAS, EduCanada, BEOE and others). The links were checked on 2026-10-17.
+- **Saved reports** (`src/lib/reports.ts`, `src/lib/report-row.ts`). A signed-in student can tick "Save this report to my account" before a check. The report goes to `verification_reports` with the findings, sources, summaries, official contact and warnings, never the document, the pasted text or the extraction, and with the recipient's name, payee, account numbers, phones and emails replaced by `[removed]`. Students see them under Verification reports and can delete them; admins can read them; nobody can edit them. Anonymous and unticked checks are never stored.
 
 ## Known limits
 
@@ -76,4 +80,6 @@ The risk level comes from `riskLevel()`, which counts red flags. A model can add
 - PKCERT's fake notifications page lists 8 notices with the text only inside images, and none are about education today, so that check will rarely fire. If the page can't be fetched, the report doesn't become "checks incomplete".
 - Helplines and opportunity links are hard-coded and can go stale.
 - Gemini's Google Search grounding is not on the free tier, which is why search runs on Groq.
+- Saved reports are inserted with the student's own session, so a student could write a made-up report into their own account through the Supabase API. That only misleads themselves today; before reports are shown to agents or attached to cases, insert them from the server with a service key or sign them. Names written in Urdu script in the Urdu summary are not removed.
+- The look-alike check only runs when an official domain is known, and an institution that really uses two domains with the same name (for example `.edu` and `.edu.au`) gets a medium flag.
 - The document checker is public and has no per-user limit yet. Plan limits from `src/lib/plans.ts` are shown on the pricing page but enforced only from milestone 5.

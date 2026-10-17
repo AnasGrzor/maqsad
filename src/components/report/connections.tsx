@@ -3,7 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import type { Connection, RiskLevel } from "@/lib/schema";
 
-// Same tones as RISK in checker.tsx.
+// Same tones as RISK in report-view.tsx.
 const RISK: Record<RiskLevel, { chip: string; fill: string; stroke: string; text: string }> = {
   high: { chip: "bg-danger text-white", fill: "fill-danger", stroke: "stroke-danger", text: "fill-white" },
   medium: { chip: "bg-lemon text-navy-900", fill: "fill-lemon", stroke: "stroke-lemon", text: "fill-navy-900" },

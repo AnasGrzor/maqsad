@@ -14,7 +14,7 @@ export const FEATURES = {
   messaging: false,
   caseTracking: false,
   feeRecords: false,
-  savedReports: false,
+  savedReports: true,
   complaints: false,
   planLimits: false,
   adminReview: false,

@@ -1,15 +1,16 @@
-import { mergeFindings, riskLevel, ruleChecks } from "./checks";
+import { checkFailed, contactLookalikes, domainAgeUnavailable, mergeFindings, riskLevel, ruleChecks } from "./checks";
 import type { Connection, Extraction, Finding, Judgement, Report } from "./schema";
 
 // Test mode (MOCK_AI=1, dev only): canned extractions and model output, but the real
 // rule checks and risk level, so the UI can be tested without spending model quota.
-// Paste "high", "medium", "low", "incomplete" or "error" to pick a scenario.
+// Paste "high", "medium", "low", "incomplete" or "error" to pick a scenario. Only the first word
+// counts, so tests can paste extra text and check it is never stored.
 
 export const SCENARIOS = ["high", "medium", "low", "incomplete", "error"] as const;
 type Scenario = (typeof SCENARIOS)[number];
 
 export function pickScenario(text: string, fileName: string): Scenario {
-  const word = text.trim().toLowerCase() as Scenario;
+  const word = text.trim().split(/\s/)[0].toLowerCase() as Scenario;
   if (SCENARIOS.includes(word)) return word;
   return /real|flinders/i.test(fileName) ? "low" : "high";
 }
@@ -79,6 +80,8 @@ const registerHit: Finding = {
   topic: "sponsor_register",
   sources: ["https://www.gov.uk/government/publications/register-of-licensed-sponsors-students"],
   origin: "registry",
+  code: "ukvi_listed",
+  params: { listed: "University of Manchester" },
 };
 
 const manchesterContact: Judgement["official_contact"] = {
@@ -115,6 +118,8 @@ const CASES: Record<Exclude<Scenario, "error">, Case> = {
         topic: "sponsor_register",
         sources: ["https://www.gov.uk/government/publications/register-of-licensed-sponsors-students"],
         origin: "registry",
+        code: "ukvi_not_found",
+        params: { issuer: "Westbridge Global University" },
       },
       {
         title: "PDF was made or edited with a consumer editing tool",
@@ -124,25 +129,21 @@ const CASES: Record<Exclude<Scenario, "error">, Case> = {
         topic: "pdf_metadata",
         sources: [],
         origin: "rules",
+        code: "pdf_editor",
+        params: { tool: "iLovePDF" },
       },
       {
         title: "PDF was changed after it was created",
-        detail: "The file was modified 39 days after it was created.",
+        detail: "Created 2026-07-26, modified 2026-09-03. Not proof of fraud, but worth confirming with the issuer.",
         severity: "low",
         status: "red_flag",
         topic: "pdf_metadata",
         sources: [],
         origin: "rules",
+        code: "pdf_modified",
+        params: { created: "2026-07-26", modified: "2026-09-03" },
       },
-      {
-        title: "Website domain age",
-        detail: "RDAP returned no registration date for westbridgeglobal.ac.uk, so its age could not be checked.",
-        severity: "low",
-        status: "unverified",
-        topic: "domain_age",
-        sources: [],
-        origin: "rules",
-      },
+      domainAgeUnavailable("westbridgeglobal.ac.uk"),
     ],
     judgement: {
       findings: [
@@ -242,7 +243,8 @@ const CASES: Record<Exclude<Scenario, "error">, Case> = {
   },
   incomplete: {
     x: clean,
-    extra: [],
+    // As the route reports a quota failure: the warnings below plus a "could not be verified" finding each.
+    extra: [checkFailed("web_research"), checkFailed("summary")],
     judgement: null,
     warnings: [
       "Web research was unavailable (rate limit or network), so online checks were skipped.",
@@ -270,6 +272,7 @@ export async function mockCheck(scenario: Scenario, step: (label: string) => voi
   const merged = mergeFindings([
     ...findings,
     ...(c.judgement?.findings ?? []).map((f) => ({ ...f, origin: "web" as const })),
+    ...contactLookalikes(c.x, c.judgement?.official_contact, findings),
   ]);
 
   return {
