@@ -1,7 +1,16 @@
 // Pure helpers for the admin pages (no server imports, so `pnpm test` can load them).
 
 // Actions written by the M6 triggers. Other milestones add theirs here and under "adminAudit.actions".
-export const AUDIT_ACTIONS = ["account.suspend", "account.reactivate", "account.role_change", "credential.review"] as const;
+export const AUDIT_ACTIONS = [
+  "account.suspend",
+  "account.reactivate",
+  "account.role_change",
+  "credential.review",
+  "dispute.review",
+  "plan.update",
+  "subscription.grant",
+  "plan_request.decide",
+] as const;
 
 // Message key for an action: next-intl treats dots as nesting.
 export const actionKey = (action: string) => action.replace(".", "_");

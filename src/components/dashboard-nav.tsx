@@ -34,8 +34,7 @@ export const NAV: Record<Role, { key: NavKey; href: string; feature: Feature }[]
     { key: "users", href: "/admin", feature: "accounts" },
     { key: "credentialReview", href: "/admin/credentials", feature: "credentialSubmission" },
     { key: "flagged", href: "/admin/reports", feature: "adminReview" },
-    // The user side of complaints works (M3); the admin handling page comes with adminReview.
-    { key: "complaints", href: "/admin/complaints", feature: "adminReview" },
+    { key: "complaints", href: "/admin/complaints", feature: "complaints" },
     { key: "plans", href: "/admin/plans", feature: "planLimits" },
     { key: "audit", href: "/admin/audit", feature: "auditLog" },
   ],

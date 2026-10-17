@@ -476,6 +476,7 @@ export type Database = {
           raised_by: string
           reason: Database["public"]["Enums"]["dispute_reason"]
           record_id: string | null
+          resolution_note: string
           status: Database["public"]["Enums"]["dispute_status"]
           updated_at: string
         }
@@ -490,6 +491,7 @@ export type Database = {
           raised_by: string
           reason: Database["public"]["Enums"]["dispute_reason"]
           record_id?: string | null
+          resolution_note?: string
           status?: Database["public"]["Enums"]["dispute_status"]
           updated_at?: string
         }
@@ -504,6 +506,7 @@ export type Database = {
           raised_by?: string
           reason?: Database["public"]["Enums"]["dispute_reason"]
           record_id?: string | null
+          resolution_note?: string
           status?: Database["public"]["Enums"]["dispute_status"]
           updated_at?: string
         }
@@ -990,6 +993,13 @@ export type Database = {
       admin_user_email: { Args: { target: string }; Returns: string }
       allowance: { Args: { kind?: string }; Returns: Json }
       codes_ok: { Args: { codes: string[]; pattern: string }; Returns: boolean }
+      connection_allows: {
+        Args: {
+          c: Database["public"]["Tables"]["connections"]["Row"]
+          feature: string
+        }
+        Returns: boolean
+      }
       current_plan: { Args: never; Returns: string }
       decide_plan_request: {
         Args: { approve: boolean; note?: string; request: string }
@@ -1080,6 +1090,14 @@ export type Database = {
           credential: string
           note?: string
           verdict: Database["public"]["Enums"]["credential_status"]
+        }
+        Returns: undefined
+      }
+      review_dispute: {
+        Args: {
+          dispute: string
+          new_status: Database["public"]["Enums"]["dispute_status"]
+          note?: string
         }
         Returns: undefined
       }

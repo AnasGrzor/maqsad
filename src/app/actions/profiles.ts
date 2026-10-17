@@ -27,6 +27,7 @@ export type ActionState =
         | "already_connected"
         | "too_many_pending"
         | "profile_required"
+        | "plan_required"
         | "unknown";
       field?: string;
       done?: boolean;

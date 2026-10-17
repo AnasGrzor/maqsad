@@ -333,6 +333,12 @@ async function DisputeList({ disputes, titles, role }: { disputes: DisputeRow[];
           <p dir="auto" className="text-sm whitespace-pre-line">
             {d.details}
           </p>
+          {d.resolution_note && (
+            <p dir="auto" className="rounded-xl bg-mint-soft p-3 text-sm whitespace-pre-line ring-1 ring-mint">
+              <span className="font-medium">{t("resolution")}: </span>
+              {d.resolution_note}
+            </p>
+          )}
           <p className="text-xs text-slate">
             {t("sentOn", { date: format.dateTime(new Date(d.created_at), { dateStyle: "medium", timeStyle: "short" }) })}
             {role && d.case_id && titles?.has(d.case_id) && (

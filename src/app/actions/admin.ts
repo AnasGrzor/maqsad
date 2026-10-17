@@ -32,3 +32,28 @@ export async function setAccountStatus(_: AdminState, form: FormData): Promise<A
   revalidatePath("/[locale]/admin", "layout");
   return { done: true };
 }
+
+const DisputeReview = z.object({
+  id: z.uuid(),
+  status: z.enum(["under_review", "resolved", "dismissed"]),
+  note: z.string().trim().max(1000).default(""),
+});
+export type DisputeState = { error?: "forbidden" | "not_available" | "unknown"; done?: boolean } | undefined;
+
+export async function reviewDispute(_: DisputeState, form: FormData): Promise<DisputeState> {
+  // review_dispute() checks is_admin() again and writes the activity history.
+  const user = await getCurrentUser();
+  if (!user?.active || user.role !== "admin") return { error: "forbidden" };
+  const parsed = DisputeReview.safeParse(Object.fromEntries(form));
+  if (!parsed.success) return { error: "not_available" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("review_dispute", {
+    dispute: parsed.data.id,
+    new_status: parsed.data.status,
+    note: parsed.data.note,
+  });
+  if (error) return { error: error.message === "forbidden" || error.message === "not_available" ? error.message : "unknown" };
+  for (const role of ["admin", "student", "agent"]) revalidatePath(`/[locale]/${role}`, "layout");
+  return { done: true };
+}

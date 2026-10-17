@@ -26,7 +26,7 @@ async function run<S extends z.ZodType>(schema: S, form: FormData, call: (args: 
   const parsed = schema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: "invalid", field: errorField(parsed.error) };
   const { error } = await call(parsed.data);
-  if (error) return { error: error.message === "not_available" ? "not_available" : "unknown" };
+  if (error) return { error: error.message === "not_available" || error.message === "plan_required" ? error.message : "unknown" };
   refresh();
   return { done: true };
 }

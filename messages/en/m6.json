@@ -66,7 +66,33 @@
       "account_suspend": "Account suspended",
       "account_reactivate": "Account reactivated",
       "account_role_change": "Role changed",
-      "credential_review": "Credential reviewed"
+      "credential_review": "Credential reviewed",
+      "dispute_review": "Report or dispute reviewed",
+      "plan_update": "Plan changed",
+      "subscription_grant": "Plan granted",
+      "plan_request_decide": "Upgrade request decided"
+    }
+  },
+  "adminDisputes": {
+    "title": "Complaints and disputes",
+    "intro": "Reports and disputes users raised. The other party never sees them. Review each one before changing its status.",
+    "raisedBy": "Raised by",
+    "against": "About",
+    "case": "Application",
+    "linkedRecord": "Linked record",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "note": "Note shown to the person who raised it",
+    "setUnderReview": "Mark under review",
+    "resolve": "Mark resolved",
+    "dismiss": "Close without action",
+    "saved": "Saved.",
+    "empty": "No reports or disputes.",
+    "viewUser": "View account",
+    "errors": {
+      "forbidden": "Only admins can do this.",
+      "not_available": "This item no longer exists.",
+      "unknown": "Something went wrong. Please try again."
     }
   }
 }
