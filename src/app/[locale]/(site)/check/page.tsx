@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getAllowance } from "@/lib/plans";
 import { Checker } from "./checker";
+import { SaveOption } from "./save-option";
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations("checker"))("metaTitle") };
@@ -47,10 +48,17 @@ async function Gate() {
     );
   }
 
+  // Admins have no plan and aren't metered (consumeCheck in src/lib/plans.ts).
+  if (user.role === "admin") return <Checker />;
+
+  const saveOption = (
+    <Suspense fallback={null}>
+      <SaveOption />
+    </Suspense>
+  );
   const allowance = await getAllowance();
-  const settings = user.role === "admin" ? null : `/${user.role}/settings`;
-  const planLink = settings && (
-    <Link href={settings} className="font-medium underline underline-offset-4">
+  const planLink = (
+    <Link href={`/${user.role}/settings`} className="font-medium underline underline-offset-4">
       {t("seePlan")}
     </Link>
   );
@@ -73,6 +81,7 @@ async function Gate() {
   }
   return (
     <Checker
+      saveOption={saveOption}
       notice={
         <p className="text-sm text-slate">
           {t("left", {

@@ -1,40 +1,25 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useFormatter, useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { Extraction, Finding, Report, StreamEvent } from "@/lib/schema";
-import { ActionPlan } from "./action-plan";
-import { Alternatives } from "./alternatives";
-import { Connections } from "./connections";
+import { useFormatter, useTranslations } from "next-intl";
+import { useState, type ReactNode } from "react";
+import { focusRing, ReportView } from "@/components/report/report-view";
+import { Link } from "@/i18n/navigation";
+import type { Report, StreamEvent } from "@/lib/schema";
 
 type Mode = "file" | "text";
-type Severity = Finding["severity"];
-
-const RISK = {
-  high: { tone: "bg-danger-bg text-danger ring-1 ring-danger/15", mark: "!", markTone: "bg-danger text-white" },
-  medium: { tone: "bg-lemon text-navy-900", mark: "!", markTone: "bg-navy-900 text-lemon" },
-  low: { tone: "bg-mint text-navy-900", mark: "✓", markTone: "bg-navy-900 text-mint" },
-  incomplete: { tone: "bg-fog text-navy-900", mark: "?", markTone: "bg-slate text-white" },
-} as const;
-
-const SEVERITY_CHIP: Record<Severity, string> = {
-  high: "bg-danger text-white",
-  medium: "bg-lemon text-navy-900",
-  low: "bg-fog text-navy-900",
-};
-const SEVERITY_ORDER: Severity[] = ["high", "medium", "low"];
 
 const MAX_BYTES = 4 * 1024 * 1024;
 
-const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-800";
-
 // `notice` is the plan line from page.tsx; `blocked` replaces the form with it (signed out or no checks left).
-export function Checker({ notice, blocked = false }: { notice?: ReactNode; blocked?: boolean }) {
+// `saveOption` is the "Save this report" checkbox, rendered on the server only for signed-in students.
+export function Checker({ notice, blocked = false, saveOption }: { notice?: ReactNode; blocked?: boolean; saveOption?: ReactNode }) {
   const t = useTranslations("checker");
   const u = useTranslations("usage");
+  const v = useTranslations("reportView");
   const format = useFormatter();
   const router = useRouter();
+  const [saved, setSaved] = useState<string | false | undefined>();
   const [mode, setMode] = useState<Mode>("file");
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
@@ -55,6 +40,7 @@ export function Checker({ notice, blocked = false }: { notice?: ReactNode; block
 
   function reset() {
     setReport(null);
+    setSaved(undefined);
     setSteps([]);
     setError("");
     setFile(null);
@@ -62,17 +48,20 @@ export function Checker({ notice, blocked = false }: { notice?: ReactNode; block
     window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
 
-  async function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const save = new FormData(e.currentTarget).get("save") === "1";
     setRunning(true);
     setError("");
     setReport(null);
+    setSaved(undefined);
     setSteps([]);
     setSubject(mode === "file" && file ? file.name : t("pasted"));
 
     const body = new FormData();
     if (mode === "file" && file) body.append("file", file);
     if (mode === "text") body.append("text", text);
+    if (save) body.append("save", "1");
 
     try {
       const res = await fetch("/api/analyze", { method: "POST", body });
@@ -94,7 +83,10 @@ export function Checker({ notice, blocked = false }: { notice?: ReactNode; block
         for (const line of lines.filter(Boolean)) {
           const ev = JSON.parse(line) as StreamEvent;
           if (ev.type === "step") setSteps((s) => [...s, ev.label]);
-          if (ev.type === "result") setReport(ev.report);
+          if (ev.type === "result") {
+            setReport(ev.report);
+            setSaved(ev.saved);
+          }
           if (ev.type === "error") setError(ev.message);
         }
       }
@@ -126,6 +118,23 @@ export function Checker({ notice, blocked = false }: { notice?: ReactNode; block
                 {t("another")}
               </button>
             </div>
+            {saved !== undefined && (
+              <p
+                role="status"
+                className={`mt-4 rounded-xl p-4 text-sm ring-1 ${saved ? "bg-mint-soft ring-mint" : "bg-danger-bg text-danger ring-danger/15"}`}
+              >
+                {saved ? (
+                  <>
+                    {v("saved")}{" "}
+                    <Link href={`/student/reports/${saved}`} className={`font-medium underline underline-offset-4 ${focusRing}`}>
+                      {v("savedLink")}
+                    </Link>
+                  </>
+                ) : (
+                  v("saveFailed")
+                )}
+              </p>
+            )}
             <ReportView report={report} />
           </>
         ) : (
@@ -240,6 +249,8 @@ export function Checker({ notice, blocked = false }: { notice?: ReactNode; block
                   </label>
                 )}
 
+                {saveOption}
+
                 <div className="mt-5 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-slate sm:max-w-[40ch]">
                     {t("privacy")}
@@ -308,200 +319,6 @@ export function Checker({ notice, blocked = false }: { notice?: ReactNode; block
   );
 }
 
-function ReportView({ report }: { report: Report }) {
-  const t = useTranslations("checker");
-  const locale = useLocale();
-  const heading = useRef<HTMLHeadingElement>(null);
-  // Move focus to the verdict so keyboard and screen-reader users land on it.
-  useEffect(() => heading.current?.focus(), []);
-
-  const risk = RISK[report.risk];
-  const flags = report.findings.filter((f) => f.status === "red_flag");
-  const bySeverity = SEVERITY_ORDER.map((s) => [s, flags.filter((f) => f.severity === s)] as const);
-  const confirmed = report.findings.filter((f) => f.status === "verified");
-  const unchecked = report.findings.filter((f) => f.status === "unverified");
-  const reasons = bySeverity.flatMap(([, items]) => items).slice(0, 3);
-
-  return (
-    <div className="mt-6 grid items-start gap-8 motion-safe:animate-rise lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
-      <section aria-label={t("report")} className="min-w-0 space-y-8">
-        <div className={`rounded-2xl p-5 sm:p-6 ${risk.tone}`}>
-          <div className="flex gap-4">
-            <span
-              aria-hidden
-              className={`grid size-10 shrink-0 place-items-center rounded-full text-lg font-bold ${risk.markTone}`}
-            >
-              {risk.mark}
-            </span>
-            <div className="min-w-0">
-              <h2 ref={heading} tabIndex={-1} className="text-2xl font-semibold tracking-tight focus:outline-none">
-                {t(`risk.${report.risk}.title`)}
-              </h2>
-              <p className="mt-0.5 text-lg font-medium">{t(`risk.${report.risk}.advice`)}</p>
-              {report.extraction.issuer_name && (
-                <p className="mt-1 text-sm opacity-85">{t("issuedBy", { issuer: report.extraction.issuer_name })}</p>
-              )}
-            </div>
-          </div>
-
-          {(flags.length > 0 || confirmed.length > 0) && (
-            <ul aria-label={t("totals")} className="mt-5 flex flex-wrap gap-2 text-sm text-navy-900">
-              {bySeverity.map(([s, items]) =>
-                items.length ? (
-                  <li key={s} className="inline-flex items-center gap-2 rounded-full bg-white/70 py-1 ps-1 pe-3">
-                    <span
-                      className={`min-w-6 rounded-full px-1.5 text-center text-xs font-semibold tabular-nums ${SEVERITY_CHIP[s]}`}
-                    >
-                      {items.length}
-                    </span>
-                    {t(`severity.${s}.short`)}
-                  </li>
-                ) : null,
-              )}
-              {confirmed.length > 0 && (
-                <li className="inline-flex items-center gap-2 rounded-full bg-white/70 py-1 ps-1 pe-3">
-                  <span className="min-w-6 rounded-full bg-mint px-1.5 text-center text-xs font-semibold tabular-nums">
-                    {confirmed.length}
-                  </span>
-                  {t("confirmedShort")}
-                </li>
-              )}
-            </ul>
-          )}
-
-          {reasons.length > 0 && (
-            <div className="mt-5 border-t border-current/15 pt-4">
-              <h3 className="text-sm font-semibold">{t("mainReasons")}</h3>
-              <ul lang="en" dir="ltr" className="mt-2 space-y-1.5">
-                {reasons.map((f, i) => (
-                  <li key={i} className="flex gap-2.5">
-                    <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-current" />
-                    {f.title}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {(report.summary_en || report.summary_ur) && (
-          <div className="grid gap-5 rounded-2xl bg-card p-5 ring-1 ring-fog sm:p-6">
-            {report.summary_en && <p lang="en" dir="ltr" className="max-w-[68ch] leading-relaxed text-pretty">{report.summary_en}</p>}
-            {locale !== "en" && <p className="text-sm text-slate">{t("summaryNote")}</p>}
-            {report.summary_ur && (
-              <p lang="ur" dir="rtl" className="border-t border-fog pt-5 font-urdu text-lg leading-[2.4]">
-                {report.summary_ur}
-              </p>
-            )}
-          </div>
-        )}
-
-        <ActionPlan report={report} />
-
-        {/* On small screens the contact sits above the findings; on wide screens it lives in the sidebar. */}
-        <div className="lg:hidden">
-          <ContactCard contact={report.official_contact} />
-        </div>
-
-        {bySeverity.map(([s, items]) =>
-          items.length ? (
-            <Group
-              key={s}
-              title={t(`severity.${s}.label`)}
-              count={items.length}
-              chip={SEVERITY_CHIP[s]}
-              collapsed={s === "low"}
-            >
-              <ul className="divide-y divide-fog overflow-hidden rounded-2xl bg-card ring-1 ring-fog">
-                {items.map((f, i) => (
-                  <FindingRow key={i} f={f} />
-                ))}
-              </ul>
-            </Group>
-          ) : null,
-        )}
-
-        {confirmed.length > 0 && (
-          <Group title={t("confirmedGroup")} count={confirmed.length} chip="bg-mint text-navy-900">
-            <ul className="divide-y divide-mint overflow-hidden rounded-2xl bg-mint-soft ring-1 ring-mint">
-              {confirmed.map((f, i) => (
-                <FindingRow key={i} f={f} />
-              ))}
-            </ul>
-          </Group>
-        )}
-
-        {unchecked.length > 0 && (
-          <Group title={t("uncheckedGroup")} count={unchecked.length} chip="bg-fog text-navy-900" collapsed>
-            <ul className="divide-y divide-fog overflow-hidden rounded-2xl bg-card ring-1 ring-fog">
-              {unchecked.map((f, i) => (
-                <FindingRow key={i} f={f} />
-              ))}
-            </ul>
-          </Group>
-        )}
-
-        <Connections connections={report.connections} />
-      </section>
-
-      {/* p-1/-m-1 keep the cards' rings from being clipped by the sidebar's own scroll box. */}
-      <aside className="-m-1 space-y-6 p-1 lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:overflow-x-hidden lg:overflow-y-auto">
-        <div className="hidden lg:block">
-          <ContactCard contact={report.official_contact} />
-        </div>
-
-        <Alternatives report={report} />
-
-        {report.warnings.length > 0 && (
-          <div className="rounded-2xl bg-lemon-soft p-5 ring-1 ring-lemon">
-            <h3 className="text-sm font-semibold">{t("notes")}</h3>
-            <ul lang="en" dir="ltr" className="mt-2 list-disc space-y-1 ps-5 text-sm text-navy-800">
-              {report.warnings.map((w) => (
-                <li key={w}>{w}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <details className="group rounded-2xl bg-card ring-1 ring-fog">
-          <summary
-            className={`flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 font-medium sm:px-6 [&::-webkit-details-marker]:hidden ${focusRing}`}
-          >
-            {t("extracted")}
-            <Chevron />
-          </summary>
-          <ExtractionList x={report.extraction} />
-        </details>
-      </aside>
-    </div>
-  );
-}
-
-function ContactCard({ contact }: { contact: Report["official_contact"] }) {
-  const t = useTranslations("checker.contact");
-  const hasContact = contact && (contact.email || contact.phone || contact.url);
-  return (
-    <div className="rounded-2xl bg-lavender-100 p-5 ring-1 ring-lavender-200 sm:p-6">
-      <h3 className="text-lg font-semibold tracking-tight">{t("title")}</h3>
-      {hasContact ? (
-        <>
-          <dl className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-[max-content_minmax(0,1fr)]">
-            {contact.name && <Row k={t("office")} v={contact.name} />}
-            {contact.email && <Row k={t("email")} v={<Contact scheme="mailto" value={contact.email} />} />}
-            {contact.phone && <Row k={t("phone")} v={<Contact scheme="tel" value={contact.phone} />} />}
-            {contact.url && <Row k={t("foundOn")} v={<Link href={contact.url} />} />}
-          </dl>
-          <p className="mt-4 text-sm text-slate">{t("source")}</p>
-        </>
-      ) : (
-        <p className="mt-2 max-w-[68ch] text-slate">
-          {t("none")}
-        </p>
-      )}
-    </div>
-  );
-}
-
 const CHECKS = [
   ["inDocument", ["doc1", "doc2", "doc3", "doc4", "doc5", "doc6"]],
   ["againstSources", ["src1", "src2", "src3", "src4"]],
@@ -536,167 +353,6 @@ function WhatWeCheck() {
         {t("never")}
       </p>
     </section>
-  );
-}
-
-function Group({
-  title,
-  count,
-  chip,
-  collapsed = false,
-  children,
-}: {
-  title: string;
-  count: number;
-  chip: string;
-  collapsed?: boolean;
-  children: React.ReactNode;
-}) {
-  const t = useTranslations("checker");
-  const label = (
-    <span className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
-      {title}
-      <span className={`min-w-6 rounded-full px-1.5 text-center text-xs font-semibold tabular-nums ${chip}`}>
-        {count}
-      </span>
-    </span>
-  );
-  if (!collapsed) {
-    return (
-      <div>
-        <h3 className="mb-3">{label}</h3>
-        {children}
-      </div>
-    );
-  }
-  return (
-    <details className="group">
-      <summary
-        className={`mb-3 flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-lg [&::-webkit-details-marker]:hidden ${focusRing}`}
-      >
-        <h3>{label}</h3>
-        <span className="flex items-center gap-1.5 text-sm text-slate">
-          <span className="group-open:hidden">{t("show")}</span>
-          <span className="hidden group-open:inline">{t("hide")}</span>
-          <Chevron />
-        </span>
-      </summary>
-      {children}
-    </details>
-  );
-}
-
-function FindingRow({ f }: { f: Finding }) {
-  const t = useTranslations("checker.origin");
-  return (
-    <li lang="en" dir="ltr" className="px-4 py-4 sm:px-6">
-      <h4 className="font-medium text-pretty">{f.title}</h4>
-      <p className="mt-1 max-w-[68ch] text-sm leading-relaxed text-pretty text-slate">{f.detail}</p>
-      <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate">
-        <span className="font-medium">{t(f.origin)}</span>
-        {f.sources.map((s) => (
-          <Link key={s} href={s} />
-        ))}
-      </p>
-    </li>
-  );
-}
-
-function ExtractionList({ x }: { x: Extraction }) {
-  const t = useTranslations("checker");
-  const rows: [string, string][] = (
-    [
-      [t("fields.docType"), t(`docType.${x.doc_type}`)],
-      [t("fields.issuer"), [x.issuer_name, x.issuer_country].filter(Boolean).join(", ")],
-      [t("fields.website"), x.issuer_website],
-      [t("fields.recipient"), x.recipient_name],
-      [t("fields.issueDate"), x.issue_date],
-      [t("fields.programme"), x.programme_or_position],
-      [t("fields.amounts"), x.amounts.map((a) => `${a.label}: ${a.amount} ${a.currency}`.trim()).join("; ")],
-      [t("fields.paymentMethod"), x.payment.method],
-      [t("fields.payTo"), x.payment.payee_name],
-      [t("fields.account"), x.payment.account_details],
-      [t("fields.emails"), x.issuer_emails.join(", ")],
-      [t("fields.phones"), x.phones.join(", ")],
-      [t("fields.references"), x.reference_numbers.map((r) => `${r.kind.toUpperCase()} ${r.value}`).join(", ")],
-      [t("fields.signedBy"), [x.signatory.name, x.signatory.title].filter(Boolean).join(", ")],
-      [t("fields.agent"), x.agent_or_intermediary],
-      [t("fields.pressure"), x.pressure_tactics.map((q) => `"${q}"`).join(" ")],
-      [t("fields.contradictions"), x.inconsistencies.join("; ")],
-      [t("fields.aiText"), x.embedded_instructions.map((q) => `"${q}"`).join(" ")],
-    ] as [string, string][]
-  ).filter(([, v]) => v);
-
-  return (
-    <dl className="space-y-3 border-t border-fog px-5 py-4 text-sm sm:px-6">
-      {rows.map(([k, v]) => (
-        <div key={k}>
-          <dt className="text-slate">{k}</dt>
-          <dd dir="auto" className="[overflow-wrap:anywhere]">{v}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-function Row({ k, v }: { k: string; v: React.ReactNode }) {
-  return (
-    <>
-      <dt className="whitespace-nowrap text-slate">{k}</dt>
-      <dd className="mb-2 min-w-0 [overflow-wrap:anywhere] sm:mb-0">{v}</dd>
-    </>
-  );
-}
-
-function Contact({ scheme, value }: { scheme: "mailto" | "tel"; value: string }) {
-  // Model output: only link values that look like an email or a phone number.
-  const target = scheme === "tel" ? value.replace(/[^\d+]/g, "") : value.trim();
-  const valid = scheme === "tel" ? target.replace(/\D/g, "").length >= 6 : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(target);
-  if (!valid) return <>{value}</>;
-  return (
-    <a
-      href={`${scheme}:${target}`}
-      className={`font-medium text-navy-900 underline decoration-mist underline-offset-4 hover:decoration-current ${focusRing}`}
-    >
-      {/* Prefer wrapping a long email after the @ rather than mid-word. */}
-      {scheme === "mailto" ? (
-        <>
-          {target.split("@")[0]}@<wbr />
-          {target.split("@")[1]}
-        </>
-      ) : (
-        value
-      )}
-    </a>
-  );
-}
-
-function Link({ href }: { href: string }) {
-  // Sources come from LLM output; only render real http(s) links.
-  let url: URL;
-  try {
-    url = new URL(href);
-  } catch {
-    return null;
-  }
-  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
-  return (
-    <a
-      href={url.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`break-all text-navy-800 underline decoration-mist underline-offset-4 hover:decoration-current ${focusRing}`}
-    >
-      {url.hostname}
-    </a>
-  );
-}
-
-function Chevron() {
-  return (
-    <span aria-hidden className="text-slate transition-transform duration-200 group-open:rotate-180">
-      ▾
-    </span>
   );
 }
 

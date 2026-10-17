@@ -88,7 +88,43 @@ export const Finding = z.object({
   topic: Topic,
   sources: z.array(z.string()),
 });
-export type Finding = z.infer<typeof Finding> & { origin: "rules" | "registry" | "web" };
+// Findings made by code also carry a stable code and parameters, so the report can show them in the
+// reader's language (messages/<lang>/m4.json, "reportFindings"); title and detail stay as the English
+// fallback. Evidence holds exact text read from the document, never written by us or a model.
+export type Finding = z.infer<typeof Finding> & {
+  origin: "rules" | "registry" | "web";
+  code?: FindingCode;
+  params?: Record<string, string | number>;
+  evidence?: string[];
+};
+
+export type FindingCode =
+  | "payment_channel"
+  | "payee_mismatch"
+  | "free_email"
+  | "email_domain_mismatch"
+  | "ref_format"
+  | "pressure"
+  | "embedded_instructions"
+  | "inconsistency"
+  | "job_fee"
+  | "internship_fee"
+  | "pdf_editor"
+  | "pdf_modified"
+  | "domain_new"
+  | "domain_age_unavailable"
+  | "ukvi_listed"
+  | "ukvi_not_found"
+  | "register_code_missing"
+  | "register_code_other"
+  | "register_code_match"
+  | "register_listed"
+  | "register_not_found"
+  | "register_website_differs"
+  | "pkcert_match"
+  | "lookalike_domain"
+  | "check_failed"
+  | "source_unavailable";
 
 export const Judgement = z.object({
   findings: z.array(Finding),
@@ -126,7 +162,8 @@ export type Connection = {
 
 export type StreamEvent =
   | { type: "step"; label: string }
-  | { type: "result"; report: Report }
+  // saved: the id of the stored report, or false when saving was asked for but failed.
+  | { type: "result"; report: Report; saved?: string | false }
   | { type: "error"; message: string };
 
 export function jsonSchema(schema: z.ZodType) {

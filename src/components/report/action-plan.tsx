@@ -5,7 +5,7 @@ import { useState } from "react";
 import { actionPlan, EXPOSURES, type Exposure } from "@/lib/actions";
 import type { Report } from "@/lib/schema";
 
-// Same as page.tsx.
+// Same as report-view.tsx.
 const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-800";
 const button = `inline-flex min-h-10 items-center rounded-full px-4 text-sm font-medium transition-[background-color,transform] duration-100 active:scale-[0.97] ${focusRing}`;
 

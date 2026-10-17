@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
 import {
+  CHECK_NAMES,
+  checkFailed,
+  contactLookalikes,
   cricosCheck,
   dliCheck,
   domainAgeChecks,
@@ -16,6 +19,7 @@ import { judge, research } from "@/lib/groq";
 import { mockCheck, pickScenario } from "@/lib/mock";
 import { linkCase } from "@/lib/network";
 import { consumeCheck } from "@/lib/plans";
+import { saveReport } from "@/lib/reports";
 import type { Finding, Judgement, Report, StreamEvent } from "@/lib/schema";
 
 export const maxDuration = 120;
@@ -36,7 +40,14 @@ const MOCK = process.env.MOCK_AI === "1" && process.env.NODE_ENV !== "production
 export async function POST(req: Request) {
   const missing = ["GEMINI_API_KEY", "GROQ_API_KEY"].filter((k) => !process.env[k]);
   if (missing.length && !MOCK) {
-    return Response.json({ error: `Server is missing ${missing.join(" and ")}.` }, { status: 500 });
+    // Name the missing keys in the server log only; the client gets a generic message.
+    console.error("analyze: missing", missing.join(", "));
+    return Response.json({ error: "The checker is not available right now." }, { status: 500 });
+  }
+
+  // Refuse oversized bodies before reading them (a file up to MAX_BYTES plus form overhead).
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_BYTES + 256 * 1024) {
+    return Response.json({ error: "File is larger than 4 MB." }, { status: 413 });
   }
 
   const form = await req.formData().catch(() => null);
@@ -62,10 +73,15 @@ export async function POST(req: Request) {
     async start(controller) {
       const send = (e: StreamEvent) => controller.enqueue(new TextEncoder().encode(JSON.stringify(e) + "\n"));
       const warnings: string[] = [];
+      // ---- M4 save step: a signed-in student who ticked "Save this report" gets it stored (src/lib/reports.ts).
+      // Anonymous and unticked checks are never stored. "saved" is the new id, or false if saving failed.
+      const sendResult = async (report: Report) =>
+        send({ type: "result", report, ...(form?.get("save") === "1" ? { saved: (await saveReport(report)) ?? false } : {}) });
+      // ---- end M4 save step
       try {
         if (MOCK) {
           const report = await mockCheck(pickScenario(text, file?.name ?? ""), (label) => send({ type: "step", label }));
-          send({ type: "result", report });
+          await sendResult(report);
           return;
         }
         const bytes = file ? new Uint8Array(await file.arrayBuffer()) : null;
@@ -73,7 +89,7 @@ export async function POST(req: Request) {
         const cached = reports.get(key);
         if (cached) {
           // Refresh connections: later checks may share identifiers with this one.
-          send({ type: "result", report: { ...cached, connections: linkCase(cached.extraction, cached.risk, new Date(), key) } });
+          await sendResult({ ...cached, connections: linkCase(cached.extraction, cached.risk, new Date(), key) });
           return;
         }
 
@@ -93,26 +109,19 @@ export async function POST(req: Request) {
           dliCheck(x),
           cricosCheck(x),
           // PKCERT lists almost no student notices, so its outage shouldn't make every report "incomplete".
-          pkcertCheck(x).catch(() => []),
+          pkcertCheck(x).catch(() => [checkFailed("pkcert", false)]),
         ]);
-        const labels = [
-          "Rule checks",
-          "PDF metadata check",
-          "Domain age check",
-          "UK sponsor register check",
-          "Canadian DLI list check",
-          "Australian CRICOS register check",
-          "PKCERT fake notification check",
-        ];
+        const checks = ["rules", "pdf", "domain_age", "ukvi", "dli", "cricos", "pkcert"] as const;
         const findings: Finding[] = settled.flatMap((s, i) => {
           if (s.status === "fulfilled") return s.value;
-          warnings.push(`${labels[i]} could not run.`);
-          return [];
+          warnings.push(`${CHECK_NAMES[checks[i]]} could not run.`);
+          return [checkFailed(checks[i])];
         });
 
         send({ type: "step", label: "Searching official sources online" });
         const notes = await research(x).catch(() => {
           warnings.push("Web research was unavailable (rate limit or network), so online checks were skipped.");
+          findings.push(checkFailed("web_research"));
           return "";
         });
 
@@ -122,10 +131,12 @@ export async function POST(req: Request) {
           judgement = await judge(x, findings, notes);
         } catch {
           warnings.push("The written summary could not be generated. The checks below are still valid.");
+          findings.push(checkFailed("summary"));
         }
         const merged = mergeFindings([
           ...findings,
           ...(judgement?.findings ?? []).map((f) => ({ ...f, origin: "web" as const })),
+          ...contactLookalikes(x, judgement?.official_contact, findings),
         ]);
 
         const report: Report = {
@@ -145,9 +156,10 @@ export async function POST(req: Request) {
           if (reports.size >= MAX_CACHED) reports.delete(reports.keys().next().value!);
           reports.set(key, report);
         }
-        send({ type: "result", report });
+        await sendResult(report);
       } catch (e) {
-        console.error(e);
+        // Provider errors can echo request content, so only the error type is logged.
+        console.error("analyze: check failed", e instanceof Error ? e.name : typeof e);
         send({ type: "error", message: "We could not read this document. Try a clearer photo or a PDF, or try again in a minute." });
       } finally {
         controller.close();
