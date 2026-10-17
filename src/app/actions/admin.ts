@@ -3,11 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
+import { rateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 // Codes double as message keys under "adminUsers.errors"; the database raises the same codes.
 const ERRORS = ["forbidden", "reason_required", "cannot_change_self", "cannot_suspend_admin", "not_available", "no_change"] as const;
-export type AdminState = { error?: (typeof ERRORS)[number] | "unknown"; done?: boolean } | undefined;
+export type AdminState = { error?: (typeof ERRORS)[number] | "rate_limited" | "unknown"; done?: boolean } | undefined;
 
 const StatusChange = z.object({
   id: z.uuid(),
@@ -19,6 +20,7 @@ export async function setAccountStatus(_: AdminState, form: FormData): Promise<A
   // set_account_status() checks is_admin() and the self/admin rules again in the database.
   const user = await getCurrentUser();
   if (!user?.active || user.role !== "admin") return { error: "forbidden" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = StatusChange.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0]?.path[0] === "reason" ? "reason_required" : "not_available" };
 
@@ -38,12 +40,13 @@ const DisputeReview = z.object({
   status: z.enum(["under_review", "resolved", "dismissed"]),
   note: z.string().trim().max(1000).default(""),
 });
-export type DisputeState = { error?: "forbidden" | "not_available" | "unknown"; done?: boolean } | undefined;
+export type DisputeState = { error?: "forbidden" | "not_available" | "rate_limited" | "unknown"; done?: boolean } | undefined;
 
 export async function reviewDispute(_: DisputeState, form: FormData): Promise<DisputeState> {
   // review_dispute() checks is_admin() again and writes the activity history.
   const user = await getCurrentUser();
   if (!user?.active || user.role !== "admin") return { error: "forbidden" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = DisputeReview.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: "not_available" };
 

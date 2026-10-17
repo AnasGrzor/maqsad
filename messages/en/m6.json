@@ -45,6 +45,7 @@
       "cannot_suspend_admin": "Admin accounts can't be suspended here.",
       "not_available": "This account isn't available. Refresh the page and try again.",
       "no_change": "The account already has this status. Refresh the page.",
+      "rate_limited": "You're doing that too often. Wait a minute and try again.",
       "unknown": "Something went wrong. Please try again."
     }
   },
@@ -92,6 +93,7 @@
     "errors": {
       "forbidden": "Only admins can do this.",
       "not_available": "This item no longer exists.",
+      "rate_limited": "You're doing that too often. Wait a minute and try again.",
       "unknown": "Something went wrong. Please try again."
     }
   },

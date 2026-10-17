@@ -84,6 +84,32 @@ export type Database = {
           },
         ]
       }
+      ai_checks: {
+        Row: {
+          created_at: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_checks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -727,6 +753,24 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          hits: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          hits?: number
+          key: string
+          window_start: string
+        }
+        Update: {
+          hits?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       student_profiles: {
         Row: {
           destinations: string[]
@@ -1134,6 +1178,20 @@ export type Database = {
       set_item_status: {
         Args: { done: boolean; item: string }
         Returns: undefined
+      }
+      take_ai_check: {
+        Args: {
+          app_per_day: number
+          app_per_minute: number
+          per_hour: number
+          per_minute: number
+          uid: string
+        }
+        Returns: number
+      }
+      take_rate_limit: {
+        Args: { key: string; max_hits: number; window_seconds: number }
+        Returns: boolean
       }
       update_plan: {
         Args: {

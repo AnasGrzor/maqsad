@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { firstError, Profile, SignIn, SignUp, type AuthError } from "@/lib/auth-schema";
 import { localeOf } from "@/lib/locale";
+import { rateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 export type FormState = { error?: AuthError; done?: "confirm_email" | "saved" } | undefined;
@@ -18,6 +19,7 @@ function authError(code: string | undefined): AuthError {
 }
 
 export async function signUp(_: FormState, form: FormData): Promise<FormState> {
+  if (await rateLimited()) return { error: "rate_limited" };
   const parsed = SignUp.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: firstError(parsed.error) };
   const { email, password, displayName, role } = parsed.data;
@@ -35,6 +37,7 @@ export async function signUp(_: FormState, form: FormData): Promise<FormState> {
 }
 
 export async function signIn(_: FormState, form: FormData): Promise<FormState> {
+  if (await rateLimited()) return { error: "rate_limited" };
   const parsed = SignIn.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: firstError(parsed.error) };
 
@@ -60,6 +63,7 @@ export async function signOut(form: FormData) {
 export async function updateProfile(_: FormState, form: FormData): Promise<FormState> {
   const user = await getCurrentUser();
   if (!user || !user.active) return { error: "unknown" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = Profile.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: firstError(parsed.error) };
 

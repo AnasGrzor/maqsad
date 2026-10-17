@@ -34,6 +34,7 @@
       "not_available": "This action isn't available. Refresh the page and try again.",
       "already_pending": "You already have a request waiting for Maqsad.",
       "already_on_plan": "You are already on this plan.",
+      "rate_limited": "You're doing that too often. Wait a minute and try again.",
       "unknown": "Something went wrong. Please try again."
     }
   },
@@ -51,6 +52,10 @@
       "limit_reached": "You have used all {limit} checks for this month. They reset on {date}.",
       "not_included": "Your plan doesn't include document checks. You can request a plan that does from your settings.",
       "not_available": "This account can't run document checks.",
+      "rate_limited": "You're checking documents too fast. Wait a minute and try again.",
+      "hourly_limit": "You've run {limit} checks in the last hour. Try again later.",
+      "busy": "The checker is busy. Wait a minute and try again.",
+      "daily_limit": "The checker has reached today's limit. Try again tomorrow.",
       "unknown": "Something went wrong. Please try again."
     }
   },

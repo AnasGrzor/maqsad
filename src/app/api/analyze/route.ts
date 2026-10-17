@@ -65,8 +65,8 @@ export async function POST(req: Request) {
     return Response.json({ error: "Text is longer than 20,000 characters." }, { status: 400 });
   }
 
-  // M5 plan limits: sign-in required (401) and one verification report used per check, before any model call.
-  const refused = await consumeCheck();
+  // M5 plan limits: sign-in required (401), rate limits (429) and one verification report used per check, before any model call.
+  const refused = await consumeCheck(!MOCK);
   if (refused) return refused;
   // End M5.
 

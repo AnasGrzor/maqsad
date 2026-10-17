@@ -517,8 +517,9 @@
       "already_connected": "You already have an open request or connection with this person.",
       "too_many_pending": "You have 20 requests waiting for an answer. Wait for replies or withdraw some first.",
       "profile_required": "Add your agency profile before sending requests.",
-      "unknown": "Something went wrong. Please try again.",
-      "plan_required": "This needs a plan that includes it on your side or the other person's (Agent Professional for agents, Student Plus for students). Plans are under Profile and settings or Subscription and settings."
+      "plan_required": "This needs a plan that includes it on your side or the other person's (Agent Professional for agents, Student Plus for students). Plans are under Profile and settings or Subscription and settings.",
+      "rate_limited": "You're doing that too often. Wait a minute and try again.",
+      "unknown": "Something went wrong. Please try again."
     },
     "fields": {
       "education_level": "education level",

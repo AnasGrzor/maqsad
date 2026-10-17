@@ -2,6 +2,7 @@ import "server-only";
 import { createClient as createAnonClient } from "@supabase/supabase-js";
 import { cacheTag } from "next/cache";
 import { getCurrentUser } from "./auth";
+import { createAdminClient } from "./supabase/admin";
 import { createClient } from "./supabase/server";
 import type { Database } from "./supabase/database.types";
 
@@ -56,15 +57,44 @@ export async function getMyPlan(userId: string) {
   return { plan, plans, allowance, subscription, request };
 }
 
-// /api/analyze: sign-in required, then one verification report is recorded before any model call.
+// Caps on checks that may reach the models (take_ai_check() in 20261020000001_ai_rate_limits.sql). Keep app_per_day
+// under the free daily quotas: one check is one Gemini call and two Groq calls.
+const AI_LIMITS = { per_minute: 2, per_hour: 10, app_per_minute: 5, app_per_day: 50 };
+const AI_REFUSALS: Record<string, string> = {
+  rate_limited: "You're checking documents too fast. Wait a minute and try again.",
+  hourly_limit: `You've run ${AI_LIMITS.per_hour} checks in the last hour. Try again later.`,
+  busy: "The checker is busy. Wait a minute and try again.",
+  daily_limit: "The checker has reached today's limit. Try again tomorrow.",
+};
+
+// /api/analyze: sign-in required, then the rate limits, then one verification report is recorded before any model call.
 // Returns the response to send when the check may not run, or null. The client translates `code` (usage.errors).
-export async function consumeCheck(): Promise<Response | null> {
+// rateLimited is false only for mock checks, which spend no model calls.
+export async function consumeCheck(rateLimited = true): Promise<Response | null> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return Response.json({ error: "Sign in to check a document.", code: "sign_in_required" }, { status: 401 });
-  // Admins have no plan; they check documents while reviewing credentials and disputes, unmetered.
+  if (!rateLimited) return spendAllowance(supabase);
+  // shortcut: a re-check served from the route's report cache still counts, fine while the cache rarely hits.
+  const admin = createAdminClient();
+  const { data: hit, error } = await admin.rpc("take_ai_check", { uid: user.id, ...AI_LIMITS });
+  if (error) {
+    if (Object.hasOwn(AI_REFUSALS, error.message)) {
+      return Response.json({ error: AI_REFUSALS[error.message], code: error.message, limit: AI_LIMITS.per_hour }, { status: 429 });
+    }
+    console.error("take_ai_check failed", error.code);
+    return Response.json({ error: "Something went wrong. Please try again.", code: "unknown" }, { status: 500 });
+  }
+  const refused = await spendAllowance(supabase);
+  // A check the plan refuses never reaches the models, so it must not use up the caps.
+  if (refused) await admin.from("ai_checks").delete().eq("id", hit);
+  return refused;
+}
+
+async function spendAllowance(supabase: Awaited<ReturnType<typeof createClient>>): Promise<Response | null> {
+  // Admins have no plan; they check documents while reviewing credentials and disputes, without a monthly limit.
   const me = await getCurrentUser();
   if (me?.active && me.role === "admin") return null;
   const { error } = await supabase.rpc("use_allowance", { kind: "verification_report" });

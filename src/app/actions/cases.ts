@@ -6,6 +6,7 @@ import type { ActionState } from "@/app/actions/profiles";
 import { getCurrentUser } from "@/lib/auth";
 import { CaseItem, CaseRecord, CaseStatus, Dispute, ItemStatus, Message, OpenCase } from "@/lib/cases";
 import { errorField } from "@/lib/profile-schema";
+import { rateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 // Every write goes through a database function that checks the accepted connection again
@@ -22,7 +23,9 @@ function refresh() {
 
 // Validates the form, then calls one RPC with the parsed fields as its arguments.
 async function run<S extends z.ZodType>(schema: S, form: FormData, call: (args: z.output<S>) => PromiseLike<{ error: { message: string } | null }>): Promise<ActionState> {
-  if (!(await party())) return { error: "not_available" };
+  const user = await party();
+  if (!user) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = schema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: "invalid", field: errorField(parsed.error) };
   const { error } = await call(parsed.data);
@@ -78,6 +81,7 @@ export async function markNotificationsRead(_: ActionState, form: FormData): Pro
   const user = await party();
   const parsed = MarkRead.safeParse(Object.fromEntries(form));
   if (!user || !parsed.success) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const supabase = await createClient();
   let query = supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", user.id).is("read_at", null);
   if (parsed.data.id !== "all") query = query.eq("id", parsed.data.id);

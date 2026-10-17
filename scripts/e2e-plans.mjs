@@ -1,7 +1,7 @@
 // End-to-end checks for plans, upgrade requests, monthly limits and the document checker gate.
 // Uses the m5-* test accounts and resets their plan data first. Set E2E_MOCK=1 against `next dev` with
 // MOCK_AI=1 to also run real (mock) checks through /api/analyze until the limit.
-import { anonClient, APP, check, ensureUser, finish, get, session, sql } from "./e2e-lib.mjs";
+import { anonClient, APP, check, ensureUser, finish, get, serviceClient, session, sql } from "./e2e-lib.mjs";
 
 await ensureUser("m5-student@maqsad.test", "student", "M5 Student");
 await ensureUser("m5-agent@maqsad.test", "agent", "M5 Agent");
@@ -113,6 +113,34 @@ check("months start at midnight in Asia/Karachi", (() => {
   return start("2026-10-31 19:00:00+00") === "2026-10-31 19:00:00+00" && start("2026-10-31 18:59:59+00") === "2026-09-30 19:00:00+00" && start("2026-01-01 00:00:00+00") === "2025-12-31 19:00:00+00";
 })());
 
+// 4b. Rate limits on checks that reach the models: server key only, atomic, per user and app-wide.
+const clearAiChecks = () => sql(`delete from public.ai_checks where user_id in (${ids})`);
+clearAiChecks();
+const service = serviceClient();
+const take = (uid, limits) =>
+  service.rpc("take_ai_check", { uid, per_minute: 99, per_hour: 99, app_per_minute: 9999, app_per_day: 99999, ...limits });
+check("users can't call take_ai_check", !!(await rpc(student, "take_ai_check", { uid: student.id, per_minute: 99, per_hour: 99, app_per_minute: 9999, app_per_day: 99999 })));
+const burst = await Promise.all(Array.from({ length: 6 }, () => take(student.id, { per_minute: 2 })));
+check("6 parallel takes at 2 a minute: exactly two succeed", burst.filter((r) => !r.error).length === 2, JSON.stringify(burst.map((r) => r.error?.message ?? "ok")));
+check("the others are refused with rate_limited", burst.filter((r) => r.error?.message === "rate_limited").length === 4);
+check("another user has their own minute", !(await take(agent.id, { per_minute: 2 })).error);
+sql(`update public.ai_checks set created_at = now() - interval '2 minutes' where user_id = '${student.id}'`);
+check("the hourly cap counts older checks", (await take(student.id, { per_minute: 2, per_hour: 2 })).error?.message === "hourly_limit");
+check("the app-wide minute cap", (await take(admin.id, { app_per_minute: 0 })).error?.message === "busy");
+check("the app-wide daily cap", (await take(admin.id, { app_per_day: 0 })).error?.message === "daily_limit");
+sql(`update public.ai_checks set created_at = now() - interval '25 hours' where user_id = '${student.id}'`);
+await take(admin.id, {});
+check("checks older than a day are deleted", sql(`select count(*) from public.ai_checks where user_id = '${student.id}'`) === "0");
+clearAiChecks();
+
+// 4c. Rate limits on every server action (src/lib/rate-limit.ts): server key only, atomic, per key.
+const rlKey = `e2e:${Date.now()}`;
+check("users can't call take_rate_limit", !!(await rpc(student, "take_rate_limit", { key: rlKey, max_hits: 99, window_seconds: 60 })));
+const hits = await Promise.all(Array.from({ length: 6 }, () => service.rpc("take_rate_limit", { key: rlKey, max_hits: 2, window_seconds: 3600 })));
+check("6 parallel hits at 2 a window: exactly two pass", hits.filter((r) => r.data === true).length === 2 && hits.every((r) => !r.error), JSON.stringify(hits.map((r) => r.error?.message ?? r.data)));
+check("another key has its own window", (await service.rpc("take_rate_limit", { key: `${rlKey}:other`, max_hits: 2, window_seconds: 3600 })).data === true);
+sql(`delete from public.rate_limits where key like '${rlKey}%'`);
+
 // 5. The document checker: sign-in first, refused at the limit before any model call.
 const analyze = async (cookie, text) => {
   const body = new FormData();
@@ -127,6 +155,8 @@ const limitBody = res.status === 429 ? JSON.parse(res.body) : {};
 check("at the limit /api/analyze refuses with the limit and reset date", limitBody.code === "limit_reached" && limitBody.limit === 3 && !!limitBody.resetsAt, `${res.status}`);
 res = await analyze(agent.cookie, "Pay the visa fee to this JazzCash account.");
 check("a plan without reports is refused", res.status === 403 && JSON.parse(res.body).code === "not_included", `${res.status}`);
+// Mock checks skip the rate limits, so this holds with and without E2E_MOCK.
+check("checks the plan refuses don't count toward the rate limits", sql(`select count(*) from public.ai_checks where user_id in (${ids})`) === "0");
 resetPlans();
 sql(`delete from public.usage_events where user_id='${student.id}'`);
 res = await analyze(student.cookie, "");

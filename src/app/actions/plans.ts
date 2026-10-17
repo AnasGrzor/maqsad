@@ -4,11 +4,12 @@ import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { PLANS_TAG } from "@/lib/plans";
+import { rateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 // Codes are message keys under "subscription.errors".
 export type PlanActionState =
-  | { error?: "invalid" | "not_available" | "already_pending" | "already_on_plan" | "unknown"; done?: boolean }
+  | { error?: "invalid" | "not_available" | "already_pending" | "already_on_plan" | "rate_limited" | "unknown"; done?: boolean }
   | undefined;
 
 const DB_ERRORS = ["not_available", "already_pending", "already_on_plan"] as const;
@@ -24,6 +25,7 @@ const Request = z.object({ plan: z.string().regex(/^[a-z_]{1,40}$/), note: z.str
 export async function requestPlan(_: PlanActionState, form: FormData): Promise<PlanActionState> {
   const user = await getCurrentUser();
   if (!user?.active || user.role === "admin") return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = Request.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: "invalid" };
   const supabase = await createClient();
@@ -35,14 +37,16 @@ export async function requestPlan(_: PlanActionState, form: FormData): Promise<P
 
 async function admin() {
   const user = await getCurrentUser();
-  return user?.active && user.role === "admin";
+  return user?.active && user.role === "admin" ? user : null;
 }
 
 const Decide = z.object({ id: z.uuid(), decision: z.enum(["approve", "decline"]), note: z.string().trim().max(500).default("") });
 
 export async function decidePlanRequest(_: PlanActionState, form: FormData): Promise<PlanActionState> {
   // decide_plan_request() checks is_admin() again in the database.
-  if (!(await admin())) return { error: "not_available" };
+  const user = await admin();
+  if (!user) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = Decide.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: "invalid" };
   const supabase = await createClient();
@@ -68,7 +72,9 @@ const PlanEdit = z.object({
 });
 
 export async function updatePlan(_: PlanActionState, form: FormData): Promise<PlanActionState> {
-  if (!(await admin())) return { error: "not_available" };
+  const user = await admin();
+  if (!user) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = PlanEdit.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: "invalid" };
   const supabase = await createClient();

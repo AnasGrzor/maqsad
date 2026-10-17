@@ -14,6 +14,7 @@ import {
   formObject,
   StudentProfile,
 } from "@/lib/profile-schema";
+import { rateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 // Codes double as message keys under "forms.errors"; field names under "forms.fields".
@@ -28,6 +29,7 @@ export type ActionState =
         | "too_many_pending"
         | "profile_required"
         | "plan_required"
+        | "rate_limited"
         | "unknown";
       field?: string;
       done?: boolean;
@@ -52,6 +54,7 @@ function refresh() {
 export async function saveStudentProfile(_: ActionState, form: FormData): Promise<ActionState> {
   const user = await userWithRole("student");
   if (!user) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = StudentProfile.safeParse(formObject(form));
   if (!parsed.success) return { error: "invalid", field: errorField(parsed.error) };
 
@@ -67,6 +70,7 @@ export async function saveStudentProfile(_: ActionState, form: FormData): Promis
 export async function saveAgentProfile(_: ActionState, form: FormData): Promise<ActionState> {
   const user = await userWithRole("agent");
   if (!user) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = AgentProfile.safeParse(formObject(form));
   if (!parsed.success) return { error: "invalid", field: errorField(parsed.error) };
 
@@ -89,6 +93,7 @@ const EXTENSION: Record<string, string> = {
 export async function submitCredential(_: ActionState, form: FormData): Promise<ActionState> {
   const user = await userWithRole("agent");
   if (!user) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const parsed = Credential.safeParse(formObject(form));
   if (!parsed.success) return { error: "invalid", field: errorField(parsed.error) };
 
@@ -124,6 +129,7 @@ export async function requestConnection(_: ActionState, form: FormData): Promise
   const target = String(form.get("target") ?? "");
   const note = ConnectionNote.safeParse(form.get("note") ?? "");
   if (!user?.active || !UUID.test(target)) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   if (!note.success) return { error: "invalid", field: "note" };
 
   const supabase = await createClient();
@@ -139,6 +145,7 @@ export async function updateConnection(_: ActionState, form: FormData): Promise<
   const user = await getCurrentUser();
   const parsed = Respond.safeParse(Object.fromEntries(form));
   if (!user?.active || !parsed.success) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   const { id, decision } = parsed.data;
 
   const supabase = await createClient();
@@ -162,6 +169,7 @@ export async function reviewCredential(_: ActionState, form: FormData): Promise<
   const user = await userWithRole("admin");
   const parsed = Review.safeParse(Object.fromEntries(form));
   if (!user) return { error: "not_available" };
+  if (await rateLimited(user.id)) return { error: "rate_limited" };
   if (!parsed.success) return { error: "invalid", field: errorField(parsed.error) };
 
   const supabase = await createClient();
