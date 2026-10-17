@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  /* The pastel palette is light by design, so the page stays light under a dark OS theme. */
+  color-scheme: light;
+}
+
+@theme inline {
+  /* Navy palette */
+  --color-navy-900: #162e48;
+  --color-navy-800: #203d58;
+  --color-slate: #485e78;
+  --color-mist: #c8d1db;
+  --color-fog: #dbe0e4;
+  /* Pastel palette */
+  --color-lavender-50: #f9f5fe;
+  --color-lavender-100: #f3ebfc;
+  --color-lavender-200: #e2d5ef;
+  --color-lemon: #fcfc92;
+  --color-lemon-soft: #fdfdc9;
+  --color-mint: #d3ecea;
+  --color-mint-soft: #e8f6f4;
+  --color-ice: #effffe;
+  --color-card: #fcfffe;
+  /* Danger is outside both palettes on purpose: high risk must not look friendly. */
+  --color-danger: #b42318;
+  --color-danger-bg: #fde8e7;
+
+  --font-sans: var(--font-geist-sans);
+  --font-urdu: var(--font-nastaliq);
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --animate-rise: rise 320ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+body {
+  background: var(--color-ice);
+  color: var(--color-navy-900);
+}

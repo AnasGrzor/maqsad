@@ -1,0 +1,5 @@
+# Install scripts these packages ask to run; none are needed by this app.
+allowBuilds:
+  '@google/genai': false
+  protobufjs: false
+  unrs-resolver: false
