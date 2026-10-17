@@ -3,7 +3,8 @@
 Maqsad is a trust and case-management platform for students, job seekers, and overseas education and recruitment agents. It is being built in milestones. Today it has:
 
 - Student and agent registration, login and role-based dashboards (student, agent, admin), with roles checked on the server and in Postgres Row Level Security.
-- A public website in English and Urdu (right-to-left), with a pricing page read from `src/lib/plans.ts`.
+- A public website in English and Urdu (right-to-left), with a pricing page read from the `plans` table.
+- Plans, upgrade requests (no payments) and monthly verification report limits, managed by admins.
 - Student and agent profiles, an agent directory, student discovery for agents, matching suggestions with reasons, and connection requests.
 - Agent credential submission with an optional document, and admin review that sets the status students see.
 - The document checker at `/check`, described below.
@@ -36,6 +37,7 @@ pnpm test:e2e                # with supabase and the app running: auth, role rou
 - **Connections.** Rows in `public.connections` change only through the database functions `request_connection`, `respond_connection` and `withdraw_connection`, because the Supabase API is reachable from the browser. They allow one open request per pair, only the recipient can accept, and an agent can have at most 20 requests waiting (an anti-spam cap until plan limits arrive in milestone 5).
 - **Matching.** `src/lib/matching.ts` scores shared destinations, field, education level, goal and a verified credential, with fixed weights and no model. Every suggestion lists its reasons, and the page says a match is not a guarantee.
 - **Credentials.** Agents can insert credentials but cannot set their status (column grants). Only `review_credential()`, which checks `is_admin()`, changes it. "Verified" means an admin verified at least one credential; plans and payments play no part. Documents go to the private `credentials` storage bucket under the agent's own folder; only that agent and admins can read them, through 5-minute signed links.
+- **Plans and limits.** `public.plans` holds prices (PKR, null = not set yet), monthly verification reports (null = not included) and included feature keys; everyone can read it and only `update_plan()` (admins) changes it. The pricing page caches it with `"use cache"` and the `plans` tag, which the admin action refreshes. Users without a `subscriptions` row are on `student_free` or `agent_basic`. Users ask for another plan with `request_plan()` (one pending request, own audience, offered plans only); no payment is taken, and only `decide_plan_request()` (admins) changes the plan. `use_allowance('verification_report')` records one use if the plan allows it this calendar month (Asia/Karachi), under a per-user lock. `/api/analyze` requires sign-in and calls it before any model call, including in `MOCK_AI` mode. Other features can gate on `plan_allows('<feature key>')` in their database functions.
 - **Languages.** URLs start with the locale (`/en/...`, `/ur/...`) so pages can be prerendered with Cache Components. Strings live in `messages/en.json` and `messages/ur.json`, loaded by next-intl from the `[locale]` root parameter. `pnpm test` fails if the two files have different keys. Report findings and the action plan steps from `src/lib` are still English only, and are marked `lang="en"` so they stay left-to-right on Urdu pages.
 
 To work on the UI without using model quota, set `MOCK_AI=1` in `.env.local`. The API then returns sample reports from `src/lib/mock.ts`, built with the real rule checks and risk level but no Gemini or Groq calls. Paste `high`, `medium`, `low`, `incomplete` or `error` to pick one. An uploaded file gives the high-risk report, or the low-risk one if its name contains "real" or "flinders". Production builds ignore the flag.
@@ -76,4 +78,4 @@ The risk level comes from `riskLevel()`, which counts red flags. A model can add
 - PKCERT's fake notifications page lists 8 notices with the text only inside images, and none are about education today, so that check will rarely fire. If the page can't be fetched, the report doesn't become "checks incomplete".
 - Helplines and opportunity links are hard-coded and can go stale.
 - Gemini's Google Search grounding is not on the free tier, which is why search runs on Groq.
-- The document checker is public and has no per-user limit yet. Plan limits from `src/lib/plans.ts` are shown on the pricing page but enforced only from milestone 5.
+- Plan usage counts a check when it starts, so a check that fails later (model quota, unreadable file) or re-checks a cached document still uses one report.

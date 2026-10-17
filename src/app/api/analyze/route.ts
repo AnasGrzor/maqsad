@@ -15,6 +15,7 @@ import { extract } from "@/lib/gemini";
 import { judge, research } from "@/lib/groq";
 import { mockCheck, pickScenario } from "@/lib/mock";
 import { linkCase } from "@/lib/network";
+import { consumeCheck } from "@/lib/plans";
 import type { Finding, Judgement, Report, StreamEvent } from "@/lib/schema";
 
 export const maxDuration = 120;
@@ -51,6 +52,11 @@ export async function POST(req: Request) {
   } else if (text.length > MAX_TEXT) {
     return Response.json({ error: "Text is longer than 20,000 characters." }, { status: 400 });
   }
+
+  // M5 plan limits: sign-in required (401) and one verification report used per check, before any model call.
+  const refused = await consumeCheck();
+  if (refused) return refused;
+  // End M5.
 
   const stream = new ReadableStream({
     async start(controller) {

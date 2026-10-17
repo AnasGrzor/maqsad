@@ -16,7 +16,7 @@ export const FEATURES = {
   feeRecords: false,
   savedReports: false,
   complaints: false,
-  planLimits: false,
+  planLimits: true,
   adminReview: false,
   auditLog: false,
   deepfakeDetection: false,
