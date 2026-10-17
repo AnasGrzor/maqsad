@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test src/lib/*.test.mjs",
-    "test:e2e": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/e2e-auth.mjs && node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/e2e-connections.mjs"
+    "test:e2e": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/e2e-auth.mjs && node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/e2e-connections.mjs && node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/e2e-cases.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
