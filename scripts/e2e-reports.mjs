@@ -21,6 +21,8 @@ const agent = await session("m4-agent@maqsad.test");
 const admin = await session("m4-admin@maqsad.test");
 const mine = [student, other, agent, admin].map((u) => `'${u.id}'`).join(",");
 sql(`delete from public.verification_reports where owner_id in (${mine})`);
+// Each mock check uses one of the monthly verification reports (milestone 5), so start every run with none used.
+sql(`delete from public.usage_events where user_id in (${mine})`);
 
 const countOf = (where = "true") => Number(sql(`select count(*) from public.verification_reports where ${where}`));
 const ownedBy = (u) => countOf(`owner_id='${u.id}'`);
