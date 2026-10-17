@@ -1,5 +1,7 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import { DeleteReport } from "@/components/report/delete-report";
+import { LinkReport } from "@/components/report/link-report";
+import { listCases } from "@/lib/case-data";
 import { ReportView } from "@/components/report/report-view";
 import { focusRing } from "@/components/styles";
 import { Link } from "@/i18n/navigation";
@@ -10,11 +12,12 @@ import { getReport } from "@/lib/reports";
 export default async function SavedReportPage({ params }: PageProps<"/[locale]/student/reports/[id]">) {
   await requireRole("student");
   const { id } = await params;
-  const [t, c, format, saved] = await Promise.all([
+  const [t, c, format, saved, cases] = await Promise.all([
     getTranslations("reports"),
     getTranslations("checker"),
     getFormatter(),
     getReport(id),
+    listCases(),
   ]);
   const back = (
     <Link href="/student/reports" className={`text-sm text-slate underline underline-offset-4 hover:text-navy-900 ${focusRing}`}>
@@ -46,6 +49,11 @@ export default async function SavedReportPage({ params }: PageProps<"/[locale]/s
         </div>
         <DeleteReport id={saved.id} />
       </div>
+      {cases.length > 0 && (
+        <div className="mt-4">
+          <LinkReport id={saved.id} current={saved.case_id} cases={cases.map((k) => ({ id: k.id, title: k.title }))} />
+        </div>
+      )}
       <ReportView report={report} stored />
     </div>
   );

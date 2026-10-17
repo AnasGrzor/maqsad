@@ -94,5 +94,17 @@
       "not_available": "This item no longer exists.",
       "unknown": "Something went wrong. Please try again."
     }
+  },
+  "adminReports": {
+    "title": "Reports and findings",
+    "intro": "Verification reports students saved to their accounts. Saved reports hold findings and summaries, never the document or personal details.",
+    "risk": "Risk",
+    "document": "Document",
+    "owner": "Saved by",
+    "checked": "Checked",
+    "empty": "No saved reports.",
+    "back": "All reports",
+    "notFound": "This report doesn't exist or was deleted.",
+    "savedBy": "Saved by"
   }
 }

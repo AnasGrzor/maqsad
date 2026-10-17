@@ -23,3 +23,19 @@ export async function deleteReport(_: DeleteState, form: FormData): Promise<Dele
   revalidatePath(`/${locale}/student/reports`);
   redirect(`/${locale}/student/reports`);
 }
+
+export type LinkState = { error?: "not_available"; done?: boolean } | undefined;
+
+// link_report() checks ownership and case membership again in the database.
+export async function linkReport(_: LinkState, form: FormData): Promise<LinkState> {
+  const user = await getCurrentUser();
+  const id = String(form.get("id") ?? "");
+  const target = String(form.get("case") ?? "");
+  if (!user?.active || user.role !== "student" || !UUID.test(id) || (target && !UUID.test(target))) return { error: "not_available" };
+  const supabase = await createClient();
+  // The generated type marks target_case as string, but null (detach) is valid for the function.
+  const { error } = await supabase.rpc("link_report", { report: id, target_case: (target || null) as string });
+  if (error) return { error: "not_available" };
+  revalidatePath("/[locale]/student", "layout");
+  return { done: true };
+}

@@ -71,9 +71,32 @@ check("plan request decision is audited", actions.includes("plan_request.decide"
 check("granting the plan is audited", actions.includes("subscription.grant"));
 check("users can't read the audit log", ((await student.sb.from("audit_log").select("id")).data ?? []).length === 0);
 
-// 5. Suspended accounts lose access to cases, messages and notifications.
+// 5. Saved reports linked to applications stay private to their owner.
+const { data: report, error: saveErr } = await student.sb
+  .from("verification_reports")
+  .insert({ owner_id: student.id, doc_type: "university_offer", issuer_name: "Integration University", risk: "medium", findings: [], warnings: [] })
+  .select("id")
+  .single();
+check("student saves a report", !saveErr && !!report, saveErr?.message);
+check("student links the report to their application", !(await errorOf(student.sb.rpc("link_report", { report: report.id, target_case: caseId }))));
+check("users can't set case_id directly", !!(await errorOf(student.sb.from("verification_reports").update({ case_id: null }).eq("id", report.id))));
+check("the agent can't link someone else's report", (await errorOf(agent.sb.rpc("link_report", { report: report.id, target_case: caseId }))) === "not_available");
+check("the agent can't see the linked report", ((await agent.sb.from("verification_reports").select("id").eq("case_id", caseId)).data ?? []).length === 0);
+const { data: otherCase } = await agent2.sb.from("cases").select("id").limit(1).maybeSingle();
+const foreignCase = otherCase?.id ?? sql(`select id from public.cases where student_id <> '${student.id}' limit 1`);
+if (foreignCase) check("a report can't be linked to someone else's application", (await errorOf(student.sb.rpc("link_report", { report: report.id, target_case: foreignCase }))) === "not_available");
+const casePage = await get(`/en/student/applications/${caseId}`, student.cookie);
+check("the case page shows the owner's linked report", casePage.body.includes("Integration University") && casePage.body.includes("Your linked verification reports"));
+const agentCasePage = await get(`/en/agent/applications/${caseId}`, agent.cookie);
+check("the agent's case page doesn't show it", agentCasePage.status === 200 && !agentCasePage.body.includes("Integration University"));
+const adminReports = await get("/en/admin/reports?risk=medium", admin.cookie);
+check("admin reports page lists saved reports", adminReports.body.includes("Integration University") && adminReports.body.includes("Integration Student"));
+check("admin can open the report", (await get(`/en/admin/reports/${report.id}`, admin.cookie)).body.includes("Integration University"));
+check("non-admins are kept out of admin reports", (await get("/en/admin/reports", student.cookie)).redirect.endsWith("/en/student"));
+
+// 6. Suspended accounts lose access to cases, messages and notifications.
 check("admin suspends the student", !(await errorOf(admin.sb.rpc("set_account_status", { target: student.id, new_status: "suspended", reason: "e2e check" }))));
-for (const table of ["cases", "case_items", "messages", "notifications", "disputes", "usage_events", "subscriptions"]) {
+for (const table of ["cases", "case_items", "messages", "notifications", "disputes", "usage_events", "subscriptions", "verification_reports"]) {
   const rows = (await student.sb.from(table).select("*").limit(5)).data ?? [];
   check(`a suspended user reads no ${table}`, rows.length === 0, `rows=${rows.length}`);
 }

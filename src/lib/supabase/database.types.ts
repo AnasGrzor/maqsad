@@ -955,6 +955,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "verification_reports_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "verification_reports_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
@@ -1009,6 +1016,10 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_case_party: { Args: { target_case: string }; Returns: boolean }
       is_connection_party: { Args: { connection: string }; Returns: boolean }
+      link_report: {
+        Args: { report: string; target_case: string }
+        Returns: undefined
+      }
       my_role: {
         Args: never
         Returns: Database["public"]["Enums"]["user_role"]

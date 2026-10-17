@@ -18,6 +18,7 @@ import {
 } from "@/lib/case-data";
 import { isOverdue, today } from "@/lib/cases";
 import { namesOf } from "@/lib/data";
+import { reportsForCase } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/database.types";
 import { countryName } from "@/lib/taxonomy";
 import { AutoRefresh, CaseStatusForm, DisputeForm, ItemForm, ItemToggle, MarkReadButton, MessageForm, OpenCaseForm, RecordForm } from "./case-forms";
@@ -130,7 +131,15 @@ function eventText(t: Awaited<ReturnType<typeof getTranslations<"cases">>>, e: C
 
 export async function CasePage({ role, id }: { role: Party; id: string }) {
   const user = await requireRole(role);
-  const [t, format, locale, kase] = await Promise.all([getTranslations("cases"), getFormatter(), getLocale(), getCase(id)]);
+  const [t, format, locale, kase, linked, r, c] = await Promise.all([
+    getTranslations("cases"),
+    getFormatter(),
+    getLocale(),
+    getCase(id),
+    reportsForCase(id),
+    getTranslations("reports"),
+    getTranslations("checker"),
+  ]);
   if (!kase) return <p className="text-slate">{t("notFound")}</p>;
 
   const names = await namesOf([kase.student_id, kase.agent_id]);
@@ -287,6 +296,29 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
           ))}
         </ol>
       </section>
+
+      {linked.length > 0 && (
+        <section className="space-y-3" aria-labelledby="linked-reports">
+          <h2 id="linked-reports" className={h2}>
+            {r("linkedTitle")}
+          </h2>
+          <p className="text-sm text-slate">{r("linkedPrivate")}</p>
+          <ul className="space-y-2 text-sm">
+            {linked.map((x) => (
+              <li key={x.id} className={`${card} flex flex-wrap items-center justify-between gap-2`}>
+                <Link href={`/student/reports/${x.id}`} dir="auto" className={link}>
+                  {c(`docType.${x.report.extraction.doc_type}`)}
+                  {x.report.extraction.issuer_name && ` · ${x.report.extraction.issuer_name}`}
+                </Link>
+                <span className="flex items-center gap-2 text-xs text-slate">
+                  <Chip>{c(`risk.${x.report.risk}.title`)}</Chip>
+                  {when(x.created_at)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <ReportSection connectionId={kase.connection_id} caseId={kase.id} records={recordOptions} disputes={kase.disputes} />
     </div>

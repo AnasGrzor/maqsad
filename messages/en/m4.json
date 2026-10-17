@@ -135,6 +135,14 @@
     "deleteConfirm": "Delete this report? This can’t be undone.",
     "deleteYes": "Yes, delete",
     "deleteNo": "Cancel",
-    "deleteFailed": "The report could not be deleted. Try again."
+    "deleteFailed": "The report could not be deleted. Try again.",
+    "linkLabel": "Keep with an application",
+    "linkNone": "Not linked",
+    "linkSave": "Save link",
+    "linkSaved": "Saved.",
+    "linkFailed": "Couldn't save the link. Refresh the page and try again.",
+    "linkHelp": "Only you see this link. The agent on the application can't see your saved reports.",
+    "linkedTitle": "Your linked verification reports",
+    "linkedPrivate": "Only you can see these. The other party is not shown your reports."
   }
 }
