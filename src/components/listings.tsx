@@ -114,11 +114,25 @@ export async function StudentCard({ student, name, reasons }: { student: Student
 type Filter = { name: string; label: string; value?: string; options: { value: string; label: string }[] };
 
 // Plain GET form, so filters work without JavaScript and land in the URL.
-export async function FilterBar({ filters, toggle }: { filters: Filter[]; toggle?: { name: string; label: string; on: boolean } }) {
+export async function FilterBar({
+  filters,
+  toggle,
+  search,
+}: {
+  filters: Filter[];
+  toggle?: { name: string; label: string; on: boolean };
+  search?: { name: string; label: string; placeholder: string; value?: string };
+}) {
   const t = await getTranslations("forms");
   const select = "h-10 w-full rounded-lg border border-input bg-card px-3 text-sm";
   return (
     <form className="flex flex-wrap items-end gap-3 rounded-2xl bg-lavender-100 p-4 ring-1 ring-lavender-200">
+      {search && (
+        <label className="min-w-48 flex-[2] space-y-1 text-sm">
+          <span className="font-medium">{search.label}</span>
+          <input type="search" name={search.name} defaultValue={search.value} placeholder={search.placeholder} maxLength={80} dir="auto" className={select} />
+        </label>
+      )}
       {filters.map((f) => (
         <label key={f.name} className="min-w-40 flex-1 space-y-1 text-sm">
           <span className="font-medium">{f.label}</span>

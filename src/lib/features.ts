@@ -18,7 +18,7 @@ export const FEATURES = {
   complaints: false,
   planLimits: true,
   adminReview: false,
-  auditLog: false,
+  auditLog: true,
   deepfakeDetection: false,
 } as const;
 

@@ -84,6 +84,36 @@ export type Database = {
           },
         ]
       }
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json
+          id: number
+          target_id: string | null
+          target_type: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: never
+          target_id?: string | null
+          target_type: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: never
+          target_id?: string | null
+          target_type?: string
+        }
+        Relationships: []
+      }
       case_events: {
         Row: {
           actor_id: string
@@ -877,6 +907,59 @@ export type Database = {
           },
         ]
       }
+      verification_reports: {
+        Row: {
+          case_id: string | null
+          created_at: string
+          doc_type: string
+          findings: Json
+          id: string
+          issuer_name: string
+          official_contact: Json | null
+          owner_id: string
+          risk: string
+          summary_en: string
+          summary_ur: string
+          warnings: Json
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string
+          doc_type: string
+          findings?: Json
+          id?: string
+          issuer_name?: string
+          official_contact?: Json | null
+          owner_id: string
+          risk: string
+          summary_en?: string
+          summary_ur?: string
+          warnings?: Json
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string
+          doc_type?: string
+          findings?: Json
+          id?: string
+          issuer_name?: string
+          official_contact?: Json | null
+          owner_id?: string
+          risk?: string
+          summary_en?: string
+          summary_ur?: string
+          warnings?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_reports_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -904,6 +987,7 @@ export type Database = {
         }
         Returns: string
       }
+      admin_user_email: { Args: { target: string }; Returns: string }
       allowance: { Args: { kind?: string }; Returns: Json }
       codes_ok: { Args: { codes: string[]; pattern: string }; Returns: boolean }
       current_plan: { Args: never; Returns: string }
@@ -911,6 +995,7 @@ export type Database = {
         Args: { approve: boolean; note?: string; request: string }
         Returns: undefined
       }
+      is_active_user: { Args: { uid: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_case_party: { Args: { target_case: string }; Returns: boolean }
       is_connection_party: { Args: { connection: string }; Returns: boolean }
@@ -1002,6 +1087,14 @@ export type Database = {
         Args: { body: string; connection: string; target_case?: string }
         Returns: string
       }
+      set_account_status: {
+        Args: {
+          new_status: Database["public"]["Enums"]["account_status"]
+          reason: string
+          target: string
+        }
+        Returns: undefined
+      }
       set_case_status: {
         Args: {
           new_status: Database["public"]["Enums"]["case_status"]
@@ -1025,6 +1118,15 @@ export type Database = {
       usage_month_start: { Args: { ts: string }; Returns: string }
       use_allowance: { Args: { kind?: string }; Returns: Json }
       withdraw_connection: { Args: { connection: string }; Returns: undefined }
+      write_audit: {
+        Args: {
+          action: string
+          details?: Json
+          target_id: string
+          target_type: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       account_status: "active" | "suspended"
