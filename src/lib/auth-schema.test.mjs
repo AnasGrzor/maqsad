@@ -40,8 +40,20 @@ test("every auth error code has an English and Urdu message", () => {
   }
 });
 
-test("en.json and ur.json have the same keys", () => {
+const FILES = ["", "/m3", "/m4", "/m5", "/m6"];
+const readMessages = (lang, file) => JSON.parse(readFileSync(new URL(`../../messages/${lang}${file}.json`, import.meta.url)));
+
+test("every English message file has an Urdu twin with the same keys", () => {
   const keys = (o, p = "") => Object.entries(o).flatMap(([k, v]) => (typeof v === "object" ? keys(v, `${p}${k}.`) : [`${p}${k}`]));
-  const load = (lang) => keys(JSON.parse(readFileSync(new URL(`../../messages/${lang}.json`, import.meta.url)))).sort();
-  assert.deepEqual(load("ur"), load("en"));
+  for (const file of FILES) assert.deepEqual(keys(readMessages("ur", file)).sort(), keys(readMessages("en", file)).sort(), `messages/ur${file}.json`);
+});
+
+test("message files don't reuse a top-level namespace", () => {
+  const seen = new Map();
+  for (const file of FILES) {
+    for (const ns of Object.keys(readMessages("en", file))) {
+      assert.ok(!seen.has(ns), `"${ns}" is in messages/en${file}.json and messages/en${seen.get(ns)}.json`);
+      seen.set(ns, file);
+    }
+  }
 });
