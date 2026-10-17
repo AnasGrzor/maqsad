@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // Credential uploads are up to 4 MB plus multipart overhead; Vercel caps request bodies at 4.5 MB anyway.
+    serverActions: { bodySizeLimit: "4.5mb" },
+  },
   turbopack: {
     rules: {
       "*.css": {

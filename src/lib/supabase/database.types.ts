@@ -34,6 +34,168 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_profiles: {
+        Row: {
+          about: string
+          agency_name: string
+          city: string
+          destinations: string[]
+          fees: string
+          kind: Database["public"]["Enums"]["agent_kind"]
+          levels: Database["public"]["Enums"]["education_level"][]
+          specialisations: string[]
+          updated_at: string
+          user_id: string
+          website: string
+        }
+        Insert: {
+          about?: string
+          agency_name: string
+          city?: string
+          destinations?: string[]
+          fees?: string
+          kind: Database["public"]["Enums"]["agent_kind"]
+          levels?: Database["public"]["Enums"]["education_level"][]
+          specialisations?: string[]
+          updated_at?: string
+          user_id: string
+          website?: string
+        }
+        Update: {
+          about?: string
+          agency_name?: string
+          city?: string
+          destinations?: string[]
+          fees?: string
+          kind?: Database["public"]["Enums"]["agent_kind"]
+          levels?: Database["public"]["Enums"]["education_level"][]
+          specialisations?: string[]
+          updated_at?: string
+          user_id?: string
+          website?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connections: {
+        Row: {
+          agent_id: string
+          created_at: string
+          id: string
+          message: string
+          requested_by: string
+          responded_at: string | null
+          status: Database["public"]["Enums"]["connection_status"]
+          student_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          id?: string
+          message?: string
+          requested_by: string
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["connection_status"]
+          student_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          requested_by?: string
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["connection_status"]
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connections_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credentials: {
+        Row: {
+          agent_id: string
+          created_at: string
+          document_path: string | null
+          id: string
+          issuer: string
+          kind: Database["public"]["Enums"]["credential_kind"]
+          reference: string
+          review_note: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["credential_status"]
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          document_path?: string | null
+          id?: string
+          issuer: string
+          kind: Database["public"]["Enums"]["credential_kind"]
+          reference?: string
+          review_note?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["credential_status"]
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          document_path?: string | null
+          id?: string
+          issuer?: string
+          kind?: Database["public"]["Enums"]["credential_kind"]
+          reference?: string
+          review_note?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["credential_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credentials_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credentials_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -58,15 +220,104 @@ export type Database = {
         }
         Relationships: []
       }
+      student_profiles: {
+        Row: {
+          destinations: string[]
+          education_level: Database["public"]["Enums"]["education_level"]
+          experience: string
+          field: string
+          goal: Database["public"]["Enums"]["journey_goal"]
+          goals_note: string
+          qualifications: string
+          skills: string
+          updated_at: string
+          user_id: string
+          visible: boolean
+        }
+        Insert: {
+          destinations?: string[]
+          education_level: Database["public"]["Enums"]["education_level"]
+          experience?: string
+          field: string
+          goal: Database["public"]["Enums"]["journey_goal"]
+          goals_note?: string
+          qualifications?: string
+          skills?: string
+          updated_at?: string
+          user_id: string
+          visible?: boolean
+        }
+        Update: {
+          destinations?: string[]
+          education_level?: Database["public"]["Enums"]["education_level"]
+          experience?: string
+          field?: string
+          goal?: Database["public"]["Enums"]["journey_goal"]
+          goals_note?: string
+          qualifications?: string
+          skills?: string
+          updated_at?: string
+          user_id?: string
+          visible?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      codes_ok: { Args: { codes: string[]; pattern: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
+      my_role: {
+        Args: never
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      request_connection: {
+        Args: { note?: string; target: string }
+        Returns: string
+      }
+      respond_connection: {
+        Args: { accept: boolean; connection: string }
+        Returns: undefined
+      }
+      review_credential: {
+        Args: {
+          credential: string
+          note?: string
+          verdict: Database["public"]["Enums"]["credential_status"]
+        }
+        Returns: undefined
+      }
+      withdraw_connection: { Args: { connection: string }; Returns: undefined }
     }
     Enums: {
       account_status: "active" | "suspended"
+      agent_kind: "education" | "recruitment" | "both"
+      connection_status: "pending" | "accepted" | "declined" | "withdrawn"
+      credential_kind:
+        | "business_registration"
+        | "oep_licence"
+        | "partnership"
+        | "membership"
+        | "other"
+      credential_status: "submitted" | "under_review" | "verified" | "rejected"
+      education_level:
+        | "secondary"
+        | "diploma"
+        | "bachelors"
+        | "masters"
+        | "phd"
+        | "other"
+      journey_goal: "study" | "work" | "both"
       user_role: "student" | "agent" | "admin"
     }
     CompositeTypes: {
@@ -199,6 +450,25 @@ export const Constants = {
   public: {
     Enums: {
       account_status: ["active", "suspended"],
+      agent_kind: ["education", "recruitment", "both"],
+      connection_status: ["pending", "accepted", "declined", "withdrawn"],
+      credential_kind: [
+        "business_registration",
+        "oep_licence",
+        "partnership",
+        "membership",
+        "other",
+      ],
+      credential_status: ["submitted", "under_review", "verified", "rejected"],
+      education_level: [
+        "secondary",
+        "diploma",
+        "bachelors",
+        "masters",
+        "phd",
+        "other",
+      ],
+      journey_goal: ["study", "work", "both"],
       user_role: ["student", "agent", "admin"],
     },
   },

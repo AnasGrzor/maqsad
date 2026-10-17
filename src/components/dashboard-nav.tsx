@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import type { Role } from "@/lib/auth";
 import { FEATURES, type Feature } from "@/lib/features";
@@ -31,7 +32,7 @@ export const NAV: Record<Role, { key: NavKey; href: string; feature: Feature }[]
   ],
   admin: [
     { key: "users", href: "/admin", feature: "accounts" },
-    { key: "credentialReview", href: "/admin/credentials", feature: "adminReview" },
+    { key: "credentialReview", href: "/admin/credentials", feature: "credentialSubmission" },
     { key: "flagged", href: "/admin/reports", feature: "adminReview" },
     { key: "complaints", href: "/admin/complaints", feature: "complaints" },
     { key: "plans", href: "/admin/plans", feature: "planLimits" },
@@ -39,9 +40,21 @@ export const NAV: Record<Role, { key: NavKey; href: string; feature: Feature }[]
   ],
 };
 
+// The pathname is request data on dynamic routes, so it is read behind Suspense with a no-highlight fallback.
 export function DashboardNav({ role }: { role: Role }) {
+  return (
+    <Suspense fallback={<NavItems role={role} pathname="" />}>
+      <ActiveNav role={role} />
+    </Suspense>
+  );
+}
+
+function ActiveNav({ role }: { role: Role }) {
+  return <NavItems role={role} pathname={usePathname()} />;
+}
+
+function NavItems({ role, pathname }: { role: Role; pathname: string }) {
   const t = useTranslations("dashboard");
-  const pathname = usePathname();
   return (
     <ul className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
       {NAV[role].map(({ key, href, feature }) => (

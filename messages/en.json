@@ -312,15 +312,36 @@
     "extracted": "What we read from the document",
     "summaryNote": "Report findings and summaries are written in English, with an Urdu summary.",
     "risk": {
-      "high": { "title": "High risk", "advice": "Do not pay anything yet." },
-      "medium": { "title": "Some concerns", "advice": "Verify with the issuer before paying." },
-      "low": { "title": "No red flags found", "advice": "Still confirm with the issuer before paying." },
-      "incomplete": { "title": "Checks incomplete", "advice": "Confirm with the issuer before paying." }
+      "high": {
+        "title": "High risk",
+        "advice": "Do not pay anything yet."
+      },
+      "medium": {
+        "title": "Some concerns",
+        "advice": "Verify with the issuer before paying."
+      },
+      "low": {
+        "title": "No red flags found",
+        "advice": "Still confirm with the issuer before paying."
+      },
+      "incomplete": {
+        "title": "Checks incomplete",
+        "advice": "Confirm with the issuer before paying."
+      }
     },
     "severity": {
-      "high": { "label": "Serious red flags", "short": "serious" },
-      "medium": { "label": "Warning signs", "short": "warning" },
-      "low": { "label": "Minor concerns", "short": "minor" }
+      "high": {
+        "label": "Serious red flags",
+        "short": "serious"
+      },
+      "medium": {
+        "label": "Warning signs",
+        "short": "warning"
+      },
+      "low": {
+        "label": "Minor concerns",
+        "short": "minor"
+      }
     },
     "origin": {
       "rules": "Rule check",
@@ -416,5 +437,230 @@
         "account": "Account number"
       }
     }
+  },
+  "taxonomy": {
+    "fields": {
+      "business": "Business and management",
+      "computing": "Computing and IT",
+      "engineering": "Engineering",
+      "health": "Medicine and health",
+      "nursing": "Nursing and care",
+      "sciences": "Sciences",
+      "social_sciences": "Social sciences",
+      "arts": "Arts and humanities",
+      "law": "Law",
+      "education": "Education and teaching",
+      "hospitality": "Hospitality and tourism",
+      "construction": "Construction",
+      "trades": "Skilled trades",
+      "logistics": "Driving and logistics",
+      "other": "Other"
+    },
+    "levels": {
+      "secondary": "Secondary school",
+      "diploma": "Diploma",
+      "bachelors": "Bachelor's",
+      "masters": "Master's",
+      "phd": "PhD",
+      "other": "Other"
+    },
+    "goals": {
+      "study": "Study abroad",
+      "work": "Work abroad",
+      "both": "Study and work"
+    },
+    "agentKinds": {
+      "education": "Education agent",
+      "recruitment": "Recruitment agent",
+      "both": "Education and recruitment"
+    },
+    "credentialKinds": {
+      "business_registration": "Business registration",
+      "oep_licence": "Overseas Employment Promoter licence (BEOE)",
+      "partnership": "Institution partnership",
+      "membership": "Professional membership",
+      "other": "Other"
+    },
+    "credentialStatus": {
+      "submitted": "Submitted, waiting for review",
+      "under_review": "Under review",
+      "verified": "Verified by Maqsad",
+      "rejected": "Not verified"
+    }
+  },
+  "forms": {
+    "save": "Save",
+    "saved": "Saved.",
+    "working": "Please wait…",
+    "any": "Any",
+    "apply": "Apply filters",
+    "clear": "Clear",
+    "errors": {
+      "invalid": "Check this field: {field}.",
+      "file_too_big": "The file is larger than 4 MB.",
+      "file_type": "Upload a PDF, JPG, PNG or WebP file.",
+      "not_available": "This action isn't available. Refresh the page and try again.",
+      "already_connected": "You already have an open request or connection with this person.",
+      "too_many_pending": "You have 20 requests waiting for an answer. Wait for replies or withdraw some first.",
+      "profile_required": "Add your agency profile before sending requests.",
+      "unknown": "Something went wrong. Please try again."
+    },
+    "fields": {
+      "education_level": "education level",
+      "field": "field",
+      "qualifications": "qualifications",
+      "skills": "skills",
+      "experience": "experience",
+      "destinations": "destinations",
+      "goal": "goal",
+      "goals_note": "goals",
+      "agency_name": "agency name",
+      "kind": "type",
+      "city": "city",
+      "website": "website",
+      "specialisations": "specialisations",
+      "levels": "levels",
+      "fees": "fees",
+      "about": "about",
+      "issuer": "issuer",
+      "reference": "reference number",
+      "note": "message",
+      "verdict": "decision",
+      "id": "item",
+      "unknown": "a field"
+    }
+  },
+  "studentProfile": {
+    "title": "Your profile",
+    "intro": "Agents use this to understand what you need. Nothing here is shared until you turn on visibility or accept a connection.",
+    "educationLevel": "Highest education",
+    "field": "Field you want to study or work in",
+    "qualifications": "Qualifications",
+    "qualificationsHelp": "Degrees, certificates, test scores (for example IELTS 6.5).",
+    "skills": "Skills",
+    "experience": "Work experience",
+    "destinations": "Countries you are interested in",
+    "goal": "What you want",
+    "goalsNote": "Your goals",
+    "visible": "Let agents find my profile",
+    "visibleHelp": "When this is on, signed-in agents can see your education, field, destinations, goals, skills and experience, but not your name or email. They see your name only after you accept their request.",
+    "missing": "You haven't added a profile yet. Agents can't find you, and agent suggestions need it."
+  },
+  "agentProfile": {
+    "title": "Agency profile",
+    "intro": "Students see this before they connect with you. Disclose your fees clearly.",
+    "agencyName": "Agency or business name",
+    "kind": "Type of agent",
+    "city": "City",
+    "website": "Website",
+    "destinations": "Countries you place students or workers in",
+    "specialisations": "Fields you specialise in",
+    "levels": "Education levels you work with",
+    "fees": "Fees and service terms",
+    "feesHelp": "What you charge, when, and what it covers. Students see this on your profile.",
+    "about": "About your agency",
+    "missing": "Add your agency profile so students can find you and you can send connection requests."
+  },
+  "directory": {
+    "title": "Find agents",
+    "intro": "Agents on Maqsad, with their disclosed fees and verification status. A listing is not an endorsement.",
+    "destination": "Destination",
+    "service": "Service",
+    "verifiedOnly": "Only agents with a verified credential",
+    "results": "{count, plural, =0 {No agents match} one {# agent} other {# agents}}",
+    "verified": "Verified credential",
+    "notVerified": "No verified credentials yet",
+    "noFees": "No fees disclosed",
+    "view": "View profile",
+    "suggested": "Why this agent may suit you",
+    "profileHint": "Add your profile in Profile and settings to see why an agent may suit you."
+  },
+  "agentDetail": {
+    "about": "About",
+    "fees": "Fees and service terms",
+    "credentials": "Credentials",
+    "credentialsNone": "This agent hasn't submitted any credentials.",
+    "credentialsNote": "\"Verified by Maqsad\" means our staff checked the document against its issuer. It is not a guarantee about the agent's conduct. Paid plans never affect this status.",
+    "details": "Details",
+    "website": "Website",
+    "city": "City",
+    "destinations": "Destinations",
+    "specialisations": "Specialisations",
+    "levels": "Levels",
+    "notFound": "This profile isn't available."
+  },
+  "discovery": {
+    "title": "Student discovery",
+    "intro": "Students who chose to be visible. Names appear only after a student accepts your request.",
+    "destination": "Destination",
+    "level": "Education level",
+    "field": "Field",
+    "goal": "Goal",
+    "results": "{count, plural, =0 {No students match} one {# student} other {# students}}",
+    "anonymous": "Student · {field}",
+    "view": "View profile",
+    "notFound": "This student isn't visible to you."
+  },
+  "matching": {
+    "title": "Matching recommendations",
+    "intro": "Visible students whose profile overlaps with yours, with the reasons for each suggestion.",
+    "disclaimer": "A suggestion is based only on what both profiles say. It is not a guarantee of suitability, legitimacy, admission or employment.",
+    "empty": "No suggestions yet. Suggestions need a shared destination and appear as students make their profiles visible.",
+    "profileFirst": "Add your agency profile to get suggestions.",
+    "reasons": {
+      "destinations": "Both list {countries}",
+      "field": "Field match: {field}",
+      "level": "Level match: {level}",
+      "goal": "Goal match: {goal}",
+      "verified": "Has a credential verified by Maqsad"
+    }
+  },
+  "connections": {
+    "title": "Connection requests",
+    "studentTitle": "Connections",
+    "incoming": "Waiting for your answer",
+    "outgoing": "Sent by you",
+    "active": "Connected",
+    "past": "Closed",
+    "empty": "No connection requests yet.",
+    "request": "Request connection",
+    "notePlaceholder": "Optional message (up to 500 characters)",
+    "note": "Message",
+    "sent": "Request sent.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "withdraw": "Withdraw",
+    "statusPending": "Request pending",
+    "statusAccepted": "Connected",
+    "statusDeclined": "Declined",
+    "statusWithdrawn": "Withdrawn",
+    "connectedNote": "Messages and application tracking for connections arrive in the next milestone.",
+    "acceptNote": "Accepting shares your name and profile with this agent."
+  },
+  "credentials": {
+    "title": "Verification and credentials",
+    "intro": "Submit licences and registrations for review. The status shown is the real review status. Paying for a plan never changes it.",
+    "kind": "Credential type",
+    "issuer": "Issued by",
+    "reference": "Licence or registration number",
+    "document": "Document (optional)",
+    "documentHelp": "PDF, JPG, PNG or WebP, up to 4 MB. Only you and Maqsad staff can open it.",
+    "submit": "Submit for review",
+    "submitted": "Submitted.",
+    "yours": "Your credentials",
+    "empty": "No credentials submitted yet.",
+    "file": "View file",
+    "reviewNote": "Reviewer's note"
+  },
+  "review": {
+    "title": "Credential review",
+    "intro": "Check each document with its issuer before marking it verified. Agents and students see the status you set.",
+    "agent": "Agent",
+    "underReview": "Mark under review",
+    "verify": "Mark verified",
+    "reject": "Reject",
+    "note": "Note to the agent",
+    "noFile": "No document uploaded",
+    "empty": "No credentials submitted."
   }
 }

@@ -76,7 +76,7 @@ export function RegisterForm() {
       </fieldset>
       <div className="space-y-2">
         <Label htmlFor="displayName">{t("displayName")}</Label>
-        <Input id="displayName" name="displayName" autoComplete="name" required maxLength={80} className={input} />
+        <Input dir="auto" id="displayName" name="displayName" autoComplete="name" required maxLength={80} className={input} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="email">{t("email")}</Label>
@@ -117,7 +117,7 @@ export function ProfileForm({ displayName }: { displayName: string }) {
       <input type="hidden" name="locale" value={useLocale()} />
       <div className="space-y-2">
         <Label htmlFor="displayName">{t("displayName")}</Label>
-        <Input id="displayName" name="displayName" defaultValue={displayName} required maxLength={80} className={input} />
+        <Input dir="auto" id="displayName" name="displayName" defaultValue={displayName} required maxLength={80} className={input} />
       </div>
       <Message state={state} />
       <button

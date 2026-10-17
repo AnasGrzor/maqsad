@@ -4,6 +4,8 @@ Maqsad is a trust and case-management platform for students, job seekers, and ov
 
 - Student and agent registration, login and role-based dashboards (student, agent, admin), with roles checked on the server and in Postgres Row Level Security.
 - A public website in English and Urdu (right-to-left), with a pricing page read from `src/lib/plans.ts`.
+- Student and agent profiles, an agent directory, student discovery for agents, matching suggestions with reasons, and connection requests.
+- Agent credential submission with an optional document, and admin review that sets the status students see.
 - The document checker at `/check`, described below.
 
 Features that are not built yet are listed in `src/lib/features.ts` as `false`. Public pages, pricing and dashboard menus read that file and label those features "Coming soon", so nothing is advertised before it works.
@@ -17,9 +19,11 @@ cp .env.example .env.local   # add a free Gemini key and a free Groq key
 pnpm install
 supabase start               # local Postgres and Auth in Docker; copy its API URL and publishable key into .env.local
 pnpm dev                     # http://localhost:3000
-pnpm test                    # unit tests: rule checks, auth validation, translation keys
-pnpm test:e2e                # with supabase and pnpm dev running: auth, role routing and RLS checks
+pnpm test                    # unit tests: rule checks, auth and profile validation, matching, translation keys
+pnpm test:e2e                # with supabase and the app running: auth, role routing, RLS, connections, credentials, files
 ```
+
+`pnpm test:e2e` targets `http://localhost:3000`; set `APP_URL` to test another server, such as `next start` on a different port.
 
 `supabase start` applies the migrations in `supabase/migrations`. To start over, run `supabase db reset`. Nobody can sign up as an admin. Register a normal account, then promote it with the SQL in `supabase/seed.sql`.
 
@@ -28,6 +32,10 @@ pnpm test:e2e                # with supabase and pnpm dev running: auth, role ro
 - **Auth.** Supabase email and password, through server actions in `src/app/actions/auth.ts`. Input is validated with Zod (`src/lib/auth-schema.ts`).
 - **Roles.** Each user has a row in `public.profiles` with a role (`student`, `agent`, `admin`) and a status. The signup trigger only accepts student or agent. RLS lets users read and rename their own row, and lets active admins read every row. Column grants stop users changing their own role or status.
 - **Authorization.** `src/lib/auth.ts` reads the role from `profiles`, never from user metadata, which users can edit. Every dashboard layout and page calls `requireRole()`. `src/proxy.ts` refreshes the session and redirects signed-out users early, but it is not the security check.
+- **Profiles and privacy.** Student profiles start hidden. Agents see a student only when the student turns on visibility, is connected to them, or asked to connect first. Discovery shows students as "Student · field" until they accept; their name reaches an agent only after that. Agent profiles and names are visible to every signed-in user.
+- **Connections.** Rows in `public.connections` change only through the database functions `request_connection`, `respond_connection` and `withdraw_connection`, because the Supabase API is reachable from the browser. They allow one open request per pair, only the recipient can accept, and an agent can have at most 20 requests waiting (an anti-spam cap until plan limits arrive in milestone 5).
+- **Matching.** `src/lib/matching.ts` scores shared destinations, field, education level, goal and a verified credential, with fixed weights and no model. Every suggestion lists its reasons, and the page says a match is not a guarantee.
+- **Credentials.** Agents can insert credentials but cannot set their status (column grants). Only `review_credential()`, which checks `is_admin()`, changes it. "Verified" means an admin verified at least one credential; plans and payments play no part. Documents go to the private `credentials` storage bucket under the agent's own folder; only that agent and admins can read them, through 5-minute signed links.
 - **Languages.** URLs start with the locale (`/en/...`, `/ur/...`) so pages can be prerendered with Cache Components. Strings live in `messages/en.json` and `messages/ur.json`, loaded by next-intl from the `[locale]` root parameter. `pnpm test` fails if the two files have different keys. Report findings and the action plan steps from `src/lib` are still English only, and are marked `lang="en"` so they stay left-to-right on Urdu pages.
 
 To work on the UI without using model quota, set `MOCK_AI=1` in `.env.local`. The API then returns sample reports from `src/lib/mock.ts`, built with the real rule checks and risk level but no Gemini or Groq calls. Paste `high`, `medium`, `low`, `incomplete` or `error` to pick one. An uploaded file gives the high-risk report, or the low-risk one if its name contains "real" or "flinders". Production builds ignore the flag.
