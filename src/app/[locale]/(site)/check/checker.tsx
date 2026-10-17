@@ -1,7 +1,8 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { Extraction, Finding, Report, StreamEvent } from "@/lib/schema";
 import { ActionPlan } from "./action-plan";
 import { Alternatives } from "./alternatives";
@@ -28,8 +29,12 @@ const MAX_BYTES = 4 * 1024 * 1024;
 
 const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-800";
 
-export function Checker() {
+// `notice` is the plan line from page.tsx; `blocked` replaces the form with it (signed out or no checks left).
+export function Checker({ notice, blocked = false }: { notice?: ReactNode; blocked?: boolean }) {
   const t = useTranslations("checker");
+  const u = useTranslations("usage");
+  const format = useFormatter();
+  const router = useRouter();
   const [mode, setMode] = useState<Mode>("file");
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
@@ -73,7 +78,10 @@ export function Checker() {
       const res = await fetch("/api/analyze", { method: "POST", body });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? t("genericError"));
+        // Plan limit refusals carry a code (usage.errors) with the limit and reset date.
+        const code = `errors.${data.code}` as "errors.unknown";
+        const date = data.resetsAt ? format.dateTime(new Date(data.resetsAt), { dateStyle: "medium" }) : "";
+        throw new Error(u.has(code) ? u(code, { limit: data.limit ?? 0, date }) : (data.error ?? t("genericError")));
       }
       const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
       let buffer = "";
@@ -94,6 +102,8 @@ export function Checker() {
       setError(err instanceof Error ? err.message : t("genericError"));
     } finally {
       setRunning(false);
+      router.refresh(); // updates the checks-left line
+
     }
   }
 
@@ -128,6 +138,8 @@ export function Checker() {
                 {t("intro")}
               </p>
 
+              {notice && <div className="mt-6">{notice}</div>}
+              {!blocked && (
               <form onSubmit={submit} className="mt-8 rounded-2xl bg-lavender-100 p-4 ring-1 ring-lavender-200 sm:p-6">
                 <div
                   role="group"
@@ -245,6 +257,7 @@ export function Checker() {
                   </button>
                 </div>
               </form>
+              )}
 
               {error && (
                 <p

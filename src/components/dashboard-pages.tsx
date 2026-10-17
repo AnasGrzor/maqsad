@@ -6,6 +6,7 @@ import type { Feature } from "@/lib/features";
 import { ProfileForm } from "./auth-forms";
 import { FeatureList } from "./feature-list";
 import { ConnectionList } from "./listings";
+import { PlanSection } from "./plan-section";
 import { AgentProfileForm, StudentProfileForm } from "./profile-forms";
 import { cta } from "./styles";
 
@@ -81,6 +82,7 @@ export async function Settings({ role }: { role: Role }) {
           {role === "student" ? <StudentProfileForm profile={studentProfile} /> : <AgentProfileForm profile={agentProfile} />}
         </section>
       )}
+      {role !== "admin" && <PlanSection userId={user.id} role={role} />}
       <section className="rounded-2xl bg-card p-6 ring-1 ring-fog">
         <h2 className="font-semibold">{t("dashboard.settings.account")}</h2>
         <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[max-content_minmax(0,1fr)]">
