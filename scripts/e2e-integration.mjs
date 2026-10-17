@@ -34,7 +34,7 @@ check("free student + Agent Basic can open a case (Student Free has case trackin
 check("Agent Basic can add case items on that connection", !(await errorOf(agent.sb.rpc("add_case_item", { target_case: caseId, kind: "requirement", title: "IELTS certificate" }))));
 check("messaging needs a plan that includes it", (await errorOf(student.sb.rpc("send_message", { connection: conn, body: "Hello" }))) === "plan_required");
 check("the agent can't message either", (await errorOf(agent.sb.rpc("send_message", { connection: conn, body: "Hello" }))) === "plan_required");
-check("fee records need a plan that includes them", (await errorOf(agent.sb.rpc("add_case_record", { target_case: caseId, kind: "fee_disclosed", summary: "Service fee", amount: 50000, currency: "PKR" }))) === "plan_required");
+check("fee records need a plan that includes them", (await errorOf(agent.sb.rpc("add_case_record", { target_case: caseId, kind: "fee_disclosed", summary: "Integration service fee", amount: 50000, currency: "PKR" }))) === "plan_required");
 const thread = await get(`/en/student/messages/${conn}`, student.cookie);
 check("the thread page still renders for the student", thread.status === 200 && !thread.redirect);
 
@@ -42,7 +42,7 @@ const { data: reqId, error: reqErr } = await agent.sb.rpc("request_plan", { plan
 check("agent requests Agent Professional", !reqErr && !!reqId, reqErr?.message);
 check("admin approves the upgrade", !(await errorOf(admin.sb.rpc("decide_plan_request", { request: reqId, approve: true, note: "Approved" }))));
 check("after the upgrade, the student can message", !(await errorOf(student.sb.rpc("send_message", { connection: conn, body: "Hello" }))));
-check("after the upgrade, fee records work", !(await errorOf(agent.sb.rpc("add_case_record", { target_case: caseId, kind: "fee_disclosed", summary: "Service fee", amount: 50000, currency: "PKR" }))));
+check("after the upgrade, fee records work", !(await errorOf(agent.sb.rpc("add_case_record", { target_case: caseId, kind: "fee_disclosed", summary: "Integration service fee", amount: 50000, currency: "PKR" }))));
 
 // 2. Agent Basic gets a few checks a month.
 const { data: basicAllowance } = await agent2.sb.rpc("allowance", { kind: "verification_report" });

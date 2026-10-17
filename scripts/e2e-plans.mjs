@@ -16,12 +16,13 @@ const resetData = () => {
   sql(`delete from public.subscription_requests where user_id in (${ids})`);
   sql(`delete from public.subscriptions where user_id in (${ids})`);
 };
-// Seed values from the migration, so a failed earlier run doesn't leak into this one.
+// Seed values from the migrations (Agent Basic's 3 checks come from 20261019000005_integration.sql),
+// so a failed earlier run doesn't leak into this one.
 // (One line: on Windows the shell would cut the command at a newline.)
 const resetPlans = () =>
   sql(
     "update public.plans p set offered=v.o, price_monthly_pkr=v.price, verification_reports_per_month=v.r " +
-      "from (values ('student_free',true,0,3),('student_plus',false,null::int,20),('agent_basic',true,null,null)," +
+      "from (values ('student_free',true,0,3),('student_plus',false,null::int,20),('agent_basic',true,null,3)," +
       "('agent_professional',true,null,30),('agency',false,null,null)) v(id,o,price,r) where p.id=v.id",
   );
 resetData();
@@ -95,6 +96,9 @@ check("at the limit, the next call is refused", (await rpc(student, "use_allowan
 const { data: allowance } = await student.sb.rpc("allowance", { kind: "verification_report" });
 const nextMonth = sql("select to_char(date_trunc('month', now() at time zone 'Asia/Karachi') + interval '1 month', 'YYYY-MM-DD')");
 check("allowance reports usage and the Karachi reset", allowance?.used === 3 && allowance?.limit === 3 && new Date(allowance.resets_at).toLocaleDateString("en-CA", { timeZone: "Asia/Karachi" }) === nextMonth && new Date(allowance.resets_at).toLocaleTimeString("en-GB", { timeZone: "Asia/Karachi" }) === "00:00:00", JSON.stringify(allowance));
+// A plan without reports: Agent Basic is switched to "not included" until the /api/analyze check below, so that
+// request is refused before any model call instead of running a real check.
+sql("update public.plans set verification_reports_per_month = null where id = 'agent_basic'");
 check("a null limit means not included", (await rpc(agent, "use_allowance", { kind: "verification_report" })) === "not_included");
 check("admins can't use allowances", (await rpc(admin, "use_allowance", { kind: "verification_report" })) === "not_available");
 check("users read only their own usage", ((await student.sb.from("usage_events").select("id")).data ?? []).length === 4 && ((await agent.sb.from("usage_events").select("id").eq("user_id", student.id)).data ?? []).length === 0);
@@ -117,6 +121,7 @@ const limitBody = res.status === 429 ? JSON.parse(res.body) : {};
 check("at the limit /api/analyze refuses with the limit and reset date", limitBody.code === "limit_reached" && limitBody.limit === 3 && !!limitBody.resetsAt, `${res.status}`);
 res = await analyze(agent.cookie, "Pay the visa fee to this JazzCash account.");
 check("a plan without reports is refused", res.status === 403 && JSON.parse(res.body).code === "not_included", `${res.status}`);
+resetPlans();
 sql(`delete from public.usage_events where user_id='${student.id}'`);
 res = await analyze(student.cookie, "");
 check("requests rejected by validation don't use a report", res.status === 400 && sql(`select count(*) from public.usage_events where user_id='${student.id}'`) === "0");
