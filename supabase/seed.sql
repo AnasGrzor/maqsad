@@ -5,6 +5,7 @@
 --   agent@maqsad.test    / maqsad-local-pass  (agent)
 --   admin@maqsad.test    / maqsad-local-pass  (registered as student, then promoted below)
 --   student2@maqsad.test / maqsad-local-pass  (student, used by scripts/e2e-connections.mjs)
+--   m3-*, m4-*, m5-*, m6-*, int-*@maqsad.test  (created by the other e2e scripts; same password)
 --
 -- Admin is never self-assignable. After registering admin@maqsad.test, promote it with:
 --   update public.profiles set role = 'admin'

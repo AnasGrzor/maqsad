@@ -50,7 +50,7 @@
   },
   "adminAudit": {
     "title": "Activity history",
-    "intro": "Account suspensions and reactivations, role changes and credential decisions, newest first. Entries can't be edited or deleted, and they hold no document contents.",
+    "intro": "Account, credential, plan and dispute decisions, newest first. Entries can't be edited or deleted, and they hold no document contents.",
     "action": "Action",
     "when": "When",
     "actor": "By",

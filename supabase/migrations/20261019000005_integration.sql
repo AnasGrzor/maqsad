@@ -82,6 +82,8 @@ security definer
 set search_path = ''
 as $$
 begin
+  -- Updates that change nothing (re-saving the same values) aren't decisions worth recording.
+  if tg_op = 'UPDATE' and new is not distinct from old then return new; end if;
   if tg_table_name = 'plans' then
     perform public.write_audit('plan.update', 'plan', new.id, jsonb_build_object(
       'price', new.price_monthly_pkr, 'reports', new.verification_reports_per_month, 'offered', new.offered));

@@ -84,7 +84,7 @@ export default async function AuditLog({ searchParams }: PageProps<"/[locale]/ad
                           `${e.target_type} ${e.target_id ?? ""}`
                         )}
                       </td>
-                      <td className="px-4 py-3 [overflow-wrap:anywhere]">
+                      <td className="min-w-32 px-4 py-3 [overflow-wrap:break-word]">
                         {e.actor_id ? (
                           <Link href={`/admin/users/${e.actor_id}`} className={link}>
                             {names.get(e.actor_id) ?? e.actor_id}

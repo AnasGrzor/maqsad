@@ -1,17 +1,17 @@
 # Maqsad
 
-Maqsad is a trust and case-management platform for students, job seekers, and overseas education and recruitment agents. It is being built in milestones. Today it has:
+Maqsad is a trust and case-management platform for students, job seekers, and overseas education and recruitment agents. Milestones 1 to 6 of the product brief are built. It has:
 
 - Student and agent registration, login and role-based dashboards (student, agent, admin), with roles checked on the server and in Postgres Row Level Security.
 - A public website in English and Urdu (right-to-left), with a pricing page read from the `plans` table.
 - Plans, upgrade requests (no payments) and monthly verification report limits, managed by admins.
 - Student and agent profiles, an agent directory, student discovery for agents, matching suggestions with reasons, and connection requests.
 - Agent credential submission with an optional document, and admin review that sets the status students see.
+- An admin area: user search and account suspension, credential review, saved reports by risk, complaints and disputes, plans and upgrade requests, and an append-only activity history.
 - Shared applications (cases) between a student and an agent whose connection is accepted: requirements, document requests, milestones and deadlines with overdue flags, an append-only history, append-only fee and commitment records, messages, in-app notifications, and user-side reports and disputes.
-- The document checker at `/check`, described below.
-- The document checker at `/check`, described below, and saved verification reports for students.
+- The document checker at `/check`, described below, which needs an account and counts against the plan's monthly limit. Students can save reports and keep them with an application.
 
-Features that are not built yet are listed in `src/lib/features.ts` as `false`. Public pages, pricing and dashboard menus read that file and label those features "Coming soon", so nothing is advertised before it works.
+Features that are not built yet are listed in `src/lib/features.ts` as `false` (today only deepfake detection). Public pages, pricing and dashboard menus read that file and label those features "Coming soon", so nothing is advertised before it works.
 
 The document checker covers what Pakistani students and families receive before they pay anyone: foreign university offers, scholarship offers, visa letters, agent WhatsApp messages, degrees and transcripts, overseas job offers and internship offers. It reports red flags with the evidence behind each one and an Urdu summary for parents. It never says a document is genuine. The best result is "no red flags found", followed by an official contact the user can confirm with.
 
@@ -20,13 +20,15 @@ The document checker covers what Pakistani students and families receive before 
 ```bash
 cp .env.example .env.local   # add a free Gemini key and a free Groq key
 pnpm install
-supabase start               # local Postgres and Auth in Docker; copy its API URL and publishable key into .env.local
+supabase start               # local Postgres and Auth in Docker; copy its API URL, publishable key and secret key into .env.local
 pnpm dev                     # http://localhost:3000
-pnpm test                    # unit tests: rule checks, auth and profile validation, matching, translation keys
-pnpm test:e2e                # with supabase and the app running: auth, role routing, RLS, connections, credentials, files, admin and audit log
+pnpm test                    # unit tests: rule checks, scoring, findings, look-alike domains, validation, matching, translation keys
+pnpm test:e2e                # with supabase and the app running: every e2e script in scripts/, in order (scripts/e2e-all.mjs)
 ```
 
-`pnpm test:e2e` targets `http://localhost:3000`; set `APP_URL` to test another server, such as `next start` on a different port.
+`pnpm test:e2e` targets `http://localhost:3000`; set `APP_URL` to test another server, such as `next start` on a different port. The checker tests that run mock checks need `next dev` with `MOCK_AI=1` and `E2E_MOCK=1`; against a production server they are skipped, so the suite never spends model quota.
+
+`SUPABASE_SECRET_KEY` is server-only. The app uses it for one thing: storing saved verification reports, so a report in the database is always one the server produced. Never give it a `NEXT_PUBLIC_` prefix.
 
 `supabase start` applies the migrations in `supabase/migrations`. To start over, run `supabase db reset`. Nobody can sign up as an admin. Register a normal account, then promote it with the SQL in `supabase/seed.sql`.
 
@@ -39,7 +41,9 @@ pnpm test:e2e                # with supabase and the app running: auth, role rou
 - **Connections.** Rows in `public.connections` change only through the database functions `request_connection`, `respond_connection` and `withdraw_connection`, because the Supabase API is reachable from the browser. They allow one open request per pair, only the recipient can accept, and an agent can have at most 20 requests waiting (an anti-spam cap until plan limits arrive in milestone 5).
 - **Matching.** `src/lib/matching.ts` scores shared destinations, field, education level, goal and a verified credential, with fixed weights and no model. Every suggestion lists its reasons, and the page says a match is not a guarantee.
 - **Credentials.** Agents can insert credentials but cannot set their status (column grants). Only `review_credential()`, which checks `is_admin()`, changes it. "Verified" means an admin verified at least one credential; plans and payments play no part. Documents go to the private `credentials` storage bucket under the agent's own folder; only that agent and admins can read them, through 5-minute signed links.
-- **Plans and limits.** `public.plans` holds prices (PKR, null = not set yet), monthly verification reports (null = not included) and included feature keys; everyone can read it and only `update_plan()` (admins) changes it. The pricing page caches it with `"use cache"` and the `plans` tag, which the admin action refreshes. Users without a `subscriptions` row are on `student_free` or `agent_basic`. Users ask for another plan with `request_plan()` (one pending request, own audience, offered plans only); no payment is taken, and only `decide_plan_request()` (admins) changes the plan. `use_allowance('verification_report')` records one use if the plan allows it this calendar month (Asia/Karachi), under a per-user lock. `/api/analyze` requires sign-in and calls it before any model call, including in `MOCK_AI` mode. Other features can gate on `plan_allows('<feature key>')` in their database functions.
+- **Plans and limits.** `public.plans` holds prices (PKR, null = not set yet), monthly verification reports (null = not included) and included feature keys; everyone can read it and only `update_plan()` (admins) changes it. The pricing page caches it with `"use cache"` and the `plans` tag, which the admin action refreshes. Users without a `subscriptions` row are on `student_free` or `agent_basic`. Users ask for another plan with `request_plan()` (one pending request, own audience, offered plans only); no payment is taken, and only `decide_plan_request()` (admins) changes the plan. `use_allowance('verification_report')` records one use if the plan allows it this calendar month (Asia/Karachi), under a per-user lock. `/api/analyze` requires sign-in and calls it before any model call, including in `MOCK_AI` mode. Other features can gate on `plan_allows('<feature key>')` in their database functions. Admins have no plan and run checks unmetered.
+- **Plan gating on applications.** `require_connection()` (every case, item, record and message function goes through it) allows an action when either party's plan includes the feature: case tracking is in Student Free, so any accepted connection can track an application; messaging and fee records need Agent Professional on the agent's side (or Student Plus). Otherwise the function raises `plan_required` and the form explains which plans include it. Reporting a problem never needs a plan. Agent Basic includes 3 checks a month (`20261019000005_integration.sql`).
+- **Admin review of disputes and reports.** `/admin/complaints` lists reports and disputes; `review_dispute()` (admins only) sets the status and a note the person who raised it can read, and writes the activity history. `/admin/reports` lists saved verification reports by risk. Plan edits, plan grants and request decisions are recorded in the activity history by triggers, but only when something actually changed.
 - **Suspension.** Admins suspend or reactivate non-admin accounts, with a reason, from `/admin/users/[id]` through `set_account_status()`, which checks `is_admin()` and refuses your own account and other admins. It also deletes the user's sessions so the refresh token stops working. An access token already issued stays valid until it expires, but `my_role()` returns null for it and restrictive RLS policies hide everything except the user's own `profiles` row. A suspended user's student or agent profile and credentials disappear for everyone except admins. Role changes are SQL-only.
 - **Activity history.** `public.audit_log` is append-only (a trigger rejects updates, deletes and truncates) and only active admins can read it, at `/admin/audit`. Triggers log role and status changes on `profiles` and status changes on `credentials`. `write_audit()` is the only writer, and API roles can't execute it. Other admin functions log their changes with one line: `perform public.write_audit('dispute.resolve', 'dispute', dispute_id::text, jsonb_build_object('outcome', outcome));`. Details hold codes and ids only, never personal data or document contents. Admins read a user's email only through `admin_user_email()`.
 - **Security headers.** `next.config.ts` sends a static Content-Security-Policy, `nosniff`, `Referrer-Policy`, `X-Frame-Options: DENY`, a restrictive `Permissions-Policy`, and HSTS in production. The CSP allows inline scripts because a nonce-based policy needs every page rendered per request, which would turn off partial prerendering.
@@ -90,6 +94,6 @@ The risk level comes from `riskLevel()` in `src/lib/scoring.ts`, which counts re
 - Helplines and opportunity links are hard-coded and can go stale.
 - Gemini's Google Search grounding is not on the free tier, which is why search runs on Groq.
 - Plan usage counts a check when it starts, so a check that fails later (model quota, unreadable file) or re-checks a cached document still uses one report.
-- Saved reports are inserted with the student's own session, so a student could write a made-up report into their own account through the Supabase API. That only misleads themselves today; before reports are shown to agents or attached to cases, insert them from the server with a service key or sign them. Names written in Urdu script in the Urdu summary are not removed.
+- Saved reports are written only by the server with `SUPABASE_SECRET_KEY`; users can't insert them through the API. A student can link a saved report to one of their applications (`link_report()`); the link and the report stay private to the student and admins, never shown to the agent. Names written in Urdu script in the Urdu summary are not removed.
 - The look-alike check only runs when an official domain is known, and an institution that really uses two domains with the same name (for example `.edu` and `.edu.au`) gets a medium flag.
 - The document checker is public and has no per-user limit yet. Plan limits from `src/lib/plans.ts` are shown on the pricing page but enforced only from milestone 5.
