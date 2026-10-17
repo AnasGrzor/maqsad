@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient as createAnonClient } from "@supabase/supabase-js";
 import { cacheTag } from "next/cache";
+import { getCurrentUser } from "./auth";
 import { createClient } from "./supabase/server";
 import type { Database } from "./supabase/database.types";
 
@@ -63,6 +64,9 @@ export async function consumeCheck(): Promise<Response | null> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return Response.json({ error: "Sign in to check a document.", code: "sign_in_required" }, { status: 401 });
+  // Admins have no plan; they check documents while reviewing credentials and disputes, unmetered.
+  const me = await getCurrentUser();
+  if (me?.active && me.role === "admin") return null;
   const { error } = await supabase.rpc("use_allowance", { kind: "verification_report" });
   if (!error) return null;
   if (error.message === "limit_reached" || error.message === "not_included") {

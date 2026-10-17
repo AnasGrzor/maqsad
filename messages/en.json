@@ -177,8 +177,6 @@
     "reports": "{count} verification reports a month",
     "notOffered": "Planned plan",
     "teamSoon": "Team management for agencies is planned.",
-    "limitsNote": "Plan limits apply once accounts are linked to verification reports. Until then, the public document check is free.",
-    "betaNote": "No payments are taken yet. When paid plans open, you will be able to request an upgrade from your dashboard.",
     "plans": {
       "student_free": "Student Free",
       "student_plus": "Student Plus",
@@ -254,17 +252,6 @@
       "role": "Account type",
       "save": "Save",
       "saved": "Saved."
-    },
-    "admin": {
-      "usersTitle": "Users",
-      "usersIntro": "Every account and its role. Changing roles and status comes with the admin tools milestone.",
-      "name": "Name",
-      "role": "Role",
-      "status": "Status",
-      "joined": "Joined",
-      "active": "Active",
-      "suspended": "Suspended",
-      "empty": "No users yet."
     }
   },
   "notFound": {
