@@ -3,7 +3,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 
-const SCRIPTS = ["auth", "connections", "cases", "reports", "plans", "admin"];
+const SCRIPTS = ["auth", "connections", "cases", "reports", "plans", "admin", "integration"];
 
 for (const name of SCRIPTS) {
   const file = new URL(`./e2e-${name}.mjs`, import.meta.url);

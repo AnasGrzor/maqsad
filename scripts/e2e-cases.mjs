@@ -9,6 +9,8 @@ await ensureUser("m3-student2@maqsad.test", "student", "Outside Student");
 await ensureUser("m3-agent@maqsad.test", "agent", "Crescent Advisers");
 await ensureUser("m3-agent2@maqsad.test", "agent", "Declined Agent");
 await ensureUser("m3-admin@maqsad.test", "student", "M3 Admin");
+// Messaging and fee records need Agent Professional on one side of the connection (integration migration).
+sql("insert into public.subscriptions (user_id, plan_id, note) select id, 'agent_professional', 'e2e' from auth.users where email = 'm3-agent@maqsad.test' on conflict (user_id) do update set plan_id = excluded.plan_id");
 sql("update public.profiles set role='admin' where id=(select id from auth.users where email='m3-admin@maqsad.test')");
 
 const student = await session("m3-student@maqsad.test");
