@@ -8,11 +8,11 @@ export async function SaveOption() {
   if (!user?.active || user.role !== "student") return null;
   const t = await getTranslations("reportView");
   return (
-    <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl bg-card p-4 ring-1 ring-lavender-200">
-      <input type="checkbox" name="save" value="1" className="mt-0.5 size-4 shrink-0 accent-navy-900" />
+    <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl bg-card p-4 ring-1 ring-tint-strong">
+      <input type="checkbox" name="save" value="1" className="mt-0.5 size-4 shrink-0 accent-ink" />
       <span>
         <span className="font-medium">{t("saveLabel")}</span>
-        <span className="mt-0.5 block text-sm text-slate">{t("saveHint")}</span>
+        <span className="mt-0.5 block text-sm text-soft">{t("saveHint")}</span>
       </span>
     </label>
   );

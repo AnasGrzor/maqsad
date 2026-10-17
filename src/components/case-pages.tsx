@@ -30,7 +30,7 @@ import { focusRing } from "./styles";
 type Party = "student" | "agent";
 type CaseStatus = Database["public"]["Enums"]["case_status"];
 
-const link = `font-medium text-navy-900 underline decoration-mist underline-offset-4 hover:decoration-current ${focusRing}`;
+const link = `font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-current ${focusRing}`;
 const h2 = "text-xl font-semibold tracking-tight";
 const disclosure = `${card} [&_summary]:cursor-pointer [&_summary]:font-medium`;
 const danger = "bg-danger-bg text-danger";
@@ -44,7 +44,7 @@ function dayFormat(format: Awaited<ReturnType<typeof getFormatter>>) {
 
 async function StatusChip({ status }: { status: CaseStatus }) {
   const t = await getTranslations("cases.status");
-  const tone = { active: "bg-lemon-soft text-navy-900", completed: "bg-mint text-navy-900", closed: "bg-fog text-slate" }[status];
+  const tone = { active: "bg-warm-soft text-ink", completed: "bg-turq-soft text-ink", closed: "bg-line text-soft" }[status];
   return <Chip tone={tone}>{t(status)}</Chip>;
 }
 
@@ -92,7 +92,7 @@ export async function ApplicationsPage({ role }: { role: Party }) {
                     <Link href={`/${role}/applications/${c.id}`} dir="auto" className={link}>
                       {c.title}
                     </Link>
-                    <p className="mt-1 text-sm text-slate">
+                    <p className="mt-1 text-sm text-soft">
                       {t("with", { name: nameOf(other(c, user.id)) })} · {t(`kinds.${c.kind}`)} · {countryName(c.country, locale)}
                     </p>
                   </div>
@@ -107,7 +107,7 @@ export async function ApplicationsPage({ role }: { role: Party }) {
           })}
         </ul>
       ) : (
-        <p className="text-slate">{t("empty")}</p>
+        <p className="text-soft">{t("empty")}</p>
       )}
     </div>
   );
@@ -140,7 +140,7 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
     getTranslations("reports"),
     getTranslations("checker"),
   ]);
-  if (!kase) return <p className="text-slate">{t("notFound")}</p>;
+  if (!kase) return <p className="text-soft">{t("notFound")}</p>;
 
   const names = await namesOf([kase.student_id, kase.agent_id]);
   const nameOf = (uid: string | null) => (uid === user.id ? t("you") : (uid && names.get(uid)) || t("someone"));
@@ -170,10 +170,10 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
           </h1>
           <StatusChip status={kase.status} />
         </div>
-        <p className="text-slate">
+        <p className="text-soft">
           {t("with", { name: nameOf(other(kase, user.id)) })} · {t(`kinds.${kase.kind}`)} · {countryName(kase.country, locale)}
         </p>
-        <p className="text-sm text-slate">{t("openedBy", { name: nameOf(kase.opened_by), date: when(kase.created_at) })}</p>
+        <p className="text-sm text-soft">{t("openedBy", { name: nameOf(kase.opened_by), date: when(kase.created_at) })}</p>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link href={`/${role}/messages/${kase.connection_id}`} className={link}>
             {t("messagesLink")}
@@ -203,9 +203,9 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
                       <p className="flex flex-wrap gap-2">
                         <Chip>{t(`itemKinds.${i.kind}`)}</Chip>
                         {late && <Chip tone={danger}>{t("overdue")}</Chip>}
-                        {done && <Chip tone="bg-mint text-navy-900">{t("done")}</Chip>}
+                        {done && <Chip tone="bg-turq-soft text-ink">{t("done")}</Chip>}
                       </p>
-                      <h3 dir="auto" className={`font-semibold ${done ? "text-slate line-through" : ""}`}>
+                      <h3 dir="auto" className={`font-semibold ${done ? "text-soft line-through" : ""}`}>
                         {i.title}
                       </h3>
                     </div>
@@ -216,7 +216,7 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
                       {i.details}
                     </p>
                   )}
-                  <p className="text-xs text-slate">
+                  <p className="text-xs text-soft">
                     {i.due_on && <span className={late ? "font-semibold text-danger" : ""}>{t("due", { date: day(i.due_on) })} · </span>}
                     {t("addedBy", { name: nameOf(i.created_by), date: when(i.created_at) })}
                     {done && i.completed_at && <> · {t("doneBy", { name: nameOf(i.completed_by), date: when(i.completed_at) })}</>}
@@ -226,7 +226,7 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
             })}
           </ul>
         ) : (
-          <p className="text-slate">{t("noItems")}</p>
+          <p className="text-soft">{t("noItems")}</p>
         )}
         <details className={disclosure}>
           <summary>{t("addItem")}</summary>
@@ -241,7 +241,7 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
           <h2 id="records" className={h2}>
             {t("recordsTitle")}
           </h2>
-          <p className="mt-1 max-w-[68ch] text-sm text-slate">{t("recordsIntro")}</p>
+          <p className="mt-1 max-w-[68ch] text-sm text-soft">{t("recordsIntro")}</p>
         </header>
         {kase.records.length ? (
           <ul className="space-y-3">
@@ -249,7 +249,7 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
               <li key={r.id} className={`${card} space-y-2`}>
                 <p className="flex flex-wrap gap-2">
                   <Chip>{t(`recordKinds.${r.kind}`)}</Chip>
-                  {corrected.has(r.id) && <Chip tone="bg-lemon-soft text-navy-900">{t("corrected")}</Chip>}
+                  {corrected.has(r.id) && <Chip tone="bg-warm-soft text-ink">{t("corrected")}</Chip>}
                 </p>
                 <p dir="auto" className="whitespace-pre-line">
                   {r.summary}
@@ -259,19 +259,19 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
                 )}
                 {r.on_date && <p className="text-sm">{t("onDate", { date: day(r.on_date) })}</p>}
                 {r.corrects && recordById.has(r.corrects) && (
-                  <p className="text-sm text-slate">
+                  <p className="text-sm text-soft">
                     {t("correctsRecord", { name: nameOf(recordById.get(r.corrects)!.recorded_by), date: when(recordById.get(r.corrects)!.created_at) })}
                   </p>
                 )}
                 {r.kind === "payment_reported" && (
-                  <p className="rounded-lg bg-lemon-soft p-2 text-sm ring-1 ring-lemon">{t("paymentNote", { name: nameOf(r.recorded_by) })}</p>
+                  <p className="rounded-lg bg-warm-soft p-2 text-sm ring-1 ring-warm">{t("paymentNote", { name: nameOf(r.recorded_by) })}</p>
                 )}
-                <p className="text-xs text-slate">{t("recordedBy", { name: nameOf(r.recorded_by), date: when(r.created_at) })}</p>
+                <p className="text-xs text-soft">{t("recordedBy", { name: nameOf(r.recorded_by), date: when(r.created_at) })}</p>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-slate">{t("noRecords")}</p>
+          <p className="text-soft">{t("noRecords")}</p>
         )}
         <details className={disclosure}>
           <summary>{t("addRecord")}</summary>
@@ -285,10 +285,10 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
         <h2 id="history" className={h2}>
           {t("historyTitle")}
         </h2>
-        <ol className="space-y-2 border-s-2 border-fog ps-4 text-sm">
+        <ol className="space-y-2 border-s-2 border-line ps-4 text-sm">
           {kase.events.map((e) => (
             <li key={e.id}>
-              <time dateTime={e.created_at} className="text-slate">
+              <time dateTime={e.created_at} className="text-soft">
                 {when(e.created_at)}
               </time>{" "}
               <span dir="auto">{eventText(t, e, nameOf(e.actor_id))}</span>
@@ -302,7 +302,7 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
           <h2 id="linked-reports" className={h2}>
             {r("linkedTitle")}
           </h2>
-          <p className="text-sm text-slate">{r("linkedPrivate")}</p>
+          <p className="text-sm text-soft">{r("linkedPrivate")}</p>
           <ul className="space-y-2 text-sm">
             {linked.map((x) => (
               <li key={x.id} className={`${card} flex flex-wrap items-center justify-between gap-2`}>
@@ -310,7 +310,7 @@ export async function CasePage({ role, id }: { role: Party; id: string }) {
                   {c(`docType.${x.report.extraction.doc_type}`)}
                   {x.report.extraction.issuer_name && ` · ${x.report.extraction.issuer_name}`}
                 </Link>
-                <span className="flex items-center gap-2 text-xs text-slate">
+                <span className="flex items-center gap-2 text-xs text-soft">
                   <Chip>{c(`risk.${x.report.risk}.title`)}</Chip>
                   {when(x.created_at)}
                 </span>
@@ -335,7 +335,7 @@ async function ReportSection({ connectionId, caseId, records, disputes }: { conn
         <h2 id="report" className={h2}>
           {t("title")}
         </h2>
-        <p className="mt-1 max-w-[68ch] text-sm text-slate">{t("privacy")}</p>
+        <p className="mt-1 max-w-[68ch] text-sm text-soft">{t("privacy")}</p>
       </header>
       {disputes.length > 0 && <DisputeList disputes={disputes} />}
       <details className={disclosure}>
@@ -350,7 +350,7 @@ async function ReportSection({ connectionId, caseId, records, disputes }: { conn
 
 async function DisputeList({ disputes, titles, role }: { disputes: DisputeRow[]; titles?: Map<string, string>; role?: Party }) {
   const [t, format] = await Promise.all([getTranslations("disputes"), getFormatter()]);
-  const tone = { open: "bg-lemon-soft text-navy-900", under_review: "bg-lavender-100 text-navy-900", resolved: "bg-mint text-navy-900", dismissed: "bg-fog text-slate" };
+  const tone = { open: "bg-warm-soft text-ink", under_review: "bg-tint text-ink", resolved: "bg-turq-soft text-ink", dismissed: "bg-line text-soft" };
   return (
     <ul className="space-y-3">
       {disputes.map((d) => (
@@ -366,12 +366,12 @@ async function DisputeList({ disputes, titles, role }: { disputes: DisputeRow[];
             {d.details}
           </p>
           {d.resolution_note && (
-            <p dir="auto" className="rounded-xl bg-mint-soft p-3 text-sm whitespace-pre-line ring-1 ring-mint">
+            <p dir="auto" className="rounded-xl bg-turq-faint p-3 text-sm whitespace-pre-line ring-1 ring-turq-soft">
               <span className="font-medium">{t("resolution")}: </span>
               {d.resolution_note}
             </p>
           )}
-          <p className="text-xs text-slate">
+          <p className="text-xs text-soft">
             {t("sentOn", { date: format.dateTime(new Date(d.created_at), { dateStyle: "medium", timeStyle: "short" }) })}
             {role && d.case_id && titles?.has(d.case_id) && (
               <>
@@ -395,7 +395,7 @@ export async function DisputesPage({ role }: { role: Party }) {
   return (
     <div className="space-y-6">
       <PageHeading title={t("listTitle")} intro={t("privacy")} />
-      {disputes.length ? <DisputeList disputes={disputes} titles={titles} role={role} /> : <p className="text-slate">{t("empty")}</p>}
+      {disputes.length ? <DisputeList disputes={disputes} titles={titles} role={role} /> : <p className="text-soft">{t("empty")}</p>}
     </div>
   );
 }
@@ -410,19 +410,19 @@ export async function MessagesPage({ role }: { role: Party }) {
     <div className="space-y-6">
       <PageHeading title={t("title")} intro={t("intro")} />
       {threads.length ? (
-        <ul className="divide-y divide-fog overflow-hidden rounded-2xl bg-card ring-1 ring-fog">
+        <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-card ring-1 ring-line">
           {threads.map(({ connection, last }) => (
             <li key={connection.id}>
-              <Link href={`/${role}/messages/${connection.id}`} className={`block space-y-1 p-4 hover:bg-lavender-50 ${focusRing}`}>
+              <Link href={`/${role}/messages/${connection.id}`} className={`block space-y-1 p-4 hover:bg-tint-soft ${focusRing}`}>
                 <span className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-medium">{names.get(other(connection, user.id)) ?? t("someone")}</span>
                   {last && (
-                    <time dateTime={last.created_at} className="text-xs text-slate">
+                    <time dateTime={last.created_at} className="text-xs text-soft">
                       {format.dateTime(new Date(last.created_at), { dateStyle: "medium", timeStyle: "short" })}
                     </time>
                   )}
                 </span>
-                <span dir="auto" className="line-clamp-1 block text-sm text-slate">
+                <span dir="auto" className="line-clamp-1 block text-sm text-soft">
                   {last ? `${last.sender_id === user.id ? t("youPrefix") : ""}${last.body}` : t("noMessages")}
                 </span>
               </Link>
@@ -441,7 +441,7 @@ export async function MessagesPage({ role }: { role: Party }) {
 export async function ThreadPage({ role, id }: { role: Party; id: string }) {
   const user = await requireRole(role);
   const [t, format, thread] = await Promise.all([getTranslations("messaging"), getFormatter(), getThread(id)]);
-  if (!thread) return <p className="text-slate">{t("notFound")}</p>;
+  if (!thread) return <p className="text-soft">{t("notFound")}</p>;
   const { connection, messages, cases } = thread;
   const otherId = other(connection, user.id);
   const names = await namesOf([otherId]);
@@ -457,16 +457,16 @@ export async function ThreadPage({ role, id }: { role: Party; id: string }) {
           </Link>
         </p>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{names.get(otherId) ?? t("someone")}</h1>
-        <p className="text-sm text-slate">{t("refreshNote")}</p>
+        <p className="text-sm text-soft">{t("refreshNote")}</p>
       </header>
       {/* column-reverse keeps the scroll pinned to the newest message while the DOM stays oldest-first */}
-      <div className="flex max-h-[60vh] flex-col-reverse overflow-y-auto rounded-2xl bg-card p-4 ring-1 ring-fog">
+      <div className="flex max-h-[60vh] flex-col-reverse overflow-y-auto rounded-2xl bg-card p-4 ring-1 ring-line">
         {messages.length ? (
           <ol role="log" aria-live="polite" aria-label={t("historyLabel")} className="space-y-3">
             {messages.map((m) => {
               const mine = m.sender_id === user.id;
               return (
-                <li key={m.id} className={`w-fit max-w-[85%] rounded-2xl px-4 py-2.5 ${mine ? "ms-auto bg-navy-900 text-ice" : "me-auto bg-lavender-100"}`}>
+                <li key={m.id} className={`w-fit max-w-[85%] rounded-2xl px-4 py-2.5 ${mine ? "ms-auto bg-primary text-on-primary" : "me-auto bg-tint"}`}>
                   <p className="text-xs opacity-80">
                     <span className="font-medium">{mine ? t("you") : (names.get(m.sender_id) ?? t("someone"))}</span>
                     {" · "}
@@ -488,7 +488,7 @@ export async function ThreadPage({ role, id }: { role: Party; id: string }) {
             })}
           </ol>
         ) : (
-          <p className="text-slate">{t("empty")}</p>
+          <p className="text-soft">{t("empty")}</p>
         )}
       </div>
       <MessageForm connectionId={connection.id} cases={cases.map((c) => ({ value: c.id, label: c.title }))} />
@@ -521,13 +521,13 @@ export async function NotificationsPage({ role }: { role: Party }) {
       {list.length ? (
         <ul className="space-y-2">
           {list.map((n) => (
-            <li key={n.id} className={`${card} flex flex-wrap items-start justify-between gap-3 ${n.read_at ? "" : "bg-lavender-50 ring-lavender-200"}`}>
+            <li key={n.id} className={`${card} flex flex-wrap items-start justify-between gap-3 ${n.read_at ? "" : "bg-tint-soft ring-tint-strong"}`}>
               <div className="space-y-1">
                 <Link href={notificationHref(role, n)} className={link}>
                   {t(`kinds.${n.kind as "message"}`, { name: names.get(n.actor_id) ?? t("someone"), title: (n.case_id && titles.get(n.case_id)) || "" })}
                 </Link>
-                <p className="flex flex-wrap items-center gap-2 text-xs text-slate">
-                  {!n.read_at && <Chip tone="bg-navy-900 text-ice">{t("unreadTag")}</Chip>}
+                <p className="flex flex-wrap items-center gap-2 text-xs text-soft">
+                  {!n.read_at && <Chip tone="bg-primary text-on-primary">{t("unreadTag")}</Chip>}
                   <time dateTime={n.created_at}>{format.dateTime(new Date(n.created_at), { dateStyle: "medium", timeStyle: "short" })}</time>
                 </p>
               </div>
@@ -536,7 +536,7 @@ export async function NotificationsPage({ role }: { role: Party }) {
           ))}
         </ul>
       ) : (
-        <p className="text-slate">{t("empty")}</p>
+        <p className="text-soft">{t("empty")}</p>
       )}
     </div>
   );
@@ -548,10 +548,10 @@ export async function NotificationLink({ role }: { role: Party }) {
   if (!user?.active || user.role !== role) return null;
   const [t, count] = await Promise.all([getTranslations("notifications"), unreadCount()]);
   return (
-    <Link href={`/${role}/notifications`} className={`flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-mist transition-colors hover:text-ice ${focusRing}`}>
+    <Link href={`/${role}/notifications`} className={`flex items-center gap-1.5 rounded-[9px] px-2.5 py-2 text-[14.5px] font-medium text-soft transition-colors hover:bg-tint hover:text-ink ${focusRing}`}>
       {t("link")}
       {count > 0 && (
-        <span className="rounded-full bg-lemon px-1.5 text-xs font-semibold text-navy-900">
+        <span className="rounded-full bg-warm px-1.5 text-xs font-semibold text-ink">
           <span aria-hidden>{count}</span>
           <span className="sr-only">{t("unread", { count })}</span>
         </span>

@@ -40,7 +40,7 @@ export default async function AdminPlans() {
       <section className="space-y-4">
         <h2 className="text-xl font-semibold tracking-tight">{t("requestsTitle")}</h2>
         {requests.length === 0 ? (
-          <p className="text-slate">{t("requestsEmpty")}</p>
+          <p className="text-soft">{t("requestsEmpty")}</p>
         ) : (
           <ul className="space-y-3">
             {requests.map((r) => {
@@ -52,7 +52,7 @@ export default async function AdminPlans() {
                     <p className="font-medium [overflow-wrap:anywhere]">
                       {t("requestLine", { name: who?.display_name ?? r.user_id, role: roles(role), plan: name(r.plan_id) })}
                     </p>
-                    <p className="text-slate">
+                    <p className="text-soft">
                       {t("currentPlan", { plan: name(current.get(r.user_id) ?? (role === "agent" ? "agent_basic" : "student_free")) })}
                       {" · "}
                       {t("sentOn", { date: date(r.created_at) })}
@@ -78,9 +78,9 @@ export default async function AdminPlans() {
             <li key={plan.id} className={`${card} space-y-4`}>
               <div>
                 <h3 className="font-semibold">
-                  {name(plan.id)} <span className="text-sm font-normal text-slate">· {roles(plan.audience === "agent" ? "agent" : "student")}</span>
+                  {name(plan.id)} <span className="text-sm font-normal text-soft">· {roles(plan.audience === "agent" ? "agent" : "student")}</span>
                 </h3>
-                <p className="text-sm text-slate">
+                <p className="text-sm text-soft">
                   <PlanPrice price={plan.price_monthly_pkr} />
                   {" · "}
                   {t("updated", { date: date(plan.updated_at) })}

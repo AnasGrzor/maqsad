@@ -8,7 +8,7 @@ import { namesOf } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 
 const LIMIT = 200;
-const link = "underline decoration-mist underline-offset-4 hover:decoration-current";
+const link = "underline decoration-line-strong underline-offset-4 hover:decoration-current";
 
 export default async function AuditLog({ searchParams }: PageProps<"/[locale]/admin/audit">) {
   await requireRole("admin");
@@ -47,13 +47,13 @@ export default async function AuditLog({ searchParams }: PageProps<"/[locale]/ad
       <PageHeading title={t("title")} intro={t("intro")} />
       <FilterBar filters={[{ name: "action", label: t("action"), value: action, options: AUDIT_ACTIONS.map((a) => ({ value: a, label: actionLabel(a) })) }]} />
       {entries.length === 0 ? (
-        <p className="text-slate">{t("empty")}</p>
+        <p className="text-soft">{t("empty")}</p>
       ) : (
         <>
-          {entries.length === LIMIT && <p className="text-sm text-slate">{t("limitNote")}</p>}
-          <div className="overflow-x-auto rounded-2xl bg-card ring-1 ring-fog">
+          {entries.length === LIMIT && <p className="text-sm text-soft">{t("limitNote")}</p>}
+          <div className="overflow-x-auto rounded-2xl bg-card ring-1 ring-line">
             <table className="w-full text-start text-sm">
-              <thead className="border-b border-fog text-slate">
+              <thead className="border-b border-line text-soft">
                 <tr>
                   <th scope="col" className="px-4 py-3 text-start font-medium">{t("when")}</th>
                   <th scope="col" className="px-4 py-3 text-start font-medium">{t("action")}</th>
@@ -62,7 +62,7 @@ export default async function AuditLog({ searchParams }: PageProps<"/[locale]/ad
                   <th scope="col" className="px-4 py-3 text-start font-medium">{t("details")}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-fog align-top">
+              <tbody className="divide-y divide-line align-top">
                 {entries.map((e) => {
                   const d = (e.details ?? {}) as Record<string, unknown>;
                   return (
@@ -90,13 +90,13 @@ export default async function AuditLog({ searchParams }: PageProps<"/[locale]/ad
                             {names.get(e.actor_id) ?? e.actor_id}
                           </Link>
                         ) : (
-                          <span className="text-slate">{t("system")}</span>
+                          <span className="text-soft">{t("system")}</span>
                         )}
                       </td>
                       <td className="max-w-[28ch] space-y-1 px-4 py-3">
                         {"from" in d && "to" in d && <p>{t("change", { from: value(e.action, d.from), to: value(e.action, d.to) })}</p>}
                         {typeof d.reason === "string" && (
-                          <p dir="auto" className="text-slate [overflow-wrap:anywhere]">
+                          <p dir="auto" className="text-soft [overflow-wrap:anywhere]">
                             {t("reason", { reason: d.reason })}
                           </p>
                         )}

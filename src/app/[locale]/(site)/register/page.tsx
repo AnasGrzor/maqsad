@@ -11,12 +11,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Register() {
   const t = useTranslations("auth");
   return (
-    <div className="mx-auto max-w-lg rounded-2xl bg-lavender-100 p-6 ring-1 ring-lavender-200 sm:p-8">
+    <div className="mx-auto max-w-lg rounded-2xl bg-tint p-6 ring-1 ring-tint-strong sm:p-8">
       <h1 className="mb-6 text-2xl font-semibold tracking-tight">{t("registerTitle")}</h1>
       <RegisterForm />
-      <p className="mt-6 text-sm text-slate">
+      <p className="mt-6 text-sm text-soft">
         {t("haveAccount")}{" "}
-        <Link href="/login" className="font-medium text-navy-900 underline underline-offset-4">
+        <Link href="/login" className="font-medium text-ink underline underline-offset-4">
           {t("login")}
         </Link>
       </p>

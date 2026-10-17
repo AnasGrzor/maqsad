@@ -11,7 +11,7 @@ export default async function AdminReport({ params }: PageProps<"/[locale]/admin
   const { id } = await params;
   const [t, c, format, saved] = await Promise.all([getTranslations("adminReports"), getTranslations("checker"), getFormatter(), getReport(id)]);
   const back = (
-    <Link href="/admin/reports" className={`text-sm text-slate underline underline-offset-4 hover:text-navy-900 ${focusRing}`}>
+    <Link href="/admin/reports" className={`text-sm text-soft underline underline-offset-4 hover:text-ink ${focusRing}`}>
       {t("back")}
     </Link>
   );
@@ -19,7 +19,7 @@ export default async function AdminReport({ params }: PageProps<"/[locale]/admin
     return (
       <div className="space-y-4">
         {back}
-        <p className="text-slate">{t("notFound")}</p>
+        <p className="text-soft">{t("notFound")}</p>
       </div>
     );
   }
@@ -28,12 +28,12 @@ export default async function AdminReport({ params }: PageProps<"/[locale]/admin
   return (
     <div>
       {back}
-      <div className="mt-3 rounded-2xl bg-lavender-100 py-3 ps-5 pe-3 ring-1 ring-lavender-200">
+      <div className="mt-3 rounded-2xl bg-tint py-3 ps-5 pe-3 ring-1 ring-tint-strong">
         <h1 dir="auto" className="font-medium [overflow-wrap:anywhere]">
           {c(`docType.${saved.report.extraction.doc_type}`)}
           {saved.report.extraction.issuer_name && ` · ${saved.report.extraction.issuer_name}`}
         </h1>
-        <p className="text-sm text-slate">
+        <p className="text-sm text-soft">
           {t("savedBy")}{" "}
           <Link href={`/admin/users/${saved.owner_id}`} className="underline underline-offset-4">
             {owner ?? saved.owner_id}

@@ -25,20 +25,20 @@ export async function PlanSection({ userId, role }: { userId: string; role: "stu
   const pending = request?.status === "pending";
 
   return (
-    <section className="space-y-5 rounded-2xl bg-card p-6 ring-1 ring-fog">
+    <section className="space-y-5 rounded-2xl bg-card p-6 ring-1 ring-line">
       <header>
         <h2 className="text-xl font-semibold tracking-tight">{t("title")}</h2>
-        <p className="mt-1 max-w-[68ch] text-sm text-slate">{t("intro")}</p>
+        <p className="mt-1 max-w-[68ch] text-sm text-soft">{t("intro")}</p>
       </header>
       <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[max-content_minmax(0,1fr)]">
-        <dt className="text-slate">{t("current")}</dt>
+        <dt className="text-soft">{t("current")}</dt>
         <dd>
           <span className="font-medium">{name(plan.id)}</span> · <PlanPrice price={plan.price_monthly_pkr} />
-          <span className="block text-slate">
+          <span className="block text-soft">
             {subscription?.plan_id === plan.id ? t("grantedOn", { date: date(subscription.granted_at) }) : t("defaultPlan")}
           </span>
         </dd>
-        <dt className="text-slate">{t("usageTitle")}</dt>
+        <dt className="text-soft">{t("usageTitle")}</dt>
         <dd>
           {allowance.limit === null
             ? t("notIncluded")
@@ -46,14 +46,14 @@ export async function PlanSection({ userId, role }: { userId: string; role: "stu
         </dd>
         {request && (
           <>
-            <dt className="text-slate">{t("lastRequest")}</dt>
+            <dt className="text-soft">{t("lastRequest")}</dt>
             <dd>
               <span className="font-medium">{t(`status.${request.status}`)}</span>
               {" · "}
               {t("requestLine", { plan: name(request.plan_id), date: date(request.created_at) })}
-              {request.decided_at && <span className="block text-slate">{t("decidedOn", { date: date(request.decided_at) })}</span>}
+              {request.decided_at && <span className="block text-soft">{t("decidedOn", { date: date(request.decided_at) })}</span>}
               {request.decision_note && (
-                <span dir="auto" className="block text-slate">
+                <span dir="auto" className="block text-soft">
                   {request.decision_note}
                 </span>
               )}
@@ -62,13 +62,13 @@ export async function PlanSection({ userId, role }: { userId: string; role: "stu
         )}
       </dl>
       {!pending && (
-        <div className="space-y-3 border-t border-fog pt-5">
+        <div className="space-y-3 border-t border-line pt-5">
           <h3 className="font-semibold">{t("requestTitle")}</h3>
-          <p className="max-w-[68ch] rounded-xl bg-lemon-soft p-3 text-sm ring-1 ring-lemon">{t("requestIntro")}</p>
+          <p className="max-w-[68ch] rounded-xl bg-warm-soft p-3 text-sm ring-1 ring-warm">{t("requestIntro")}</p>
           {options.length ? (
             <RequestPlanForm options={options.map((o) => ({ id: o.id, label: name(o.id) }))} />
           ) : (
-            <p className="text-sm text-slate">{t("noOther")}</p>
+            <p className="text-sm text-soft">{t("noOther")}</p>
           )}
         </div>
       )}

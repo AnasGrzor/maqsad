@@ -7,10 +7,10 @@ import { requireRole } from "@/lib/auth";
 import { listReports } from "@/lib/reports";
 
 const RISK_CHIP = {
-  high: "bg-danger text-white",
-  medium: "bg-lemon text-navy-900",
-  low: "bg-mint text-navy-900",
-  incomplete: "bg-fog text-navy-900",
+  high: "bg-risk-high-bg text-risk-high",
+  medium: "bg-risk-med-bg text-risk-med",
+  low: "bg-risk-low-bg text-risk-low",
+  incomplete: "bg-risk-inc-bg text-risk-inc",
 } as const;
 
 export default async function Reports() {
@@ -27,25 +27,25 @@ export default async function Reports() {
       <PageHeading title={t("title")} intro={t("intro")} />
       {reports.length === 0 ? (
         <div className={`${card} space-y-4`}>
-          <p className="text-slate">{t("empty")}</p>
-          <Link href="/check" className={`${cta} bg-navy-900 text-ice hover:bg-navy-800`}>
+          <p className="text-soft">{t("empty")}</p>
+          <Link href="/check" className={`${cta} bg-primary text-on-primary hover:bg-primary-hover`}>
             {t("checkCta")}
           </Link>
         </div>
       ) : (
-        <ul className="divide-y divide-fog overflow-hidden rounded-2xl bg-card ring-1 ring-fog">
+        <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-card ring-1 ring-line">
           {reports.map(({ id, created_at, report }) => (
             <li key={id}>
               <Link
                 href={`/student/reports/${id}`}
-                className={`flex flex-wrap items-center justify-between gap-3 px-5 py-4 hover:bg-lavender-50 ${focusRing}`}
+                className={`flex flex-wrap items-center justify-between gap-3 px-5 py-4 hover:bg-tint-soft ${focusRing}`}
               >
                 <span className="min-w-0">
                   <span className="block font-medium [overflow-wrap:anywhere]">
                     {c(`docType.${report.extraction.doc_type}`)}
                     {report.extraction.issuer_name && ` · ${report.extraction.issuer_name}`}
                   </span>
-                  <time dateTime={created_at} className="text-sm text-slate">
+                  <time dateTime={created_at} className="text-sm text-soft">
                     {t("checkedOn", { date: format.dateTime(new Date(created_at), { dateStyle: "medium", timeStyle: "short" }) })}
                   </time>
                 </span>

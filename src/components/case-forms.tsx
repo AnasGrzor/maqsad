@@ -21,7 +21,7 @@ import { control, Field, small, submit } from "./profile-forms";
 
 type Option = { value: string; label: string };
 const input = "h-11 bg-card px-3";
-const quiet = `${small} bg-lavender-100 ring-1 ring-lavender-200 hover:bg-lavender-200`;
+const quiet = `${small} ring-1 ring-line ring-inset hover:ring-ink`;
 
 function Result({ state, done }: { state: ActionState; done?: string }) {
   const f = useTranslations("forms");
@@ -37,7 +37,7 @@ function Result({ state, done }: { state: ActionState; done?: string }) {
   }
   if (state?.done && done) {
     return (
-      <p role="status" className="rounded-xl bg-mint-soft p-3 text-sm ring-1 ring-mint">
+      <p role="status" className="rounded-xl bg-turq-faint p-3 text-sm ring-1 ring-turq-soft">
         {done}
       </p>
     );
@@ -136,7 +136,7 @@ export function ItemToggle({ itemId, done }: { itemId: string; done: boolean }) 
   return (
     <form action={action} className="space-y-2">
       <input type="hidden" name="item" value={itemId} />
-      <button type="submit" name="done" value={done ? "0" : "1"} disabled={pending} className={done ? quiet : `${small} bg-navy-900 text-ice hover:bg-navy-800`}>
+      <button type="submit" name="done" value={done ? "0" : "1"} disabled={pending} className={done ? quiet : `${small} bg-primary text-on-primary hover:bg-primary-hover`}>
         {t(done ? "reopen" : "markDone")}
       </button>
       <Result state={state} />

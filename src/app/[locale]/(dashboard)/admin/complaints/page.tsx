@@ -8,7 +8,7 @@ import { namesOf } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 
 const STATUSES = ["open", "under_review", "resolved", "dismissed"] as const;
-const TONE = { open: "bg-lemon-soft text-navy-900", under_review: "bg-lavender-100 text-navy-900", resolved: "bg-mint text-navy-900", dismissed: "bg-fog text-slate" };
+const TONE = { open: "bg-warm-soft text-ink", under_review: "bg-tint text-ink", resolved: "bg-turq-soft text-ink", dismissed: "bg-line text-soft" };
 
 export default async function AdminDisputes({ searchParams }: PageProps<"/[locale]/admin/complaints">) {
   await requireRole("admin");
@@ -37,7 +37,7 @@ export default async function AdminDisputes({ searchParams }: PageProps<"/[local
   const caseTitle = new Map((cases ?? []).map((c) => [c.id, c.title]));
   const recordSummary = new Map((records ?? []).map((r) => [r.id, r.summary]));
   const person = (id: string) => (
-    <Link href={`/admin/users/${id}`} className="underline decoration-mist underline-offset-4 hover:decoration-current">
+    <Link href={`/admin/users/${id}`} className="underline decoration-line-strong underline-offset-4 hover:decoration-current">
       {names.get(id) ?? id}
     </Link>
   );
@@ -47,7 +47,7 @@ export default async function AdminDisputes({ searchParams }: PageProps<"/[local
       <PageHeading title={t("title")} intro={t("intro")} />
       <FilterBar filters={[{ name: "status", label: t("status"), value: status, options: STATUSES.map((s) => ({ value: s, label: d(`status.${s}`) })) }]} />
       {disputes.length === 0 ? (
-        <p className="text-slate">{t("empty")}</p>
+        <p className="text-soft">{t("empty")}</p>
       ) : (
         <ul className="space-y-3">
           {disputes.map((x) => (
@@ -59,27 +59,27 @@ export default async function AdminDisputes({ searchParams }: PageProps<"/[local
                   <Chip tone={TONE[x.status]}>{d(`status.${x.status}`)}</Chip>
                 </div>
                 <p>
-                  <span className="text-slate">{t("raisedBy")}: </span>
+                  <span className="text-soft">{t("raisedBy")}: </span>
                   {person(x.raised_by)}
-                  <span className="text-slate"> · {t("against")}: </span>
+                  <span className="text-soft"> · {t("against")}: </span>
                   {person(x.against)}
                 </p>
                 {x.case_id && (
                   <p dir="auto">
-                    <span className="text-slate">{t("case")}: </span>
+                    <span className="text-soft">{t("case")}: </span>
                     {caseTitle.get(x.case_id) ?? x.case_id}
                   </p>
                 )}
                 {x.record_id && (
                   <p dir="auto">
-                    <span className="text-slate">{t("linkedRecord")}: </span>
+                    <span className="text-soft">{t("linkedRecord")}: </span>
                     {recordSummary.get(x.record_id) ?? x.record_id}
                   </p>
                 )}
                 <p dir="auto" className="whitespace-pre-line">
                   {x.details}
                 </p>
-                <p className="text-xs text-slate">
+                <p className="text-xs text-soft">
                   <time dateTime={x.created_at}>{format.dateTime(new Date(x.created_at), { dateStyle: "medium", timeStyle: "short" })}</time>
                 </p>
               </div>

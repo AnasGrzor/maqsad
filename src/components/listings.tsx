@@ -9,21 +9,21 @@ import { focusRing } from "./styles";
 
 type CredentialStatus = Database["public"]["Enums"]["credential_status"];
 
-export const card = "rounded-2xl bg-card p-5 ring-1 ring-fog";
-const link = `font-medium text-navy-900 underline decoration-mist underline-offset-4 hover:decoration-current ${focusRing}`;
+export const card = "rounded-2xl bg-card p-5 ring-1 ring-line";
+const link = `font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-current ${focusRing}`;
 
 export async function countries(codes: string[]) {
   const locale = await getLocale();
   return codes.map((c) => countryName(c, locale)).join(", ");
 }
 
-export function Chip({ children, tone = "bg-fog text-navy-900" }: { children: React.ReactNode; tone?: string }) {
+export function Chip({ children, tone = "bg-line text-ink" }: { children: React.ReactNode; tone?: string }) {
   return <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${tone}`}>{children}</span>;
 }
 
 export async function CredentialBadge({ status }: { status: CredentialStatus }) {
   const t = await getTranslations("taxonomy.credentialStatus");
-  const tone = { submitted: "bg-fog text-slate", under_review: "bg-lemon-soft text-navy-900", verified: "bg-mint text-navy-900", rejected: "bg-danger-bg text-danger" }[status];
+  const tone = { submitted: "bg-line text-soft", under_review: "bg-warm-soft text-ink", verified: "bg-turq-soft text-ink", rejected: "bg-danger-bg text-danger" }[status];
   return <Chip tone={tone}>{t(status)}</Chip>;
 }
 
@@ -48,7 +48,7 @@ export async function MatchReasons({ reasons }: { reasons: Reason[] }) {
     <ul className="space-y-1 text-sm">
       {lines.map((line) => (
         <li key={line} className="flex gap-2">
-          <span aria-hidden className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-mint text-[10px] text-navy-800">
+          <span aria-hidden className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-turq-soft text-[10px] text-ink">
             ✓
           </span>
           {line}
@@ -65,18 +65,18 @@ export async function AgentCard({ agent, reasons }: { agent: AgentListing; reaso
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h3 className="font-semibold">{agent.agency_name}</h3>
-          <p className="text-sm text-slate">
+          <p className="text-sm text-soft">
             {tax(`agentKinds.${agent.kind}`)}
             {agent.city && ` · ${agent.city}`}
           </p>
         </div>
-        {agent.verified ? <Chip tone="bg-mint text-navy-900">{t("verified")}</Chip> : <Chip tone="bg-fog text-slate">{t("notVerified")}</Chip>}
+        {agent.verified ? <Chip tone="bg-turq-soft text-ink">{t("verified")}</Chip> : <Chip tone="bg-line text-soft">{t("notVerified")}</Chip>}
       </div>
       {agent.destinations.length > 0 && <p className="text-sm">{await countries(agent.destinations)}</p>}
-      <p className="line-clamp-2 text-sm text-slate">{agent.fees || t("noFees")}</p>
+      <p className="line-clamp-2 text-sm text-soft">{agent.fees || t("noFees")}</p>
       {reasons && reasons.length > 0 && (
         <div>
-          <p className="mb-1 text-xs font-medium text-slate">{t("suggested")}</p>
+          <p className="mb-1 text-xs font-medium text-soft">{t("suggested")}</p>
           <MatchReasons reasons={reasons} />
         </div>
       )}
@@ -98,7 +98,7 @@ export async function StudentCard({ student, name, reasons }: { student: Student
     <li className={`${card} flex flex-col gap-3`}>
       <div>
         <h3 className="font-semibold">{await studentLabel(student, name)}</h3>
-        <p className="text-sm text-slate">
+        <p className="text-sm text-soft">
           {tax(`levels.${student.education_level}`)} · {tax(`goals.${student.goal}`)}
         </p>
       </div>
@@ -126,7 +126,7 @@ export async function FilterBar({
   const t = await getTranslations("forms");
   const select = "h-10 w-full rounded-lg border border-input bg-card px-3 text-sm";
   return (
-    <form className="flex flex-wrap items-end gap-3 rounded-2xl bg-lavender-100 p-4 ring-1 ring-lavender-200">
+    <form className="flex flex-wrap items-end gap-3 rounded-2xl bg-tint p-4 ring-1 ring-tint-strong">
       {search && (
         <label className="min-w-48 flex-[2] space-y-1 text-sm">
           <span className="font-medium">{search.label}</span>
@@ -148,11 +148,11 @@ export async function FilterBar({
       ))}
       {toggle && (
         <label className="flex min-h-10 items-center gap-2 text-sm">
-          <input type="checkbox" name={toggle.name} value="1" defaultChecked={toggle.on} className="size-4 accent-navy-900" />
+          <input type="checkbox" name={toggle.name} value="1" defaultChecked={toggle.on} className="size-4 accent-ink" />
           {toggle.label}
         </label>
       )}
-      <button type="submit" className={`inline-flex min-h-10 items-center rounded-full bg-navy-900 px-5 text-sm font-medium text-ice hover:bg-navy-800 ${focusRing}`}>
+      <button type="submit" className={`inline-flex min-h-10 items-center rounded-[10px] bg-primary px-5 text-sm font-medium text-on-primary hover:bg-primary-hover ${focusRing}`}>
         {t("apply")}
       </button>
     </form>
@@ -169,7 +169,7 @@ const STATUS_KEY = { pending: "statusPending", accepted: "statusAccepted", decli
 // Groups the caller's connections. `names` holds only names RLS let the caller read.
 export async function ConnectionList({ connections, me, names, labels }: { connections: ConnectionRow[]; me: string; names: Map<string, string>; labels: Map<string, string> }) {
   const [t, format] = await Promise.all([getTranslations("connections"), getFormatter()]);
-  if (!connections.length) return <p className="text-slate">{t("empty")}</p>;
+  if (!connections.length) return <p className="text-soft">{t("empty")}</p>;
 
   const groups = [
     ["incoming", connections.filter((c) => c.status === "pending" && c.requested_by !== me)],
@@ -194,19 +194,19 @@ export async function ConnectionList({ connections, me, names, labels }: { conne
                       <Link href={otherIsAgent ? `/student/agents/${other}` : `/agent/students/${other}`} className={link}>
                         {names.get(other) ?? labels.get(other) ?? "—"}
                       </Link>
-                      <span className="flex items-center gap-2 text-xs text-slate">
+                      <span className="flex items-center gap-2 text-xs text-soft">
                         <Chip>{t(STATUS_KEY[c.status])}</Chip>
                         <time dateTime={c.created_at}>{format.dateTime(new Date(c.created_at), { dateStyle: "medium" })}</time>
                       </span>
                     </div>
                     {c.message && (
-                      <p dir="auto" className="text-sm whitespace-pre-line text-navy-800">
+                      <p dir="auto" className="text-sm whitespace-pre-line text-ink">
                         {c.message}
                       </p>
                     )}
                     {key === "incoming" && (
                       <>
-                        {!otherIsAgent ? null : <p className="text-xs text-slate">{t("acceptNote")}</p>}
+                        {!otherIsAgent ? null : <p className="text-xs text-soft">{t("acceptNote")}</p>}
                         <ConnectionActions id={c.id} actions={["accept", "decline"]} />
                       </>
                     )}

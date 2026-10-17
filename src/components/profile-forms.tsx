@@ -18,8 +18,8 @@ import { AGENT_KINDS, COUNTRIES, countryName, CREDENTIAL_KINDS, FIELDS, GOALS, L
 import { cta, focusRing } from "./styles";
 
 export const control = "w-full rounded-lg border border-input bg-card px-3 text-base md:text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 outline-none";
-export const submit = `${cta} bg-navy-900 text-ice hover:bg-navy-800 disabled:cursor-progress disabled:opacity-60`;
-export const small = `inline-flex min-h-9 items-center rounded-full px-4 text-sm font-medium transition-colors disabled:opacity-60 ${focusRing}`;
+export const submit = `${cta} bg-primary text-on-primary hover:bg-primary-hover disabled:cursor-progress disabled:opacity-60`;
+export const small = `inline-flex min-h-9 items-center rounded-[10px] px-4 text-sm font-medium transition-colors disabled:opacity-60 ${focusRing}`;
 
 export function FormMessage({ state, done }: { state: ActionState; done?: string }) {
   const t = useTranslations("forms");
@@ -34,7 +34,7 @@ export function FormMessage({ state, done }: { state: ActionState; done?: string
   }
   if (state?.done && done) {
     return (
-      <p role="status" className="rounded-xl bg-mint-soft p-3 text-sm ring-1 ring-mint">
+      <p role="status" className="rounded-xl bg-turq-faint p-3 text-sm ring-1 ring-turq-soft">
         {done}
       </p>
     );
@@ -47,7 +47,7 @@ export function Field({ id, label, help, children }: { id: string; label: string
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       {children}
-      {help && <p className="text-xs text-slate">{help}</p>}
+      {help && <p className="text-xs text-soft">{help}</p>}
     </div>
   );
 }
@@ -72,8 +72,8 @@ function Choices({ name, legend, options, selected = [] }: { name: string; legen
       <legend className="mb-2 text-sm font-medium">{legend}</legend>
       <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-3">
         {options.map((o) => (
-          <label key={o.value} className="flex min-h-10 cursor-pointer items-center gap-2.5 rounded-lg px-2 text-sm hover:bg-lavender-50">
-            <input type="checkbox" name={name} value={o.value} defaultChecked={selected.includes(o.value)} className="size-4 shrink-0 accent-navy-900" />
+          <label key={o.value} className="flex min-h-10 cursor-pointer items-center gap-2.5 rounded-lg px-2 text-sm hover:bg-tint-soft">
+            <input type="checkbox" name={name} value={o.value} defaultChecked={selected.includes(o.value)} className="size-4 shrink-0 accent-ink" />
             {o.label}
           </label>
         ))}
@@ -120,11 +120,11 @@ export function StudentProfileForm({ profile }: { profile: StudentProfileRow | n
       <TextArea name="skills" label={t("skills")} value={profile?.skills} max={500} rows={2} />
       <TextArea name="experience" label={t("experience")} value={profile?.experience} max={1000} />
       <TextArea name="goals_note" label={t("goalsNote")} value={profile?.goals_note} max={1000} />
-      <label className="flex cursor-pointer gap-3 rounded-xl bg-lemon-soft p-4 ring-1 ring-lemon">
-        <input type="checkbox" name="visible" defaultChecked={profile?.visible} className="mt-1 size-4 shrink-0 accent-navy-900" />
+      <label className="flex cursor-pointer gap-3 rounded-xl bg-warm-soft p-4 ring-1 ring-warm">
+        <input type="checkbox" name="visible" defaultChecked={profile?.visible} className="mt-1 size-4 shrink-0 accent-ink" />
         <span>
           <span className="font-medium">{t("visible")}</span>
-          <span className="mt-1 block text-sm text-navy-800">{t("visibleHelp")}</span>
+          <span className="mt-1 block text-sm text-ink">{t("visibleHelp")}</span>
         </span>
       </label>
       <FormMessage state={state} done={f("saved")} />
@@ -184,7 +184,7 @@ export function CredentialForm() {
         </Field>
       </div>
       <Field id="document" label={t("document")} help={t("documentHelp")}>
-        <input id="document" name="document" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" className="block text-sm file:me-3 file:rounded-full file:border-0 file:bg-lavender-200 file:px-4 file:py-2 file:text-sm file:font-medium" />
+        <input id="document" name="document" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" className="block text-sm file:me-3 file:rounded-full file:border-0 file:bg-tint-strong file:px-4 file:py-2 file:text-sm file:font-medium" />
       </Field>
       <FormMessage state={state} done={t("submitted")} />
       <button type="submit" disabled={pending} aria-busy={pending} className={submit}>
@@ -217,7 +217,7 @@ export function ConnectionRequestForm({ target }: { target: string }) {
 export function ConnectionActions({ id, actions }: { id: string; actions: ("accept" | "decline" | "withdraw")[] }) {
   const t = useTranslations("connections");
   const [state, action, pending] = useActionState(updateConnection, undefined);
-  const tone = { accept: "bg-navy-900 text-ice hover:bg-navy-800", decline: "bg-lavender-100 ring-1 ring-lavender-200 hover:bg-lavender-200", withdraw: "bg-lavender-100 ring-1 ring-lavender-200 hover:bg-lavender-200" };
+  const tone = { accept: "bg-primary text-on-primary hover:bg-primary-hover", decline: "ring-1 ring-line ring-inset hover:ring-ink", withdraw: "ring-1 ring-line ring-inset hover:ring-ink" };
   return (
     <form action={action} className="space-y-2">
       <input type="hidden" name="id" value={id} />
@@ -245,10 +245,10 @@ export function ReviewForm({ id }: { id: string }) {
       </label>
       <input dir="auto" id={`note-${id}`} name="note" maxLength={500} placeholder={t("note")} className={`${control} h-10`} />
       <div className="flex flex-wrap gap-2">
-        <button type="submit" name="verdict" value="verified" disabled={pending} className={`${small} bg-navy-900 text-ice hover:bg-navy-800`}>
+        <button type="submit" name="verdict" value="verified" disabled={pending} className={`${small} bg-primary text-on-primary hover:bg-primary-hover`}>
           {t("verify")}
         </button>
-        <button type="submit" name="verdict" value="under_review" disabled={pending} className={`${small} bg-lavender-100 ring-1 ring-lavender-200`}>
+        <button type="submit" name="verdict" value="under_review" disabled={pending} className={`${small} bg-tint ring-1 ring-tint-strong`}>
           {t("underReview")}
         </button>
         <button type="submit" name="verdict" value="rejected" disabled={pending} className={`${small} bg-danger-bg text-danger ring-1 ring-danger/15`}>

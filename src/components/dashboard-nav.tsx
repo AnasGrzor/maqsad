@@ -64,14 +64,14 @@ function NavItems({ role, pathname }: { role: Role; pathname: string }) {
               href={href}
               // Overview (/role) matches only itself; other items also cover their nested pages.
               aria-current={pathname === href || (href !== `/${role}` && pathname.startsWith(`${href}/`)) ? "page" : undefined}
-              className={`flex min-h-10 items-center rounded-xl px-3 text-sm transition-colors hover:bg-lavender-100 aria-[current=page]:bg-navy-900 aria-[current=page]:text-ice ${focusRing}`}
+              className={`flex min-h-10 items-center rounded-[10px] px-3 text-[14.5px] font-medium text-soft transition-colors hover:text-ink aria-[current=page]:bg-card aria-[current=page]:font-semibold aria-[current=page]:text-ink aria-[current=page]:ring-1 aria-[current=page]:ring-line aria-[current=page]:ring-inset ${focusRing}`}
             >
               {t(`nav.${key}`)}
             </Link>
           ) : (
-            <span aria-disabled className="flex min-h-10 items-center justify-between gap-2 px-3 text-sm text-slate">
+            <span aria-disabled className="flex min-h-10 items-center justify-between gap-2 px-3 text-sm text-soft">
               {t(`nav.${key}`)}
-              <span className="rounded-full bg-fog px-2 py-0.5 text-[11px] font-medium">{t("soon")}</span>
+              <span className="rounded-full bg-line px-2 py-0.5 text-[11px] font-medium">{t("soon")}</span>
             </span>
           )}
         </li>

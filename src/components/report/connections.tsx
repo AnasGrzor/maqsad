@@ -5,10 +5,10 @@ import type { Connection, RiskLevel } from "@/lib/schema";
 
 // Same tones as RISK in report-view.tsx.
 const RISK: Record<RiskLevel, { chip: string; fill: string; stroke: string; text: string }> = {
-  high: { chip: "bg-danger text-white", fill: "fill-danger", stroke: "stroke-danger", text: "fill-white" },
-  medium: { chip: "bg-lemon text-navy-900", fill: "fill-lemon", stroke: "stroke-lemon", text: "fill-navy-900" },
-  low: { chip: "bg-mint text-navy-900", fill: "fill-mint", stroke: "stroke-mint", text: "fill-navy-900" },
-  incomplete: { chip: "bg-fog text-navy-900", fill: "fill-fog", stroke: "stroke-fog", text: "fill-navy-900" },
+  high: { chip: "bg-risk-high text-on-primary", fill: "fill-risk-high", stroke: "stroke-risk-high", text: "fill-on-primary" },
+  medium: { chip: "bg-risk-med text-on-primary", fill: "fill-risk-med", stroke: "stroke-risk-med", text: "fill-on-primary" },
+  low: { chip: "bg-risk-low text-on-primary", fill: "fill-risk-low", stroke: "stroke-risk-low", text: "fill-on-primary" },
+  incomplete: { chip: "bg-risk-inc text-on-primary", fill: "fill-risk-inc", stroke: "stroke-risk-inc", text: "fill-on-primary" },
 };
 
 const KIND_SHORT: Record<Connection["kind"], string> = { domain: "www", email: "@", phone: "tel", payee: "pay", account: "a/c" };
@@ -48,11 +48,11 @@ export function Connections({ connections }: { connections: Connection[] }) {
   }
 
   return (
-    <section aria-labelledby="connections-heading" className="rounded-2xl bg-card p-5 ring-1 ring-fog sm:p-6">
+    <section aria-labelledby="connections-heading" className="rounded-2xl bg-card p-5 ring-1 ring-line sm:p-6">
       <h3 id="connections-heading" className="text-lg font-semibold tracking-tight">
         {t("connections.title")}
       </h3>
-      <p className="mt-1 max-w-[68ch] text-sm text-pretty text-slate">
+      <p className="mt-1 max-w-[68ch] text-sm text-pretty text-soft">
         {t("connections.intro", { count: n })}
       </p>
 
@@ -63,7 +63,7 @@ export function Connections({ connections }: { connections: Connection[] }) {
             const p = placed.get(caseKey(k))!;
             return (
               <g key={`${c.kind}${c.value}${caseKey(k)}`}>
-                <line x1={ix} y1={iy} x2={p.x} y2={p.y} strokeWidth={5} className="stroke-navy-900" />
+                <line x1={ix} y1={iy} x2={p.x} y2={p.y} strokeWidth={5} className="stroke-ink" />
                 <line x1={ix} y1={iy} x2={p.x} y2={p.y} strokeWidth={3} className={RISK[k.risk].stroke} />
               </g>
             );
@@ -73,21 +73,21 @@ export function Connections({ connections }: { connections: Connection[] }) {
           const [x, y] = at(R_ID, angle);
           return (
             <g key={c.kind + c.value}>
-              <line x1={CX} y1={CY} x2={x} y2={y} strokeWidth={1.5} className="stroke-mist" />
-              <circle cx={x} cy={y} r={14} strokeWidth={1.5} className="fill-lavender-200 stroke-navy-800" />
-              <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize={9} className="fill-navy-900 font-semibold">
+              <line x1={CX} y1={CY} x2={x} y2={y} strokeWidth={1.5} className="stroke-line-strong" />
+              <circle cx={x} cy={y} r={14} strokeWidth={1.5} className="fill-tint-strong stroke-ink" />
+              <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize={9} className="fill-ink font-semibold">
                 {KIND_SHORT[c.kind]}
               </text>
             </g>
           );
         })}
-        <rect x={CX - 44} y={CY - 13} width={88} height={26} rx={13} className="fill-navy-900" />
-        <text x={CX} y={CY} textAnchor="middle" dominantBaseline="central" fontSize={10} className="fill-ice font-medium">
+        <rect x={CX - 44} y={CY - 13} width={88} height={26} rx={13} className="fill-ink" />
+        <text x={CX} y={CY} textAnchor="middle" dominantBaseline="central" fontSize={10} className="fill-on-primary font-medium">
           {t("connections.thisDocument")}
         </text>
         {[...placed.values()].map((p) => (
           <g key={p.n}>
-            <circle cx={p.x} cy={p.y} r={10} strokeWidth={1.5} className={`${RISK[p.risk].fill} stroke-navy-900`} />
+            <circle cx={p.x} cy={p.y} r={10} strokeWidth={1.5} className={`${RISK[p.risk].fill} stroke-ink`} />
             <text x={p.x} y={p.y} textAnchor="middle" dominantBaseline="central" fontSize={9} className={`${RISK[p.risk].text} font-semibold`}>
               {p.n}
             </text>
@@ -95,14 +95,14 @@ export function Connections({ connections }: { connections: Connection[] }) {
         ))}
       </svg>
 
-      <ul className="mt-4 divide-y divide-fog text-sm">
+      <ul className="mt-4 divide-y divide-line text-sm">
         {connections.map((c) => (
           <li key={c.kind + c.value} className="py-3 first:pt-0 last:pb-0">
             <p>
-              <span className="text-slate">{t(`connections.kind.${c.kind}`)}: </span>
+              <span className="text-soft">{t(`connections.kind.${c.kind}`)}: </span>
               <span className="font-medium [overflow-wrap:anywhere]">{c.value}</span>
             </p>
-            <p className="mt-1 text-slate">
+            <p className="mt-1 text-soft">
               {t("connections.alsoIn", { count: c.cases.length })}
             </p>
             <ul className="mt-1.5 space-y-1.5">
@@ -110,7 +110,7 @@ export function Connections({ connections }: { connections: Connection[] }) {
                 <li key={caseKey(k)} className="flex gap-2.5">
                   <span
                     aria-hidden
-                    className={`grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-semibold tabular-nums ring-1 ring-navy-900 ${RISK[k.risk].chip}`}
+                    className={`grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-semibold tabular-nums ring-1 ring-ink ${RISK[k.risk].chip}`}
                   >
                     {number.get(caseKey(k))}
                   </span>

@@ -25,7 +25,7 @@ export default async function Credentials() {
       <section>
         <h2 className="mb-3 text-xl font-semibold tracking-tight">{t("yours")}</h2>
         {credentials.length === 0 ? (
-          <p className="text-slate">{t("empty")}</p>
+          <p className="text-soft">{t("empty")}</p>
         ) : (
           <ul className="space-y-3">
             {credentials.map((c, i) => (
@@ -34,7 +34,7 @@ export default async function Credentials() {
                   <span className="font-medium">{tax(`credentialKinds.${c.kind}`)}</span>
                   <CredentialBadge status={c.status} />
                 </div>
-                <p className="text-slate">
+                <p className="text-soft">
                   {c.issuer}
                   {c.reference && ` · ${c.reference}`}
                   {" · "}
@@ -47,7 +47,7 @@ export default async function Credentials() {
                 )}
                 {c.review_note && (
                   <p dir="auto">
-                    <span className="text-slate">{t("reviewNote")}: </span>
+                    <span className="text-soft">{t("reviewNote")}: </span>
                     {c.review_note}
                   </p>
                 )}

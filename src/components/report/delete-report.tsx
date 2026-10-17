@@ -5,7 +5,7 @@ import { useActionState, useState } from "react";
 import { deleteReport } from "@/app/actions/reports";
 import { focusRing } from "@/components/styles";
 
-const button = `inline-flex min-h-10 items-center rounded-full px-4 text-sm font-medium transition-colors disabled:opacity-60 ${focusRing}`;
+const button = `inline-flex min-h-10 items-center rounded-[10px] px-4 text-sm font-medium transition-colors disabled:opacity-60 ${focusRing}`;
 
 // Deleting can't be undone, so it takes a second, explicit click.
 export function DeleteReport({ id }: { id: string }) {
@@ -19,10 +19,10 @@ export function DeleteReport({ id }: { id: string }) {
       {confirming ? (
         <>
           <span className="text-sm">{t("deleteConfirm")}</span>
-          <button type="submit" disabled={pending} className={`${button} bg-danger text-white hover:bg-danger/90`}>
+          <button type="submit" disabled={pending} className={`${button} bg-danger text-on-primary hover:bg-danger/90`}>
             {t("deleteYes")}
           </button>
-          <button type="button" onClick={() => setConfirming(false)} className={`${button} bg-lavender-100 ring-1 ring-lavender-200 hover:bg-lavender-200`}>
+          <button type="button" onClick={() => setConfirming(false)} className={`${button} ring-1 ring-line ring-inset hover:ring-ink`}>
             {t("deleteNo")}
           </button>
         </>

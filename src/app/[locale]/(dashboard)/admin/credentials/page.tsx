@@ -24,7 +24,7 @@ export default async function CredentialReview() {
     <div className="space-y-6">
       <PageHeading title={t("title")} intro={t("intro")} />
       {credentials.length === 0 ? (
-        <p className="text-slate">{t("empty")}</p>
+        <p className="text-soft">{t("empty")}</p>
       ) : (
         <ul className="space-y-3">
           {credentials.map((c, i) => (
@@ -35,10 +35,10 @@ export default async function CredentialReview() {
                   <CredentialBadge status={c.status} />
                 </div>
                 <p>
-                  <span className="text-slate">{t("agent")}: </span>
+                  <span className="text-soft">{t("agent")}: </span>
                   {names.get(c.agent_id) ?? c.agent_id}
                 </p>
-                <p className="text-slate">
+                <p className="text-soft">
                   {c.issuer}
                   {c.reference && ` · ${c.reference}`}
                   {" · "}
@@ -49,9 +49,9 @@ export default async function CredentialReview() {
                     {cred("file")}
                   </a>
                 ) : (
-                  <p className="text-slate">{t("noFile")}</p>
+                  <p className="text-soft">{t("noFile")}</p>
                 )}
-                {c.review_note && <p dir="auto" className="text-slate">{c.review_note}</p>}
+                {c.review_note && <p dir="auto" className="text-soft">{c.review_note}</p>}
               </div>
               <ReviewForm id={c.id} />
             </li>

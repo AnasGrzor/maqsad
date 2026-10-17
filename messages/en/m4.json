@@ -4,7 +4,6 @@
     "evidence": "Quoted from the document",
     "unverifiedGroup": "Could not be verified",
     "storedNote": "This is a saved copy of the report. We don’t keep your document, the text you pasted, or personal details read from it, such as names, account numbers, phone numbers and emails.",
-    "deepfakePlanned": "Deepfake and image manipulation detection is planned. It was not part of this check.",
     "saveLabel": "Save this report to my account",
     "saveHint": "Keeps the result, findings and summary under Verification reports. Your document and the personal details in it are not saved.",
     "saved": "Saved to your account.",

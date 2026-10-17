@@ -1,56 +1,148 @@
 @import "tailwindcss";
 @import "shadcn/tailwind.css";
 
+/* Lapis & Marble, from the tilework of Lahore's Wazir Khan Mosque. Light by default; the header switch sets
+   data-mode on <html>, its own attribute, so the OS theme never overrides the viewer's choice. */
 :root {
-  /* The pastel palette is light by design, so the page stays light under a dark OS theme. */
   color-scheme: light;
+  --bg: #f7f7f4; /* Marble */
+  --surface: #ffffff; /* Paper */
+  --ink: #14213d; /* Lapis Night */
+  --soft: #4b5873; /* Slate */
+  --primary: #1d3f8a; /* Lapis */
+  --primary-hover: #16326f;
+  --on-primary: #ffffff;
+  --accent-ink: #1f7a78; /* Deep Turquoise */
+  --decor: #2a9d9a; /* Turquoise */
+  --warm: #e9a27e; /* Terracotta */
+  --warm-soft: #fcebe2;
+  --warm-ink: #9a4a26; /* Fired Clay */
+  --line: #e3e1da; /* Grout */
+  --line-strong: #cdd2dc;
+  --tint: #e3ebf7; /* Sky Glaze */
+  --tint-soft: #eff4fb;
+  --tint-strong: #cfd9ea;
+  --turq-soft: #d5eeeb;
+  --turq-faint: #eaf6f4;
+  --mark: #e9a27e;
+  --band: #e9eff9;
+  --band-line: #cfd9ea;
+  --splash-a: #ffffff;
+  --splash-b: #f7f7f4;
+  --logo-line: #1d3f8a;
+  --shadow: 0 1px 2px rgb(20 33 61 / 0.06), 0 12px 32px -12px rgb(20 33 61 / 0.18);
+  /* Tile colors are the brand's fixed glaze, the same in both themes. */
+  --lapis: #1d3f8a;
+  --turq: #2a9d9a;
+  --marble: #f7f7f4;
+  --terra: #e9a27e;
+  --night: #14213d;
+  /* Risk colors never borrow from the brand, so a warning can't be mistaken for decoration. */
+  --risk-high: #b42318;
+  --risk-high-bg: #fde8e7;
+  --risk-med: #a04a06;
+  --risk-med-bg: #fef0c7;
+  --risk-inc: #475467;
+  --risk-inc-bg: #eef1f4;
+  --risk-low: #0e6e6a;
+  --risk-low-bg: #e1f3f1;
 
-  /* shadcn/ui tokens, mapped onto the palette below so its components match the existing UI. */
-  --background: #effffe;
-  --foreground: #162e48;
-  --card: #fcfffe;
-  --card-foreground: #162e48;
-  --popover: #fcfffe;
-  --popover-foreground: #162e48;
-  --primary: #162e48;
-  --primary-foreground: #effffe;
-  --secondary: #f3ebfc;
-  --secondary-foreground: #162e48;
-  --muted: #dbe0e4;
-  --muted-foreground: #485e78;
-  --accent: #f3ebfc;
-  --accent-foreground: #162e48;
-  --destructive: #b42318;
-  --border: #c8d1db;
-  --input: #c8d1db;
-  --ring: #203d58;
-  --radius: 0.75rem;
+  /* shadcn/ui tokens, mapped onto the palette so its components match the rest of the UI. */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary-foreground: var(--on-primary);
+  --secondary: var(--tint);
+  --secondary-foreground: var(--ink);
+  --muted: var(--line);
+  --muted-foreground: var(--soft);
+  --accent: var(--tint);
+  --accent-foreground: var(--ink);
+  --destructive: var(--risk-high);
+  --border: var(--line);
+  --input: var(--line-strong);
+  --ring: var(--accent-ink);
+  --radius: 0.625rem;
+}
+
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #0e1424;
+  --surface: #161e33;
+  --ink: #e9edf6;
+  --soft: #a5b0c7;
+  --primary: #7ea2f2;
+  --primary-hover: #a3bdf6;
+  --on-primary: #0b1530;
+  --accent-ink: #5cc8c2;
+  --warm: #8a4a2e;
+  --warm-soft: #2e1d16;
+  --warm-ink: #f0b393;
+  --line: #26314d;
+  --line-strong: #34405f;
+  --tint: #1b2744;
+  --tint-soft: #172138;
+  --tint-strong: #2b3a5e;
+  --turq-soft: #123b39;
+  --turq-faint: #0f2a2a;
+  --mark: #6b3b28;
+  --band: #121a2e;
+  --band-line: #26314d;
+  --splash-a: #1a2440;
+  --splash-b: #0e1424;
+  --logo-line: #7ea2f2;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -12px rgb(0 0 0 / 0.6);
+  --risk-high: #ff8f86;
+  --risk-high-bg: #3a1614;
+  --risk-med: #f5b86a;
+  --risk-med-bg: #3a2610;
+  --risk-inc: #b4bfcd;
+  --risk-inc-bg: #252c38;
+  --risk-low: #6fd3c9;
+  --risk-low-bg: #0f302e;
 }
 
 @theme inline {
-  /* Navy palette */
-  --color-navy-900: #162e48;
-  --color-navy-800: #203d58;
-  --color-slate: #485e78;
-  --color-mist: #c8d1db;
-  --color-fog: #dbe0e4;
-  /* Pastel palette */
-  --color-lavender-50: #f9f5fe;
-  --color-lavender-100: #f3ebfc;
-  --color-lavender-200: #e2d5ef;
-  --color-lemon: #fcfc92;
-  --color-lemon-soft: #fdfdc9;
-  --color-mint: #d3ecea;
-  --color-mint-soft: #e8f6f4;
-  --color-ice: #effffe;
-  --color-card: #fcfffe;
-  /* Danger is outside both palettes on purpose: high risk must not look friendly. */
-  --color-danger: #b42318;
-  --color-danger-bg: #fde8e7;
+  --color-ink: var(--ink);
+  --color-soft: var(--soft);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-accent-ink: var(--accent-ink);
+  --color-decor: var(--decor);
+  --color-warm: var(--warm);
+  --color-warm-soft: var(--warm-soft);
+  --color-warm-ink: var(--warm-ink);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-tint: var(--tint);
+  --color-tint-soft: var(--tint-soft);
+  --color-tint-strong: var(--tint-strong);
+  --color-turq-soft: var(--turq-soft);
+  --color-turq-faint: var(--turq-faint);
+  --color-band: var(--band);
+  --color-band-line: var(--band-line);
+  --color-danger: var(--risk-high);
+  --color-danger-bg: var(--risk-high-bg);
+  --color-risk-high: var(--risk-high);
+  --color-risk-high-bg: var(--risk-high-bg);
+  --color-risk-med: var(--risk-med);
+  --color-risk-med-bg: var(--risk-med-bg);
+  --color-risk-inc: var(--risk-inc);
+  --color-risk-inc-bg: var(--risk-inc-bg);
+  --color-risk-low: var(--risk-low);
+  --color-risk-low-bg: var(--risk-low-bg);
+  --color-lapis: var(--lapis);
+  --color-marble: var(--marble);
+  --color-night: var(--night);
 
   --font-sans: var(--font-geist-sans);
-  --font-heading: var(--font-geist-sans);
+  --font-heading: var(--font-bricolage);
+  --font-mono: var(--font-geist-mono);
   --font-urdu: var(--font-nastaliq);
+  --shadow-float: var(--shadow);
 
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --animate-rise: rise 320ms cubic-bezier(0.25, 1, 0.5, 1);
@@ -70,6 +162,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
   --radius-sm: calc(var(--radius) * 0.6);
@@ -98,6 +191,17 @@
   html {
     @apply font-sans;
   }
+  /* Display face for English headings only; Urdu headings stay in Nastaliq. */
+  [lang="en"] :is(h1, h2, h3) {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  mark {
+    background: linear-gradient(transparent 60%, var(--mark) 60% 92%, transparent 92%);
+    color: inherit;
+    padding: 0 3px;
+  }
   /* Urdu is set in Nastaliq, which needs tall lines. Text-size utilities read --tw-leading, so this beats their
      tight line heights while an explicit leading-* class still wins. English blocks inside Urdu pages switch back. */
   [lang="ur"] {
@@ -118,5 +222,189 @@
   [lang="en"] * {
     --tw-leading: initial;
     line-height: inherit;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    font: 500 12px/1.4 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+  [lang="ur"] .eyebrow {
+    font: inherit;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+  /* A turquoise-ringed lapis rhombus, the tile's centre, used as a feature glyph. */
+  .glyph {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--tint);
+  }
+  .glyph::after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background: var(--primary);
+    transform: rotate(45deg);
+    box-shadow: 0 0 0 4px var(--tint), 0 0 0 5px var(--decor);
+  }
+  .rhombus::before {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 8px;
+    background: var(--decor);
+    transform: rotate(45deg);
+  }
+  .no-mark::before {
+    content: "";
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 4px;
+    border: 2px solid var(--terra);
+    border-radius: 50%;
+    background: linear-gradient(45deg, transparent 45%, var(--terra) 45% 55%, transparent 55%);
+  }
+  .roundel-drop {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: stamp 1.1s cubic-bezier(0.3, 1.3, 0.5, 1) 0.4s both;
+  }
+
+  /* Splash: the Urdu calligraphy logo, shown once per browser session at app start. */
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    place-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    background: radial-gradient(70% 60% at 50% 46%, var(--splash-a) 0%, var(--splash-b) 75%);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  :root[data-splash] .splash {
+    display: grid;
+  }
+  .splash.out {
+    opacity: 0;
+    transform: scale(1.02);
+    pointer-events: none;
+  }
+  .splash .ur-svg {
+    display: block;
+    width: min(72vw, 460px);
+    height: auto;
+    overflow: visible;
+    clip-path: inset(-20% -20% -20% 100%);
+  }
+  .splash .ur-svg text {
+    font-family: var(--font-nastaliq);
+    font-weight: 700;
+    font-size: 200px;
+  }
+  .kashida {
+    position: relative;
+    width: 70%;
+    height: 1em;
+    margin-inline: auto;
+    font-size: clamp(7px, 1vw, 11px);
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+  .kashida::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--turq);
+    clip-path: polygon(0 55%, 100% 0, 100% 100%);
+  }
+  .kashida svg {
+    position: absolute;
+    right: -1.5em;
+    top: 50%;
+    width: 3em;
+    height: 3em;
+    color: var(--logo-line);
+    opacity: 0;
+    transform: translateY(-50%) rotate(-120deg) scale(0.3);
+  }
+  .splash .cap {
+    opacity: 0;
+  }
+  .splash.play .ur-svg {
+    animation: ink 1.3s cubic-bezier(0.55, 0.08, 0.25, 1) 0.2s forwards;
+  }
+  .splash.play .kashida {
+    animation: kash 0.55s cubic-bezier(0.3, 0.6, 0.2, 1) 1.3s forwards;
+  }
+  .splash.play .kashida svg {
+    animation: pindrop 0.7s cubic-bezier(0.3, 1.5, 0.5, 1) 1.7s forwards;
+  }
+  .splash.play .cap {
+    animation: fade 0.5s ease 1.85s forwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .splash .ur-svg {
+      clip-path: none;
+    }
+    .kashida {
+      transform: none;
+    }
+    .kashida svg {
+      opacity: 1;
+      transform: translateY(-50%);
+    }
+    .splash .cap {
+      opacity: 1;
+    }
+    .splash.play .ur-svg,
+    .splash.play .kashida,
+    .splash.play .kashida svg,
+    .splash.play .cap,
+    .roundel-drop {
+      animation: none;
+    }
+    .splash,
+    .splash.out {
+      transition: opacity 0.3s;
+      transform: none;
+    }
+  }
+}
+
+@keyframes stamp {
+  from {
+    transform: rotate(-90deg) scale(0.5);
+    opacity: 0;
+  }
+}
+@keyframes ink {
+  to {
+    clip-path: inset(-20% -20% -20% -20%);
+  }
+}
+@keyframes kash {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes pindrop {
+  to {
+    opacity: 1;
+    transform: translateY(-50%) rotate(0deg) scale(1);
+  }
+}
+@keyframes fade {
+  to {
+    opacity: 1;
   }
 }

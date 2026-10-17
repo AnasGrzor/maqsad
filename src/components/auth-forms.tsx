@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { cta } from "./styles";
 
 const input = "h-11 bg-card px-3";
-const submit = `${cta} w-full bg-navy-900 text-ice hover:bg-navy-800 disabled:cursor-progress disabled:opacity-60`;
+const submit = `${cta} w-full bg-primary text-on-primary hover:bg-primary-hover disabled:cursor-progress disabled:opacity-60`;
 
 function Message({ state }: { state: FormState }) {
   const t = useTranslations("auth");
@@ -22,7 +22,7 @@ function Message({ state }: { state: FormState }) {
   }
   if (state?.done) {
     return (
-      <p role="status" className="rounded-xl bg-mint-soft p-3 text-sm ring-1 ring-mint">
+      <p role="status" className="rounded-xl bg-turq-faint p-3 text-sm ring-1 ring-turq-soft">
         {state.done === "saved" ? d("saved") : t("confirmEmail")}
       </p>
     );
@@ -66,9 +66,9 @@ export function RegisterForm() {
           {(["student", "agent"] as const).map((role, i) => (
             <label
               key={role}
-              className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl bg-card px-3 py-2 text-sm ring-1 ring-mist has-checked:ring-2 has-checked:ring-navy-900"
+              className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl bg-card px-3 py-2 text-sm ring-1 ring-line-strong has-checked:ring-2 has-checked:ring-ink"
             >
-              <input type="radio" name="role" value={role} defaultChecked={i === 0} className="size-4 accent-navy-900" />
+              <input type="radio" name="role" value={role} defaultChecked={i === 0} className="size-4 accent-ink" />
               {t(role === "student" ? "roleStudent" : "roleAgent")}
             </label>
           ))}
@@ -95,11 +95,11 @@ export function RegisterForm() {
           aria-describedby="password-hint"
           className={input}
         />
-        <p id="password-hint" className="text-xs text-slate">
+        <p id="password-hint" className="text-xs text-soft">
           {t("passwordHint")}
         </p>
       </div>
-      <p className="text-xs text-slate">{t("consent")}</p>
+      <p className="text-xs text-soft">{t("consent")}</p>
       <Message state={state} />
       <button type="submit" disabled={pending} aria-busy={pending} className={submit}>
         {pending ? t("working") : t("register")}
@@ -124,7 +124,7 @@ export function ProfileForm({ displayName }: { displayName: string }) {
         type="submit"
         disabled={pending}
         aria-busy={pending}
-        className={`${cta} bg-navy-900 text-ice hover:bg-navy-800 disabled:cursor-progress disabled:opacity-60`}
+        className={`${cta} bg-primary text-on-primary hover:bg-primary-hover disabled:cursor-progress disabled:opacity-60`}
       >
         {pending ? t("working") : d("save")}
       </button>

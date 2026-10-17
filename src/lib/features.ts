@@ -19,7 +19,6 @@ export const FEATURES = {
   planLimits: true,
   adminReview: true,
   auditLog: true,
-  deepfakeDetection: false,
 } as const;
 
 export type Feature = keyof typeof FEATURES;

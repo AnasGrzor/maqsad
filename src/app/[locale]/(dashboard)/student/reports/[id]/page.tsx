@@ -20,7 +20,7 @@ export default async function SavedReportPage({ params }: PageProps<"/[locale]/s
     listCases(),
   ]);
   const back = (
-    <Link href="/student/reports" className={`text-sm text-slate underline underline-offset-4 hover:text-navy-900 ${focusRing}`}>
+    <Link href="/student/reports" className={`text-sm text-soft underline underline-offset-4 hover:text-ink ${focusRing}`}>
       {t("back")}
     </Link>
   );
@@ -28,7 +28,7 @@ export default async function SavedReportPage({ params }: PageProps<"/[locale]/s
     return (
       <div className="space-y-4">
         {back}
-        <p className="text-slate">{t("notFound")}</p>
+        <p className="text-soft">{t("notFound")}</p>
       </div>
     );
   }
@@ -37,13 +37,13 @@ export default async function SavedReportPage({ params }: PageProps<"/[locale]/s
   return (
     <div>
       {back}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-lavender-100 py-3 ps-5 pe-3 ring-1 ring-lavender-200">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-tint py-3 ps-5 pe-3 ring-1 ring-tint-strong">
         <div className="min-w-0">
           <h1 className="font-medium [overflow-wrap:anywhere]">
             {c(`docType.${report.extraction.doc_type}`)}
             {report.extraction.issuer_name && ` · ${report.extraction.issuer_name}`}
           </h1>
-          <time dateTime={created_at} className="text-sm text-slate">
+          <time dateTime={created_at} className="text-sm text-soft">
             {t("checkedOn", { date: format.dateTime(new Date(created_at), { dateStyle: "medium", timeStyle: "short" }) })}
           </time>
         </div>

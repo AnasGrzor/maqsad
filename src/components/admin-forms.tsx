@@ -15,7 +15,7 @@ export function AccountStatusForm({ id, suspended }: { id: string; suspended: bo
       <input type="hidden" name="status" value={suspended ? "active" : "suspended"} />
       <div>
         <h2 className="font-semibold">{t(suspended ? "reactivateTitle" : "suspendTitle")}</h2>
-        <p className="mt-1 text-sm text-slate">{t(suspended ? "reactivateHelp" : "suspendHelp")}</p>
+        <p className="mt-1 text-sm text-soft">{t(suspended ? "reactivateHelp" : "suspendHelp")}</p>
       </div>
       <div className="space-y-1.5">
         <label htmlFor="reason" className="text-sm font-medium">
@@ -32,7 +32,7 @@ export function AccountStatusForm({ id, suspended }: { id: string; suspended: bo
           aria-describedby="reason-help"
           className="w-full rounded-lg border border-input bg-card px-3 py-2 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm"
         />
-        <p id="reason-help" className="text-xs text-slate">
+        <p id="reason-help" className="text-xs text-soft">
           {t("reasonHelp")}
         </p>
       </div>
@@ -42,7 +42,7 @@ export function AccountStatusForm({ id, suspended }: { id: string; suspended: bo
         </p>
       )}
       {state?.done && (
-        <p role="status" className="rounded-xl bg-mint-soft p-3 text-sm ring-1 ring-mint">
+        <p role="status" className="rounded-xl bg-turq-faint p-3 text-sm ring-1 ring-turq-soft">
           {t("done")}
         </p>
       )}
@@ -50,7 +50,7 @@ export function AccountStatusForm({ id, suspended }: { id: string; suspended: bo
         type="submit"
         disabled={pending}
         aria-busy={pending}
-        className={`${cta} disabled:opacity-60 ${suspended ? "bg-navy-900 text-ice hover:bg-navy-800" : "bg-danger text-ice hover:bg-danger/90"}`}
+        className={`${cta} disabled:opacity-60 ${suspended ? "bg-primary text-on-primary hover:bg-primary-hover" : "bg-danger text-on-primary hover:bg-danger/90"}`}
       >
         {t(suspended ? "reactivate" : "suspend")}
       </button>
@@ -79,13 +79,13 @@ export function DisputeReviewForm({ id, note }: { id: string; note: string }) {
         className="w-full rounded-lg border border-input bg-card px-3 py-2 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm"
       />
       <div className="flex flex-wrap gap-2">
-        <button type="submit" name="status" value="under_review" disabled={pending} className={`${small} bg-lavender-100 ring-1 ring-lavender-200`}>
+        <button type="submit" name="status" value="under_review" disabled={pending} className={`${small} bg-tint ring-1 ring-tint-strong`}>
           {t("setUnderReview")}
         </button>
-        <button type="submit" name="status" value="resolved" disabled={pending} className={`${small} bg-navy-900 text-ice hover:bg-navy-800`}>
+        <button type="submit" name="status" value="resolved" disabled={pending} className={`${small} bg-primary text-on-primary hover:bg-primary-hover`}>
           {t("resolve")}
         </button>
-        <button type="submit" name="status" value="dismissed" disabled={pending} className={`${small} bg-fog text-navy-900`}>
+        <button type="submit" name="status" value="dismissed" disabled={pending} className={`${small} bg-line text-ink`}>
           {t("dismiss")}
         </button>
       </div>
@@ -95,7 +95,7 @@ export function DisputeReviewForm({ id, note }: { id: string; note: string }) {
         </p>
       )}
       {state?.done && (
-        <p role="status" className="rounded-xl bg-mint-soft p-3 text-sm ring-1 ring-mint">
+        <p role="status" className="rounded-xl bg-turq-faint p-3 text-sm ring-1 ring-turq-soft">
           {t("saved")}
         </p>
       )}

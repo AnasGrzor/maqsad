@@ -47,12 +47,12 @@ export default async function AdminUsers({ searchParams }: PageProps<"/[locale]/
       />
       <p className="text-sm font-medium">
         {t("results", { count: users.length })}
-        {users.length === LIMIT && <span className="ms-2 font-normal text-slate">{t("limitNote")}</span>}
+        {users.length === LIMIT && <span className="ms-2 font-normal text-soft">{t("limitNote")}</span>}
       </p>
       {users.length > 0 && (
-        <div className="overflow-x-auto rounded-2xl bg-card ring-1 ring-fog">
+        <div className="overflow-x-auto rounded-2xl bg-card ring-1 ring-line">
           <table className="w-full text-start text-sm">
-            <thead className="border-b border-fog text-slate">
+            <thead className="border-b border-line text-soft">
               <tr>
                 <th scope="col" className="px-4 py-3 text-start font-medium">{t("name")}</th>
                 <th scope="col" className="px-4 py-3 text-start font-medium">{t("role")}</th>
@@ -60,11 +60,11 @@ export default async function AdminUsers({ searchParams }: PageProps<"/[locale]/
                 <th scope="col" className="px-4 py-3 text-start font-medium">{t("joined")}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-fog">
+            <tbody className="divide-y divide-line">
               {users.map((u) => (
                 <tr key={u.id}>
                   <td className="px-4 py-3 [overflow-wrap:anywhere]">
-                    <Link href={`/admin/users/${u.id}`} className="font-medium underline decoration-mist underline-offset-4 hover:decoration-current">
+                    <Link href={`/admin/users/${u.id}`} className="font-medium underline decoration-line-strong underline-offset-4 hover:decoration-current">
                       {u.display_name}
                     </Link>
                   </td>

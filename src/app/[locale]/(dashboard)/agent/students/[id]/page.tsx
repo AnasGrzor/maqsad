@@ -19,7 +19,7 @@ export default async function StudentPage({ params }: PageProps<"/[locale]/agent
   const [student, connection, names, own] = UUID.test(id)
     ? await Promise.all([getStudentForAgent(id), openConnectionWith(id), namesOf([id]), getAgentProfile(user.id)])
     : [null, null, new Map<string, string>(), null];
-  if (!student) return <p className="text-slate">{t("notFound")}</p>;
+  if (!student) return <p className="text-soft">{t("notFound")}</p>;
 
   const rows: [string, string][] = (
     [
@@ -41,12 +41,12 @@ export default async function StudentPage({ params }: PageProps<"/[locale]/agent
         <dl className={`${card} space-y-4 text-sm`}>
           {rows.map(([k, v]) => (
             <div key={k}>
-              <dt className="text-slate">{k}</dt>
+              <dt className="text-soft">{k}</dt>
               <dd dir="auto" className="mt-0.5 whitespace-pre-line">{v}</dd>
             </div>
           ))}
         </dl>
-        <aside className="h-fit rounded-2xl bg-lavender-100 p-5 ring-1 ring-lavender-200">
+        <aside className="h-fit rounded-2xl bg-tint p-5 ring-1 ring-tint-strong">
           {connection ? (
             <div className="space-y-3">
               <Chip>{c(connection.status === "accepted" ? "statusAccepted" : "statusPending")}</Chip>
@@ -60,7 +60,7 @@ export default async function StudentPage({ params }: PageProps<"/[locale]/agent
           ) : student.visible ? (
             <ConnectionRequestForm target={student.user_id} />
           ) : (
-            <p className="text-sm text-slate">{t("notFound")}</p>
+            <p className="text-sm text-soft">{t("notFound")}</p>
           )}
         </aside>
       </div>

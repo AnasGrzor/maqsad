@@ -39,7 +39,7 @@ export default async function FindAgents({ searchParams }: PageProps<"/[locale]/
         ]}
         toggle={{ name: "verified", label: t("verifiedOnly"), on: verifiedOnly }}
       />
-      {!profile && <p className="text-sm text-slate">{t("profileHint")}</p>}
+      {!profile && <p className="text-sm text-soft">{t("profileHint")}</p>}
       <p className="text-sm font-medium">{t("results", { count: shown.length })}</p>
       <ul className="grid gap-4 md:grid-cols-2">
         {shown.map(({ agent, reasons }) => (

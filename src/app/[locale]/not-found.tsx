@@ -10,8 +10,8 @@ export default function NotFound() {
       <SiteHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-12 pb-16 lg:px-8">
         <h1 className="text-3xl font-semibold tracking-tight">{t("title")}</h1>
-        <p className="mt-3 text-slate">{t("body")}</p>
-        <Link href="/" className={`${cta} mt-6 bg-navy-900 text-ice hover:bg-navy-800`}>
+        <p className="mt-3 text-soft">{t("body")}</p>
+        <Link href="/" className={`${cta} mt-6 bg-primary text-on-primary hover:bg-primary-hover`}>
           {t("home")}
         </Link>
       </main>

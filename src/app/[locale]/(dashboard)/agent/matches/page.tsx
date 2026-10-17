@@ -21,13 +21,13 @@ export default async function Matches() {
   return (
     <div className="space-y-6">
       <PageHeading title={t("title")} intro={t("intro")} />
-      <p className="rounded-2xl bg-lemon-soft p-4 text-sm ring-1 ring-lemon">{t("disclaimer")}</p>
+      <p className="rounded-2xl bg-warm-soft p-4 text-sm ring-1 ring-warm">{t("disclaimer")}</p>
       {!agent ? (
         <Notice href="/agent/settings" action={ap("title")}>
           {t("profileFirst")}
         </Notice>
       ) : ranked.length === 0 ? (
-        <p className="text-slate">{t("empty")}</p>
+        <p className="text-soft">{t("empty")}</p>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">
           {ranked.map(({ item, reasons }) => (

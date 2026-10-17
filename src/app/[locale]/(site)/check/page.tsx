@@ -15,13 +15,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CheckPage() {
   const t = await getTranslations("usage");
   return (
-    <Suspense fallback={<Checker blocked notice={<p className="text-sm text-slate">{t("loading")}</p>} />}>
+    <Suspense fallback={<Checker blocked notice={<p className="text-sm text-soft">{t("loading")}</p>} />}>
       <Gate />
     </Suspense>
   );
 }
 
-const notice = "rounded-2xl bg-lavender-100 p-4 ring-1 ring-lavender-200 sm:p-6";
+const notice = "rounded-2xl bg-tint p-4 ring-1 ring-tint-strong sm:p-6";
 
 // Checks use the plan's monthly verification reports, so signing in comes first. /api/analyze enforces the same.
 async function Gate() {
@@ -33,12 +33,12 @@ async function Gate() {
         notice={
           <div className={notice}>
             <h2 className="font-semibold">{t("signedOutTitle")}</h2>
-            <p className="mt-1 max-w-[62ch] text-sm text-slate">{t("signedOutBody")}</p>
+            <p className="mt-1 max-w-[62ch] text-sm text-soft">{t("signedOutBody")}</p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Link href="/login" className={`${cta} bg-navy-900 text-ice hover:bg-navy-800`}>
+              <Link href="/login" className={`${cta} bg-primary text-on-primary hover:bg-primary-hover`}>
                 {nav("login")}
               </Link>
-              <Link href="/register" className={`${cta} bg-card ring-1 ring-lavender-200 hover:bg-lavender-50`}>
+              <Link href="/register" className={`${cta} bg-card ring-1 ring-tint-strong hover:bg-tint-soft`}>
                 {nav("register")}
               </Link>
             </div>
@@ -83,7 +83,7 @@ async function Gate() {
     <Checker
       saveOption={saveOption}
       notice={
-        <p className="text-sm text-slate">
+        <p className="text-sm text-soft">
           {t("left", {
             left: allowance.limit - allowance.used,
             limit: allowance.limit,

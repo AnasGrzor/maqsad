@@ -7,7 +7,7 @@ import { namesOf } from "@/lib/data";
 import { listReportsForAdmin } from "@/lib/reports";
 
 const RISKS = ["high", "medium", "low", "incomplete"] as const;
-const TONE = { high: "bg-danger text-white", medium: "bg-lemon text-navy-900", low: "bg-mint text-navy-900", incomplete: "bg-fog text-navy-900" };
+const TONE = { high: "bg-risk-high-bg text-risk-high", medium: "bg-risk-med-bg text-risk-med", low: "bg-risk-low-bg text-risk-low", incomplete: "bg-risk-inc-bg text-risk-inc" };
 
 // Saved verification reports, for spotting documents and agents that keep coming up in high-risk results.
 export default async function AdminReports({ searchParams }: PageProps<"/[locale]/admin/reports">) {
@@ -22,11 +22,11 @@ export default async function AdminReports({ searchParams }: PageProps<"/[locale
       <PageHeading title={t("title")} intro={t("intro")} />
       <FilterBar filters={[{ name: "risk", label: t("risk"), value: risk, options: RISKS.map((x) => ({ value: x, label: c(`risk.${x}.title`) })) }]} />
       {reports.length === 0 ? (
-        <p className="text-slate">{t("empty")}</p>
+        <p className="text-soft">{t("empty")}</p>
       ) : (
-        <div className="overflow-x-auto rounded-2xl bg-card ring-1 ring-fog">
+        <div className="overflow-x-auto rounded-2xl bg-card ring-1 ring-line">
           <table className="w-full text-start text-sm">
-            <thead className="border-b border-fog text-slate">
+            <thead className="border-b border-line text-soft">
               <tr>
                 <th scope="col" className="px-4 py-3 text-start font-medium">{t("document")}</th>
                 <th scope="col" className="px-4 py-3 text-start font-medium">{t("risk")}</th>
@@ -34,11 +34,11 @@ export default async function AdminReports({ searchParams }: PageProps<"/[locale
                 <th scope="col" className="px-4 py-3 text-start font-medium">{t("checked")}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-fog">
+            <tbody className="divide-y divide-line">
               {reports.map((r) => (
                 <tr key={r.id}>
                   <td className="px-4 py-3 [overflow-wrap:anywhere]">
-                    <Link href={`/admin/reports/${r.id}`} dir="auto" className="font-medium underline decoration-mist underline-offset-4 hover:decoration-current">
+                    <Link href={`/admin/reports/${r.id}`} dir="auto" className="font-medium underline decoration-line-strong underline-offset-4 hover:decoration-current">
                       {c(`docType.${r.report.extraction.doc_type}`)}
                       {r.report.extraction.issuer_name && ` · ${r.report.extraction.issuer_name}`}
                     </Link>
@@ -47,7 +47,7 @@ export default async function AdminReports({ searchParams }: PageProps<"/[locale
                     <Chip tone={TONE[r.report.risk]}>{c(`risk.${r.report.risk}.title`)}</Chip>
                   </td>
                   <td className="px-4 py-3">
-                    <Link href={`/admin/users/${r.owner_id}`} className="underline decoration-mist underline-offset-4 hover:decoration-current">
+                    <Link href={`/admin/users/${r.owner_id}`} className="underline decoration-line-strong underline-offset-4 hover:decoration-current">
                       {names.get(r.owner_id) ?? r.owner_id}
                     </Link>
                   </td>

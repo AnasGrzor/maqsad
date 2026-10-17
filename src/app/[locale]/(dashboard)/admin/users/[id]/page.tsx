@@ -6,7 +6,7 @@ import { requireRole } from "@/lib/auth";
 import { getAgentProfile, getStudentProfile, listOwnCredentials, UUID } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 
-const link = "font-medium underline decoration-mist underline-offset-4 hover:decoration-current";
+const link = "font-medium underline decoration-line-strong underline-offset-4 hover:decoration-current";
 const CONNECTION_LABEL = { pending: "statusPending", accepted: "statusAccepted", declined: "statusDeclined", withdrawn: "statusWithdrawn" } as const;
 
 export default async function AdminUser({ params }: PageProps<"/[locale]/admin/users/[id]">) {
@@ -22,7 +22,7 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
     getFormatter(),
     createClient(),
   ]);
-  if (!UUID.test(id)) return <p className="text-slate">{t("notFound")}</p>;
+  if (!UUID.test(id)) return <p className="text-soft">{t("notFound")}</p>;
 
   // Every read runs as the admin: RLS (is_admin()) allows it, and admin_user_email() checks is_admin() itself.
   const [userRead, emailRead, student, agent, credentials, connectionsRead] = await Promise.all([
@@ -37,7 +37,7 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
   for (const read of [userRead, emailRead, connectionsRead]) if (read.error) throw read.error;
   const { data: user } = userRead;
   const { data: email } = emailRead;
-  if (!user) return <p className="text-slate">{t("notFound")}</p>;
+  if (!user) return <p className="text-soft">{t("notFound")}</p>;
 
   const counts = (["pending", "accepted", "declined", "withdrawn"] as const).map(
     (s) => [s, (connectionsRead.data ?? []).filter((c) => c.status === s).length] as const,
@@ -68,7 +68,7 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
       </Link>
       <header className="flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-semibold tracking-tight [overflow-wrap:anywhere] sm:text-3xl">{user.display_name}</h1>
-        <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${suspended ? "bg-danger-bg text-danger" : "bg-mint text-navy-900"}`}>
+        <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${suspended ? "bg-danger-bg text-danger" : "bg-turq-soft text-ink"}`}>
           {t(user.status)}
         </span>
       </header>
@@ -78,18 +78,18 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
           <section className={card}>
             <h2 className="font-semibold">{t("account")}</h2>
             <dl className="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[max-content_minmax(0,1fr)]">
-              <dt className="text-slate">{t("role")}</dt>
+              <dt className="text-soft">{t("role")}</dt>
               <dd>{roles(user.role)}</dd>
-              <dt className="text-slate">{t("email")}</dt>
+              <dt className="text-soft">{t("email")}</dt>
               <dd dir="ltr" className="text-start [overflow-wrap:anywhere]">
                 {email}
               </dd>
-              <dt className="text-slate">{t("joined")}</dt>
+              <dt className="text-soft">{t("joined")}</dt>
               <dd>
                 <time dateTime={user.created_at}>{format.dateTime(new Date(user.created_at), { dateStyle: "medium" })}</time>
               </dd>
             </dl>
-            <p className="mt-3 text-xs text-slate">{t("emailNote")}</p>
+            <p className="mt-3 text-xs text-soft">{t("emailNote")}</p>
           </section>
 
           {user.role !== "admin" && (
@@ -101,19 +101,19 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
                     .filter(([, v]) => v)
                     .map(([k, v]) => (
                       <div key={k} className="contents">
-                        <dt className="text-slate">{k}</dt>
+                        <dt className="text-soft">{k}</dt>
                         <dd dir="auto" className="[overflow-wrap:anywhere]">{v}</dd>
                       </div>
                     ))}
                   {student && (
                     <>
-                      <dt className="text-slate">{sp("visible")}</dt>
+                      <dt className="text-soft">{sp("visible")}</dt>
                       <dd>{t(student.visible ? "visible" : "hidden")}</dd>
                     </>
                   )}
                 </dl>
               ) : (
-                <p className="mt-2 text-sm text-slate">{t("noProfile")}</p>
+                <p className="mt-2 text-sm text-soft">{t("noProfile")}</p>
               )}
             </section>
           )}
@@ -127,12 +127,12 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
                 </Link>
               </div>
               {credentials.length ? (
-                <ul className="mt-3 divide-y divide-fog text-sm">
+                <ul className="mt-3 divide-y divide-line text-sm">
                   {credentials.map((c) => (
                     <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
                       <span>
                         <span className="font-medium">{tax(`credentialKinds.${c.kind}`)}</span>
-                        <span className="text-slate">
+                        <span className="text-soft">
                           {" · "}
                           {c.issuer}
                           {c.reference && ` · ${c.reference}`}
@@ -145,7 +145,7 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
                   ))}
                 </ul>
               ) : (
-                <p className="mt-2 text-sm text-slate">{t("noCredentials")}</p>
+                <p className="mt-2 text-sm text-soft">{t("noCredentials")}</p>
               )}
             </section>
           )}
@@ -155,8 +155,8 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
               <h2 className="font-semibold">{t("connections")}</h2>
               <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
                 {counts.map(([status, n]) => (
-                  <div key={status} className="rounded-xl bg-lavender-50 p-3">
-                    <dt className="text-slate">{conn(CONNECTION_LABEL[status])}</dt>
+                  <div key={status} className="rounded-xl bg-tint-soft p-3">
+                    <dt className="text-soft">{conn(CONNECTION_LABEL[status])}</dt>
                     <dd className="mt-1 text-xl font-semibold tabular-nums">{n}</dd>
                   </div>
                 ))}
@@ -165,7 +165,7 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
           )}
         </div>
 
-        <aside className="h-fit space-y-4 rounded-2xl bg-lavender-100 p-5 ring-1 ring-lavender-200">
+        <aside className="h-fit space-y-4 rounded-2xl bg-tint p-5 ring-1 ring-tint-strong">
           {user.id === me.id ? (
             <p className="text-sm">{t("selfNote")}</p>
           ) : user.role === "admin" && !suspended ? (

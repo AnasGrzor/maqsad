@@ -118,7 +118,7 @@ check("reports list shows the saved report", list.status === 200 && list.body.in
 const detail = await get(`/en/student/reports/${id}`, student.cookie);
 check("report page renders the report with its explanation", detail.status === 200 && detail.body.includes(">Why this result<") && /High risk because \d+ serious red flags? (was|were) found:/.test(detail.body) && detail.body.includes(`name="id" value="${id}"`));
 check("report page shows the evidence quote and the stored-copy note", detail.body.includes("<q>JazzCash</q>") && detail.body.includes(">This is a saved copy of the report."));
-check("report page labels deepfake detection as planned", detail.body.includes(">Deepfake and image manipulation detection is planned."));
+check("report page does not mention deepfake detection", !/deepfake/i.test(detail.body));
 const urdu = await get(`/ur/student/reports/${id}`, student.cookie);
 check("report page renders in Urdu with translated findings", urdu.status === 200 && urdu.body.includes(">یہ نتیجہ کیوں<") && urdu.body.includes(">ذاتی یا ناقابلِ سراغ ذریعے سے ادائیگی<"));
 const theirs = await get(`/en/student/reports/${id}`, other.cookie);

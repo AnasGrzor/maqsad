@@ -11,7 +11,7 @@ Maqsad is a trust and case-management platform for students, job seekers, and ov
 - Shared applications (cases) between a student and an agent whose connection is accepted: requirements, document requests, milestones and deadlines with overdue flags, an append-only history, append-only fee and commitment records, messages, in-app notifications, and user-side reports and disputes.
 - The document checker at `/check`, described below, which needs an account and counts against the plan's monthly limit. Students can save reports and keep them with an application.
 
-Features that are not built yet are listed in `src/lib/features.ts` as `false` (today only deepfake detection). Public pages, pricing and dashboard menus read that file and label those features "Coming soon", so nothing is advertised before it works.
+Features that are not built yet are listed in `src/lib/features.ts` as `false` (today none). Public pages, pricing and dashboard menus read that file and label those features "Coming soon", so nothing is advertised before it works.
 
 The document checker covers what Pakistani students and families receive before they pay anyone: foreign university offers, scholarship offers, visa letters, agent WhatsApp messages, degrees and transcripts, overseas job offers and internship offers. It reports red flags with the evidence behind each one and an Urdu summary for parents. It never says a document is genuine. The best result is "no red flags found", followed by an official contact the user can confirm with.
 

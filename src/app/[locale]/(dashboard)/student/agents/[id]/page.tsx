@@ -14,7 +14,7 @@ export default async function AgentPage({ params }: PageProps<"/[locale]/student
     getTranslations("directory"),
   ]);
   const [agent, connection] = UUID.test(id) ? await Promise.all([getAgent(id), openConnectionWith(id)]) : [null, null];
-  if (!agent) return <p className="text-slate">{t("notFound")}</p>;
+  if (!agent) return <p className="text-soft">{t("notFound")}</p>;
 
   const details: [string, string][] = (
     [
@@ -30,9 +30,9 @@ export default async function AgentPage({ params }: PageProps<"/[locale]/student
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{agent.agency_name}</h1>
-          <p className="mt-1 text-slate">{tax(`agentKinds.${agent.kind}`)}</p>
+          <p className="mt-1 text-soft">{tax(`agentKinds.${agent.kind}`)}</p>
         </div>
-        {agent.verified ? <Chip tone="bg-mint text-navy-900">{dir("verified")}</Chip> : <Chip tone="bg-fog text-slate">{dir("notVerified")}</Chip>}
+        {agent.verified ? <Chip tone="bg-turq-soft text-ink">{dir("verified")}</Chip> : <Chip tone="bg-line text-soft">{dir("notVerified")}</Chip>}
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
@@ -50,12 +50,12 @@ export default async function AgentPage({ params }: PageProps<"/[locale]/student
           <section className={card}>
             <h2 className="font-semibold">{t("credentials")}</h2>
             {agent.credentials.length ? (
-              <ul className="mt-3 divide-y divide-fog text-sm">
+              <ul className="mt-3 divide-y divide-line text-sm">
                 {agent.credentials.map((cr) => (
                   <li key={cr.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
                     <span>
                       <span className="font-medium">{tax(`credentialKinds.${cr.kind}`)}</span>
-                      <span className="text-slate">
+                      <span className="text-soft">
                         {" · "}
                         {cr.issuer}
                         {cr.reference && ` · ${cr.reference}`}
@@ -66,9 +66,9 @@ export default async function AgentPage({ params }: PageProps<"/[locale]/student
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 text-sm text-slate">{t("credentialsNone")}</p>
+              <p className="mt-2 text-sm text-soft">{t("credentialsNone")}</p>
             )}
-            <p className="mt-3 text-xs text-slate">{t("credentialsNote")}</p>
+            <p className="mt-3 text-xs text-soft">{t("credentialsNote")}</p>
           </section>
         </div>
 
@@ -78,13 +78,13 @@ export default async function AgentPage({ params }: PageProps<"/[locale]/student
             <dl className="mt-3 space-y-2 text-sm">
               {details.map(([k, v]) => (
                 <div key={k}>
-                  <dt className="text-slate">{k}</dt>
+                  <dt className="text-soft">{k}</dt>
                   <dd>{v}</dd>
                 </div>
               ))}
               {agent.website && (
                 <div>
-                  <dt className="text-slate">{t("website")}</dt>
+                  <dt className="text-soft">{t("website")}</dt>
                   <dd>
                     <a href={agent.website} target="_blank" rel="noopener noreferrer nofollow" dir="ltr" className="break-all underline underline-offset-4">
                       {agent.website}
@@ -94,7 +94,7 @@ export default async function AgentPage({ params }: PageProps<"/[locale]/student
               )}
             </dl>
           </section>
-          <section className="rounded-2xl bg-lavender-100 p-5 ring-1 ring-lavender-200">
+          <section className="rounded-2xl bg-tint p-5 ring-1 ring-tint-strong">
             {connection ? (
               <div className="space-y-3">
                 <Chip>{c(connection.status === "accepted" ? "statusAccepted" : "statusPending")}</Chip>
@@ -103,7 +103,7 @@ export default async function AgentPage({ params }: PageProps<"/[locale]/student
                 )}
                 {connection.status === "pending" && connection.requested_by !== user.id && (
                   <>
-                    <p className="text-xs text-slate">{c("acceptNote")}</p>
+                    <p className="text-xs text-soft">{c("acceptNote")}</p>
                     <ConnectionActions id={connection.id} actions={["accept", "decline"]} />
                   </>
                 )}

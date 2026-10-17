@@ -19,11 +19,17 @@
     "dashboard": "Dashboard",
     "signOut": "Sign out",
     "language": "Language",
-    "switchTo": "اردو"
+    "switchTo": "اردو",
+    "dark": "Dark",
+    "light": "Light",
+    "darkTheme": "Dark theme"
   },
   "footer": {
     "disclaimer": "Maqsad flags risks. It cannot prove that a document, person, agent or opportunity is genuine or safe. Always confirm with the issuer through contact details you find on their official website, never the ones in a document.",
-    "notPayments": "Maqsad does not handle or hold money."
+    "notPayments": "Maqsad does not handle or hold money.",
+    "studentsCol": "Students",
+    "agentsCol": "Agents",
+    "maqsadCol": "Maqsad"
   },
   "status": {
     "soon": "Coming soon"
@@ -100,24 +106,43 @@
     "auditLog": {
       "title": "Activity history",
       "body": "A record of important account and case activity."
-    },
-    "deepfakeDetection": {
-      "title": "Deepfake detection",
-      "body": "Planned. Maqsad does not check images or video for manipulation today, and will not show results until a tested detector exists."
     }
   },
   "home": {
-    "title": "Your journey abroad, with greater transparency, verification and accountability",
+    "title": "Check the offer letter <mark>before you pay</mark> anyone.",
     "intro": "Maqsad connects students and job seekers with overseas education and recruitment agents. Check documents before you pay, see who you are dealing with, and keep a clear record of what was agreed.",
     "ctaRegister": "Create an account",
     "ctaCheck": "Check a document now",
     "buildingTitle": "What Maqsad does",
-    "buildingIntro": "Maqsad is being built in stages. Each feature says whether you can use it today.",
+    "buildingIntro": "Check documents, find agents and track every application in one place.",
     "neverTitle": "What Maqsad will never do",
     "never1": "Say a document, agent or opportunity is completely genuine or safe.",
     "never2": "Mark an agent as verified because they pay for a subscription.",
     "never3": "Read your Gmail, WhatsApp or other accounts. We only check what you choose to submit.",
-    "never4": "Handle, hold or transfer your money."
+    "never4": "Handle, hold or transfer your money.",
+    "eyebrow": "For students and job seekers going abroad",
+    "urduLine": "ادائیگی سے پہلے دستاویزات چیک کریں، اور جانیں کہ آپ کس سے معاملہ کر رہے ہیں۔",
+    "exampleLabel": "Example report",
+    "exampleRisk": "High risk",
+    "exampleTitle": "WhatsApp message · \"University of Westbridge\"",
+    "exampleBody": "<b>Do not pay anything yet.</b> The deposit goes to a personal JazzCash account, and the website was registered 23 days ago.",
+    "sourcesLabel": "Checked against",
+    "source1": "UK sponsor register",
+    "source2": "Canada DLI list",
+    "source3": "Australia CRICOS",
+    "source4": "SEVIS number formats",
+    "source5": "Domain age",
+    "howChecks": "How checks work",
+    "stepsTitle": "The student decides who gets in.",
+    "allSteps": "All seven steps",
+    "step1Title": "Create a profile",
+    "step1Body": "Your education, goals and destinations. You choose whether agents can find you.",
+    "step2Title": "Accept a connection",
+    "step2Body": "An agent asks to connect. Nothing is shared until you accept.",
+    "step3Title": "Track it together",
+    "step3Body": "Fees, documents, deadlines and messages, with who changed what and when.",
+    "neverEyebrow": "Our limits, in writing",
+    "neverBody": "Maqsad flags risks. It cannot prove that a document, person, agent or opportunity is genuine or safe."
   },
   "howItWorks": {
     "title": "How Maqsad works",
@@ -130,7 +155,11 @@
     "step6": "Once connected, they message and manage the application on Maqsad.",
     "step7": "Both sides track fees, documents, deadlines and progress.",
     "checkTitle": "Check documents at any step",
-    "checkBody": "Anyone can check an offer letter, visa letter, job offer or agent message today. The report shows what was checked, which source supports each finding and what could not be verified."
+    "checkBody": "Anyone can check an offer letter, visa letter, job offer or agent message today. The report shows what was checked, which source supports each finding and what could not be verified.",
+    "checkEyebrow": "At any step",
+    "whoStudent": "Student",
+    "whoAgent": "Agent",
+    "whoBoth": "Both"
   },
   "students": {
     "title": "For students and job seekers",
@@ -162,8 +191,7 @@
     "failTitle": "When a check fails",
     "failBody": "If a source is down or a check cannot run, the report says the information could not be verified. A failed check is never treated as proof of fraud, and the result becomes \"checks incomplete\" rather than \"no red flags\".",
     "scoreTitle": "How risk is scored",
-    "scoreBody": "The risk level is calculated in code from the red flags found. An AI model can add a red flag but can never remove one, so text hidden in a document cannot lower the risk.",
-    "plannedTitle": "Planned, not available yet"
+    "scoreBody": "The risk level is calculated in code from the red flags found. An AI model can add a red flag but can never remove one, so text hidden in a document cannot lower the risk."
   },
   "pricing": {
     "title": "Pricing",
@@ -649,5 +677,9 @@
     "note": "Note to the agent",
     "noFile": "No document uploaded",
     "empty": "No credentials submitted."
+  },
+  "splash": {
+    "caption": "Maqsad · purpose",
+    "skip": "Skip intro"
   }
 }

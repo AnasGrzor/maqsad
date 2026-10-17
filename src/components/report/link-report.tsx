@@ -10,7 +10,7 @@ export function LinkReport({ id, current, cases }: { id: string; current: string
   const t = useTranslations("reports");
   const [state, action, pending] = useActionState(linkReport, undefined);
   return (
-    <form action={action} className="flex flex-wrap items-end gap-3 rounded-2xl bg-card p-4 ring-1 ring-fog">
+    <form action={action} className="flex flex-wrap items-end gap-3 rounded-2xl bg-card p-4 ring-1 ring-line">
       <input type="hidden" name="id" value={id} />
       <label className="min-w-56 flex-1 space-y-1 text-sm">
         <span className="font-medium">{t("linkLabel")}</span>
@@ -26,11 +26,11 @@ export function LinkReport({ id, current, cases }: { id: string; current: string
       <button
         type="submit"
         disabled={pending}
-        className={`inline-flex min-h-10 items-center rounded-full bg-navy-900 px-5 text-sm font-medium text-ice hover:bg-navy-800 disabled:opacity-60 ${focusRing}`}
+        className={`inline-flex min-h-10 items-center rounded-[10px] bg-primary px-5 text-sm font-medium text-on-primary hover:bg-primary-hover disabled:opacity-60 ${focusRing}`}
       >
         {t("linkSave")}
       </button>
-      <p className="w-full text-xs text-slate">{t("linkHelp")}</p>
+      <p className="w-full text-xs text-soft">{t("linkHelp")}</p>
       {state?.done && (
         <p role="status" className="w-full text-sm">
           {t("linkSaved")}

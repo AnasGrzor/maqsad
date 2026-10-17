@@ -15,7 +15,7 @@ export default function Agents() {
   return (
     <div className="space-y-10">
       <PageHeading title={t("title")} intro={t("intro")} />
-      <p className="max-w-3xl rounded-2xl bg-lemon-soft p-5 font-medium ring-1 ring-lemon">{t("paidNotVerified")}</p>
+      <p className="max-w-3xl rounded-2xl bg-warm-soft p-5 font-medium ring-1 ring-warm">{t("paidNotVerified")}</p>
       <FeatureList
         items={[
           "accounts",
@@ -31,10 +31,10 @@ export default function Agents() {
         ]}
       />
       <div className="flex flex-wrap gap-3">
-        <Link href="/register" className={`${cta} bg-navy-900 text-ice hover:bg-navy-800`}>
+        <Link href="/register" className={`${cta} bg-primary text-on-primary hover:bg-primary-hover`}>
           {nav("register")}
         </Link>
-        <Link href="/pricing" className={`${cta} bg-lavender-100 text-navy-900 ring-1 ring-lavender-200 hover:bg-lavender-200`}>
+        <Link href="/pricing" className={`${cta} text-ink ring-1 ring-line ring-inset hover:ring-ink`}>
           {nav("pricing")}
         </Link>
       </div>

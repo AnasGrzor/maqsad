@@ -110,17 +110,17 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
     <div>
         {report ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-lavender-100 py-3 ps-5 pe-3 ring-1 ring-lavender-200">
-              <h1 className="min-w-0 text-sm text-slate">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-tint py-3 ps-5 pe-3 ring-1 ring-tint-strong">
+              <h1 className="min-w-0 text-sm text-soft">
                 {t.rich("reportFor", {
                   subject,
-                  b: (chunks) => <span className="font-medium break-all text-navy-900">{chunks}</span>,
+                  b: (chunks) => <span className="font-medium break-all text-ink">{chunks}</span>,
                 })}
               </h1>
               <button
                 type="button"
                 onClick={reset}
-                className={`min-h-10 rounded-full bg-navy-900 px-4 text-sm font-medium text-ice transition-[background-color,transform] duration-100 hover:bg-navy-800 active:scale-[0.97] ${focusRing}`}
+                className={`min-h-10 rounded-[10px] bg-primary px-4 text-sm font-medium text-on-primary transition-[background-color,transform] duration-100 hover:bg-primary-hover active:scale-[0.97] ${focusRing}`}
               >
                 {t("another")}
               </button>
@@ -128,7 +128,7 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
             {saved !== undefined && (
               <p
                 role="status"
-                className={`mt-4 rounded-xl p-4 text-sm ring-1 ${saved ? "bg-mint-soft ring-mint" : "bg-danger-bg text-danger ring-danger/15"}`}
+                className={`mt-4 rounded-xl p-4 text-sm ring-1 ${saved ? "bg-turq-faint ring-turq-soft" : "bg-danger-bg text-danger ring-danger/15"}`}
               >
                 {saved ? (
                   <>
@@ -150,21 +150,21 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
               <h1 className="max-w-[22ch] text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
                 {t("title")}
               </h1>
-              <p className="mt-4 max-w-[62ch] text-pretty text-slate sm:text-lg">
+              <p className="mt-4 max-w-[62ch] text-pretty text-soft sm:text-lg">
                 {t("intro")}
               </p>
 
               {notice && <div className="mt-6">{notice}</div>}
               {!blocked && (
-              <form onSubmit={submit} className="mt-8 rounded-2xl bg-lavender-100 p-4 ring-1 ring-lavender-200 sm:p-6">
+              <form onSubmit={submit} className="mt-8 rounded-2xl bg-tint p-4 ring-1 ring-tint-strong sm:p-6">
                 <div
                   role="group"
                   aria-label={t("inputType")}
-                  className="relative grid w-full grid-cols-2 rounded-full bg-lavender-200 p-1 sm:w-80"
+                  className="relative grid w-full grid-cols-2 rounded-full bg-tint-strong p-1 sm:w-80"
                 >
                   <span
                     aria-hidden
-                    className={`absolute inset-y-1 start-1 w-[calc(50%-0.25rem)] rounded-full bg-navy-900 shadow-[0_1px_3px_rgb(22_46_72/0.25)] transition-transform duration-250 ease-out-quart motion-reduce:transition-none ${
+                    className={`absolute inset-y-1 start-1 w-[calc(50%-0.25rem)] rounded-full bg-primary shadow-[0_1px_3px_rgb(22_46_72/0.25)] transition-transform duration-250 ease-out-quart motion-reduce:transition-none ${
                       mode === "text" ? "translate-x-full rtl:-translate-x-full" : ""
                     }`}
                   />
@@ -175,7 +175,7 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
                       aria-pressed={mode === m}
                       onClick={() => setMode(m)}
                       className={`relative min-h-10 rounded-full px-4 text-sm font-medium transition-colors duration-200 ${focusRing} ${
-                        mode === m ? "text-ice" : "text-navy-800 hover:text-navy-900"
+                        mode === m ? "text-on-primary" : "text-ink hover:text-ink"
                       }`}
                     >
                       {m === "file" ? t("modeFile") : t("modeText")}
@@ -185,16 +185,16 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
 
                 {mode === "file" ? (
                   file ? (
-                    <div className="mt-5 flex items-center gap-4 rounded-xl bg-card p-4 ring-1 ring-lavender-200">
+                    <div className="mt-5 flex items-center gap-4 rounded-xl bg-card p-4 ring-1 ring-tint-strong">
                       <span
                         aria-hidden
-                        className="grid size-11 shrink-0 place-items-center rounded-lg bg-lavender-100 text-[11px] font-semibold tracking-wide text-navy-800"
+                        className="grid size-11 shrink-0 place-items-center rounded-lg bg-tint text-[11px] font-semibold tracking-wide text-ink"
                       >
                         {file.type === "application/pdf" ? "PDF" : "IMG"}
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-medium">{file.name}</p>
-                        <p className="text-sm text-slate">
+                        <p className="text-sm text-soft">
                           {file.size < 1024 * 1024
                             ? t("kb", { n: Math.max(1, Math.round(file.size / 1024)) })
                             : t("mb", { n: (file.size / 1024 / 1024).toFixed(1) })}
@@ -204,7 +204,7 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
                         type="button"
                         onClick={() => pick(null)}
                         disabled={running}
-                        className={`min-h-10 rounded-full px-3 text-sm font-medium text-slate transition-colors hover:bg-lavender-100 hover:text-navy-900 disabled:opacity-50 ${focusRing}`}
+                        className={`min-h-10 rounded-full px-3 text-sm font-medium text-soft transition-colors hover:bg-tint hover:text-ink disabled:opacity-50 ${focusRing}`}
                       >
                         {t("remove")}
                       </button>
@@ -224,10 +224,10 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
                         setDragging(false);
                         pick(e.dataTransfer.files[0] ?? null);
                       }}
-                      className={`mt-5 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-12 text-center transition-colors duration-200 has-[:focus-visible]:border-navy-800 ${
+                      className={`mt-5 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-12 text-center transition-colors duration-200 has-[:focus-visible]:border-ink ${
                         dragging
-                          ? "border-navy-800 bg-mint-soft"
-                          : "border-mist bg-card hover:border-slate hover:bg-lavender-50"
+                          ? "border-ink bg-turq-faint"
+                          : "border-line-strong bg-card hover:border-soft hover:bg-tint-soft"
                       }`}
                     >
                       <input
@@ -239,7 +239,7 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
                       <span className="font-medium">
                         {dragging ? t("drop") : t("choose")}
                       </span>
-                      <span className="mt-1 text-sm text-slate">{t("fileHint")}</span>
+                      <span className="mt-1 text-sm text-soft">{t("fileHint")}</span>
                     </label>
                   )
                 ) : (
@@ -251,7 +251,7 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
                       rows={8}
                       maxLength={20000}
                       placeholder={t("messagePlaceholder")}
-                      className="block w-full resize-y rounded-xl border border-mist bg-card p-4 leading-relaxed placeholder:text-slate focus:border-navy-800 focus:ring-1 focus:ring-navy-800 focus:outline-none"
+                      className="block w-full resize-y rounded-xl border border-line-strong bg-card p-4 leading-relaxed placeholder:text-soft focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                     />
                   </label>
                 )}
@@ -259,14 +259,14 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
                 {saveOption}
 
                 <div className="mt-5 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-sm text-slate sm:max-w-[40ch]">
+                  <p className="text-sm text-soft sm:max-w-[40ch]">
                     {t("privacy")}
                   </p>
                   <button
                     type="submit"
                     disabled={!ready || running}
                     aria-busy={running}
-                    className={`inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-navy-900 px-6 font-medium text-ice transition-[background-color,transform] duration-100 hover:bg-navy-800 active:scale-[0.97] disabled:active:scale-100 ${
+                    className={`inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-6 font-medium text-on-primary transition-[background-color,transform] duration-100 hover:bg-primary-hover active:scale-[0.97] disabled:active:scale-100 ${
                       running ? "cursor-progress" : "disabled:cursor-not-allowed disabled:opacity-45"
                     } ${focusRing}`}
                   >
@@ -287,30 +287,30 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
               )}
             </div>
 
-            <aside className="lg:sticky lg:top-6">
+            <aside className="lg:sticky lg:top-24">
               {running ? (
                 <section
                   aria-label={t("progress")}
-                  className="rounded-2xl bg-card p-5 ring-1 ring-fog motion-safe:animate-rise sm:p-6"
+                  className="rounded-2xl bg-card p-5 ring-1 ring-line motion-safe:animate-rise sm:p-6"
                 >
                   <h2 className="font-semibold">{t("progressTitle")}</h2>
-                  <p className="mt-1 text-sm text-slate">{t("progressHint")}</p>
+                  <p className="mt-1 text-sm text-soft">{t("progressHint")}</p>
                   <ol aria-live="polite" className="mt-4 space-y-3">
                     {(steps.length ? steps : [t("starting")]).map((s, i, all) => {
                       const current = i === all.length - 1;
                       return (
                         <li key={s} className="flex items-center gap-3 text-sm">
                           {current ? (
-                            <Spinner className="text-slate" />
+                            <Spinner className="text-soft" />
                           ) : (
                             <span
                               aria-hidden
-                              className="grid size-4 place-items-center rounded-full bg-mint text-[10px] text-navy-800"
+                              className="grid size-4 place-items-center rounded-full bg-turq-soft text-[10px] text-ink"
                             >
                               ✓
                             </span>
                           )}
-                          <span dir="auto" className={current ? "font-medium" : "text-slate"}>{s}</span>
+                          <span dir="auto" className={current ? "font-medium" : "text-soft"}>{s}</span>
                         </li>
                       );
                     })}
@@ -334,19 +334,19 @@ const CHECKS = [
 function WhatWeCheck() {
   const t = useTranslations("checker.checks");
   return (
-    <section aria-labelledby="checks-heading" className="rounded-2xl bg-card p-5 ring-1 ring-fog sm:p-6">
+    <section aria-labelledby="checks-heading" className="rounded-2xl bg-card p-5 ring-1 ring-line sm:p-6">
       <h2 id="checks-heading" className="text-lg font-semibold tracking-tight">
         {t("title")}
       </h2>
       {CHECKS.map(([group, items]) => (
         <div key={group} className="mt-5">
-          <h3 className="text-sm font-semibold text-slate">{t(group)}</h3>
+          <h3 className="text-sm font-semibold text-soft">{t(group)}</h3>
           <ul className="mt-2 space-y-2.5 text-sm">
             {items.map((item) => (
               <li key={item} className="flex gap-3">
                 <span
                   aria-hidden
-                  className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-mint text-[10px] text-navy-800"
+                  className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-turq-soft text-[10px] text-ink"
                 >
                   ✓
                 </span>
@@ -356,7 +356,7 @@ function WhatWeCheck() {
           </ul>
         </div>
       ))}
-      <p className="mt-5 border-t border-fog pt-4 text-sm text-slate">
+      <p className="mt-5 border-t border-line pt-4 text-sm text-soft">
         {t("never")}
       </p>
     </section>

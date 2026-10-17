@@ -2,7 +2,6 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
-import { FEATURES } from "@/lib/features";
 import type { Extraction, Finding, Report } from "@/lib/schema";
 import { explainRisk } from "@/lib/scoring";
 import { ActionPlan } from "./action-plan";
@@ -14,20 +13,20 @@ import { Connections } from "./connections";
 type Severity = Finding["severity"];
 
 const RISK = {
-  high: { tone: "bg-danger-bg text-danger ring-1 ring-danger/15", mark: "!", markTone: "bg-danger text-white" },
-  medium: { tone: "bg-lemon text-navy-900", mark: "!", markTone: "bg-navy-900 text-lemon" },
-  low: { tone: "bg-mint text-navy-900", mark: "✓", markTone: "bg-navy-900 text-mint" },
-  incomplete: { tone: "bg-fog text-navy-900", mark: "?", markTone: "bg-slate text-white" },
+  high: { tone: "bg-risk-high-bg text-risk-high ring-1 ring-risk-high/15", mark: "!", markTone: "bg-risk-high text-on-primary" },
+  medium: { tone: "bg-risk-med-bg text-risk-med ring-1 ring-risk-med/15", mark: "!", markTone: "bg-risk-med text-on-primary" },
+  low: { tone: "bg-risk-low-bg text-risk-low ring-1 ring-risk-low/15", mark: "✓", markTone: "bg-risk-low text-on-primary" },
+  incomplete: { tone: "bg-risk-inc-bg text-risk-inc ring-1 ring-risk-inc/15", mark: "?", markTone: "bg-risk-inc text-on-primary" },
 } as const;
 
 const SEVERITY_CHIP: Record<Severity, string> = {
-  high: "bg-danger text-white",
-  medium: "bg-lemon text-navy-900",
-  low: "bg-fog text-navy-900",
+  high: "bg-risk-high-bg text-risk-high",
+  medium: "bg-risk-med-bg text-risk-med",
+  low: "bg-risk-inc-bg text-risk-inc",
 };
 const SEVERITY_ORDER: Severity[] = ["high", "medium", "low"];
 
-export const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-800";
+export const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
 // stored: a saved report, which keeps no extraction, so the "what we read" panel is replaced by a note.
 export function ReportView({ report, stored = false }: { report: Report; stored?: boolean }) {
@@ -69,10 +68,10 @@ export function ReportView({ report, stored = false }: { report: Report; stored?
           </div>
 
           {(flags.length > 0 || confirmed.length > 0) && (
-            <ul aria-label={t("totals")} className="mt-5 flex flex-wrap gap-2 text-sm text-navy-900">
+            <ul aria-label={t("totals")} className="mt-5 flex flex-wrap gap-2 text-sm text-ink">
               {bySeverity.map(([s, items]) =>
                 items.length ? (
-                  <li key={s} className="inline-flex items-center gap-2 rounded-full bg-white/70 py-1 ps-1 pe-3">
+                  <li key={s} className="inline-flex items-center gap-2 rounded-full bg-card/70 py-1 ps-1 pe-3">
                     <span
                       className={`min-w-6 rounded-full px-1.5 text-center text-xs font-semibold tabular-nums ${SEVERITY_CHIP[s]}`}
                     >
@@ -83,8 +82,8 @@ export function ReportView({ report, stored = false }: { report: Report; stored?
                 ) : null,
               )}
               {confirmed.length > 0 && (
-                <li className="inline-flex items-center gap-2 rounded-full bg-white/70 py-1 ps-1 pe-3">
-                  <span className="min-w-6 rounded-full bg-mint px-1.5 text-center text-xs font-semibold tabular-nums">
+                <li className="inline-flex items-center gap-2 rounded-full bg-card/70 py-1 ps-1 pe-3">
+                  <span className="min-w-6 rounded-full bg-turq-soft px-1.5 text-center text-xs font-semibold tabular-nums">
                     {confirmed.length}
                   </span>
                   {t("confirmedShort")}
@@ -111,11 +110,11 @@ export function ReportView({ report, stored = false }: { report: Report; stored?
         </div>
 
         {(report.summary_en || report.summary_ur) && (
-          <div className="grid gap-5 rounded-2xl bg-card p-5 ring-1 ring-fog sm:p-6">
+          <div className="grid gap-5 rounded-2xl bg-card p-5 ring-1 ring-line sm:p-6">
             {report.summary_en && <p lang="en" dir="ltr" className="max-w-[68ch] leading-relaxed text-pretty">{report.summary_en}</p>}
-            {locale !== "en" && <p className="text-sm text-slate">{t("summaryNote")}</p>}
+            {locale !== "en" && <p className="text-sm text-soft">{t("summaryNote")}</p>}
             {report.summary_ur && (
-              <p lang="ur" dir="rtl" className="border-t border-fog pt-5 font-urdu text-lg leading-[2.4]">
+              <p lang="ur" dir="rtl" className="border-t border-line pt-5 font-urdu text-lg leading-[2.4]">
                 {report.summary_ur}
               </p>
             )}
@@ -138,7 +137,7 @@ export function ReportView({ report, stored = false }: { report: Report; stored?
               chip={SEVERITY_CHIP[s]}
               collapsed={s === "low"}
             >
-              <ul className="divide-y divide-fog overflow-hidden rounded-2xl bg-card ring-1 ring-fog">
+              <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-card ring-1 ring-line">
                 {items.map((f, i) => (
                   <FindingRow key={i} f={f} />
                 ))}
@@ -148,8 +147,8 @@ export function ReportView({ report, stored = false }: { report: Report; stored?
         )}
 
         {confirmed.length > 0 && (
-          <Group title={t("confirmedGroup")} count={confirmed.length} chip="bg-mint text-navy-900">
-            <ul className="divide-y divide-mint overflow-hidden rounded-2xl bg-mint-soft ring-1 ring-mint">
+          <Group title={t("confirmedGroup")} count={confirmed.length} chip="bg-turq-soft text-ink">
+            <ul className="divide-y divide-turq-soft overflow-hidden rounded-2xl bg-turq-faint ring-1 ring-turq-soft">
               {confirmed.map((f, i) => (
                 <FindingRow key={i} f={f} />
               ))}
@@ -158,8 +157,8 @@ export function ReportView({ report, stored = false }: { report: Report; stored?
         )}
 
         {unchecked.length > 0 && (
-          <Group title={v("unverifiedGroup")} count={unchecked.length} chip="bg-fog text-navy-900" collapsed>
-            <ul className="divide-y divide-fog overflow-hidden rounded-2xl bg-card ring-1 ring-fog">
+          <Group title={v("unverifiedGroup")} count={unchecked.length} chip="bg-line text-ink" collapsed>
+            <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-card ring-1 ring-line">
               {unchecked.map((f, i) => (
                 <FindingRow key={i} f={f} />
               ))}
@@ -171,29 +170,28 @@ export function ReportView({ report, stored = false }: { report: Report; stored?
       </section>
 
       {/* p-1/-m-1 keep the cards' rings from being clipped by the sidebar's own scroll box. */}
-      <aside className="-m-1 space-y-6 p-1 lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:overflow-x-hidden lg:overflow-y-auto">
+      <aside className="-m-1 space-y-6 p-1 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7.5rem)] lg:overflow-x-hidden lg:overflow-y-auto">
         <div className="hidden lg:block">
           <ContactCard contact={report.official_contact} />
         </div>
 
         <Alternatives report={report} />
 
-        <div className="rounded-2xl bg-lemon-soft p-5 ring-1 ring-lemon">
-          <h3 className="text-sm font-semibold">{t("notes")}</h3>
-          {report.warnings.length > 0 && (
-            <ul lang="en" dir="ltr" className="mt-2 list-disc space-y-1 ps-5 text-sm text-navy-800">
+        {report.warnings.length > 0 && (
+          <div className="rounded-2xl bg-warm-soft p-5 ring-1 ring-warm">
+            <h3 className="text-sm font-semibold">{t("notes")}</h3>
+            <ul lang="en" dir="ltr" className="mt-2 list-disc space-y-1 ps-5 text-sm text-ink">
               {report.warnings.map((w) => (
                 <li key={w}>{w}</li>
               ))}
             </ul>
-          )}
-          {!FEATURES.deepfakeDetection && <p className="mt-2 text-sm text-navy-800">{v("deepfakePlanned")}</p>}
-        </div>
+          </div>
+        )}
 
         {stored ? (
-          <p className="rounded-2xl bg-card p-5 text-sm text-slate ring-1 ring-fog">{v("storedNote")}</p>
+          <p className="rounded-2xl bg-card p-5 text-sm text-soft ring-1 ring-line">{v("storedNote")}</p>
         ) : (
-          <details className="group rounded-2xl bg-card ring-1 ring-fog">
+          <details className="group rounded-2xl bg-card ring-1 ring-line">
             <summary
               className={`flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 font-medium sm:px-6 [&::-webkit-details-marker]:hidden ${focusRing}`}
             >
@@ -239,7 +237,7 @@ function ContactCard({ contact }: { contact: Report["official_contact"] }) {
   const t = useTranslations("checker.contact");
   const hasContact = contact && (contact.email || contact.phone || contact.url);
   return (
-    <div className="rounded-2xl bg-lavender-100 p-5 ring-1 ring-lavender-200 sm:p-6">
+    <div className="rounded-2xl bg-tint p-5 ring-1 ring-tint-strong sm:p-6">
       <h3 className="text-lg font-semibold tracking-tight">{t("title")}</h3>
       {hasContact ? (
         <>
@@ -249,10 +247,10 @@ function ContactCard({ contact }: { contact: Report["official_contact"] }) {
             {contact.phone && <Row k={t("phone")} v={<Contact scheme="tel" value={contact.phone} />} />}
             {contact.url && <Row k={t("foundOn")} v={<Link href={contact.url} />} />}
           </dl>
-          <p className="mt-4 text-sm text-slate">{t("source")}</p>
+          <p className="mt-4 text-sm text-soft">{t("source")}</p>
         </>
       ) : (
-        <p className="mt-2 max-w-[68ch] text-slate">
+        <p className="mt-2 max-w-[68ch] text-soft">
           {t("none")}
         </p>
       )}
@@ -296,7 +294,7 @@ function Group({
         className={`mb-3 flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-lg [&::-webkit-details-marker]:hidden ${focusRing}`}
       >
         <h3>{label}</h3>
-        <span className="flex items-center gap-1.5 text-sm text-slate">
+        <span className="flex items-center gap-1.5 text-sm text-soft">
           <span className="group-open:hidden">{t("show")}</span>
           <span className="hidden group-open:inline">{t("hide")}</span>
           <Chevron />
@@ -314,23 +312,23 @@ function FindingRow({ f }: { f: Finding }) {
   return (
     <li className="px-4 py-4 sm:px-6">
       <h4 {...(title === null ? english : {})} className="font-medium text-pretty">{title ?? f.title}</h4>
-      <p {...(detail === null ? english : {})} className="mt-1 max-w-[68ch] text-sm leading-relaxed text-pretty text-slate">
+      <p {...(detail === null ? english : {})} className="mt-1 max-w-[68ch] text-sm leading-relaxed text-pretty text-soft">
         {detail ?? f.detail}
       </p>
       {/* Exact text read from the document, so it is shown as written and never translated. */}
       {f.evidence && f.evidence.length > 0 && (
         <div className="mt-2">
-          <p className="text-xs font-medium text-slate">{v("evidence")}</p>
+          <p className="text-xs font-medium text-soft">{v("evidence")}</p>
           <ul className="mt-1 space-y-1">
             {f.evidence.map((q) => (
-              <li key={q} dir="auto" className="border-s-2 border-mist ps-3 text-sm [overflow-wrap:anywhere]">
+              <li key={q} dir="auto" className="border-s-2 border-line-strong ps-3 text-sm [overflow-wrap:anywhere]">
                 <q>{q}</q>
               </li>
             ))}
           </ul>
         </div>
       )}
-      <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate">
+      <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-soft">
         <span className="font-medium">{t(f.origin)}</span>
         {f.sources.map((s) => (
           <Link key={s} href={s} />
@@ -366,10 +364,10 @@ function ExtractionList({ x }: { x: Extraction }) {
   ).filter(([, v]) => v);
 
   return (
-    <dl className="space-y-3 border-t border-fog px-5 py-4 text-sm sm:px-6">
+    <dl className="space-y-3 border-t border-line px-5 py-4 text-sm sm:px-6">
       {rows.map(([k, v]) => (
         <div key={k}>
-          <dt className="text-slate">{k}</dt>
+          <dt className="text-soft">{k}</dt>
           <dd dir="auto" className="[overflow-wrap:anywhere]">{v}</dd>
         </div>
       ))}
@@ -380,7 +378,7 @@ function ExtractionList({ x }: { x: Extraction }) {
 function Row({ k, v }: { k: string; v: React.ReactNode }) {
   return (
     <>
-      <dt className="whitespace-nowrap text-slate">{k}</dt>
+      <dt className="whitespace-nowrap text-soft">{k}</dt>
       <dd className="mb-2 min-w-0 [overflow-wrap:anywhere] sm:mb-0">{v}</dd>
     </>
   );
@@ -394,7 +392,7 @@ function Contact({ scheme, value }: { scheme: "mailto" | "tel"; value: string })
   return (
     <a
       href={`${scheme}:${target}`}
-      className={`font-medium text-navy-900 underline decoration-mist underline-offset-4 hover:decoration-current ${focusRing}`}
+      className={`font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-current ${focusRing}`}
     >
       {/* Prefer wrapping a long email after the @ rather than mid-word. */}
       {scheme === "mailto" ? (
@@ -423,7 +421,7 @@ function Link({ href }: { href: string }) {
       href={url.href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`break-all text-navy-800 underline decoration-mist underline-offset-4 hover:decoration-current ${focusRing}`}
+      className={`break-all text-ink underline decoration-line-strong underline-offset-4 hover:decoration-current ${focusRing}`}
     >
       {url.hostname}
     </a>
@@ -432,7 +430,7 @@ function Link({ href }: { href: string }) {
 
 export function Chevron() {
   return (
-    <span aria-hidden className="text-slate transition-transform duration-200 group-open:rotate-180">
+    <span aria-hidden className="text-soft transition-transform duration-200 group-open:rotate-180">
       ▾
     </span>
   );

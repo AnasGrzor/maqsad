@@ -28,8 +28,8 @@ export default async function Pricing() {
           </ul>
         </section>
       ))}
-      <div className="max-w-3xl space-y-2 text-sm text-slate">
-        <p className="font-medium text-navy-900">{n("notVerified")}</p>
+      <div className="max-w-3xl space-y-2 text-sm text-soft">
+        <p className="font-medium text-ink">{n("notVerified")}</p>
         <p>{n("limitsNote")}</p>
         <p>{n("betaNote")}</p>
       </div>
@@ -45,16 +45,16 @@ function PlanCard({ plan }: { plan: PlanRow }) {
   const features = plan.features.filter(isFeature);
 
   return (
-    <li className={`flex flex-col rounded-2xl p-6 ring-1 ${plan.offered ? "bg-card ring-fog" : "bg-lavender-50 ring-lavender-200"}`}>
+    <li className={`flex flex-col rounded-2xl p-6 ring-1 ${plan.offered ? "bg-card ring-line" : "bg-tint-soft ring-tint-strong"}`}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h3 className="text-lg font-semibold">{t.has(`plans.${plan.id}` as "plans.agency") ? t(`plans.${plan.id}` as "plans.agency") : plan.id}</h3>
-        {!plan.offered && <span className="rounded-full bg-fog px-2.5 py-0.5 text-xs font-medium text-slate">{t("notOffered")}</span>}
+        {!plan.offered && <span className="rounded-full bg-line px-2.5 py-0.5 text-xs font-medium text-soft">{t("notOffered")}</span>}
       </div>
       <p className="mt-1 text-2xl font-semibold tracking-tight">
         <PlanPrice price={plan.price_monthly_pkr} />
       </p>
       {plan.verification_reports_per_month !== null && (
-        <p className="mt-1 text-sm text-slate">{t("reports", { count: plan.verification_reports_per_month })}</p>
+        <p className="mt-1 text-sm text-soft">{t("reports", { count: plan.verification_reports_per_month })}</p>
       )}
       {features.length > 0 ? (
         <ul className="mt-5 space-y-2.5 text-sm">
@@ -66,7 +66,7 @@ function PlanCard({ plan }: { plan: PlanRow }) {
           ))}
         </ul>
       ) : (
-        <p className="mt-5 text-sm text-slate">{t("teamSoon")}</p>
+        <p className="mt-5 text-sm text-soft">{t("teamSoon")}</p>
       )}
     </li>
   );
