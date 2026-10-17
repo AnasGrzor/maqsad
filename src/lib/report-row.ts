@@ -13,7 +13,7 @@ export type ReportRow = {
   warnings: string[];
 };
 
-export const REMOVED = "[removed]";
+const REMOVED = "[removed]";
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // A phone or account number written another way (0301-4567890, +92 301 4567890): any run of digits,
@@ -25,7 +25,7 @@ const digitsPattern = (s: string) => {
 
 // Personal details read from the document: the recipient's name, the payee, account numbers, phones
 // and emails. Exact values and any email address are replaced before a report is stored.
-export function personalPatterns(x: Extraction): RegExp {
+function personalPatterns(x: Extraction): RegExp {
   const values = [x.recipient_name, x.payment.payee_name, x.payment.account_details, ...x.phones, ...x.issuer_emails]
     .map((v) => v.trim())
     .filter((v) => v.length >= 3);
@@ -40,7 +40,7 @@ export function personalPatterns(x: Extraction): RegExp {
   return new RegExp(parts.join("|"), "giu");
 }
 
-export function scrub(text: string, pattern: RegExp) {
+function scrub(text: string, pattern: RegExp) {
   return text.replace(pattern, REMOVED);
 }
 

@@ -20,21 +20,24 @@ export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{1
 
 export async function getStudentProfile(userId: string) {
   const supabase = await createClient();
-  const { data } = await supabase.from("student_profiles").select("*").eq("user_id", userId).maybeSingle();
+  const { data, error } = await supabase.from("student_profiles").select("*").eq("user_id", userId).maybeSingle();
+  if (error) throw error;
   return data;
 }
 
 export async function getAgentProfile(userId: string) {
   const supabase = await createClient();
-  const { data } = await supabase.from("agent_profiles").select("*").eq("user_id", userId).maybeSingle();
+  const { data, error } = await supabase.from("agent_profiles").select("*").eq("user_id", userId).maybeSingle();
+  if (error) throw error;
   return data;
 }
 
 async function verifiedAgents(ids: string[]) {
   if (!ids.length) return new Set<string>();
   const supabase = await createClient();
-  const { data } = await supabase.from("credentials").select("agent_id").eq("status", "verified").in("agent_id", ids);
-  return new Set((data ?? []).map((c) => c.agent_id));
+  const { data, error } = await supabase.from("credentials").select("agent_id").eq("status", "verified").in("agent_id", ids);
+  if (error) throw error;
+  return new Set(data.map((c) => c.agent_id));
 }
 
 export async function listAgents(): Promise<AgentListing[]> {
@@ -51,13 +54,14 @@ export async function listAgents(): Promise<AgentListing[]> {
 
 export async function getAgent(id: string): Promise<(AgentListing & { credentials: CredentialRow[] }) | null> {
   const supabase = await createClient();
-  const [{ data: agent }, { data: credentials }] = await Promise.all([
+  const [{ data: agent, error }, { data: credentials, error: credentialsError }] = await Promise.all([
     supabase.from("agent_profiles").select("*").eq("user_id", id).maybeSingle(),
     supabase.from("credentials").select("*").eq("agent_id", id).order("created_at", { ascending: false }),
   ]);
+  if (error) throw error;
+  if (credentialsError) throw credentialsError;
   if (!agent) return null;
-  const list = credentials ?? [];
-  return { ...agent, credentials: list, verified: list.some((c) => c.status === "verified") };
+  return { ...agent, credentials, verified: credentials.some((c) => c.status === "verified") };
 }
 
 // RLS returns visible students plus those connected to (or asking) this agent.
@@ -74,7 +78,8 @@ export async function listStudentsForAgent() {
 
 export async function getStudentForAgent(id: string) {
   const supabase = await createClient();
-  const { data } = await supabase.from("student_profiles").select("*").eq("user_id", id).maybeSingle();
+  const { data, error } = await supabase.from("student_profiles").select("*").eq("user_id", id).maybeSingle();
+  if (error) throw error;
   return data;
 }
 
@@ -82,13 +87,14 @@ export async function getStudentForAgent(id: string) {
 export async function namesOf(ids: string[]) {
   if (!ids.length) return new Map<string, string>();
   const supabase = await createClient();
-  const { data } = await supabase.from("profiles").select("id, display_name").in("id", ids);
-  return new Map((data ?? []).map((p) => [p.id, p.display_name]));
+  const { data, error } = await supabase.from("profiles").select("id, display_name").in("id", ids);
+  if (error) throw error;
+  return new Map(data.map((p) => [p.id, p.display_name]));
 }
 
 export async function listConnections() {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("connections").select("*").order("created_at", { ascending: false });
+  const { data, error } = await supabase.from("connections").select("*").order("created_at", { ascending: false }).limit(LIST_LIMIT);
   if (error) throw error;
   return data;
 }
@@ -98,12 +104,13 @@ export async function openConnectionWith(otherId: string) {
   // The id goes into a PostgREST filter string, so only a UUID may reach it.
   if (!UUID.test(otherId)) return null;
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("connections")
     .select("*")
     .or(`student_id.eq.${otherId},agent_id.eq.${otherId}`)
     .in("status", ["pending", "accepted"])
     .maybeSingle();
+  if (error) throw error;
   return data;
 }
 
@@ -130,9 +137,13 @@ export async function listCredentialsForReview() {
   return data;
 }
 
-// Short-lived link for an admin or the owning agent; storage RLS refuses everyone else.
-export async function credentialFileUrl(path: string) {
+// Short-lived links for an admin or the owning agent, signed in one request and keyed by file path.
+// Storage RLS refuses everyone else; a refused or failed path is left out, so its link is hidden.
+export async function credentialFileUrls(paths: string[]) {
+  const urls = new Map<string, string>();
+  if (!paths.length) return urls;
   const supabase = await createClient();
-  const { data } = await supabase.storage.from("credentials").createSignedUrl(path, 300);
-  return data?.signedUrl ?? null;
+  const { data } = await supabase.storage.from("credentials").createSignedUrls(paths, 300);
+  for (const f of data ?? []) if (f.path && f.signedUrl) urls.set(f.path, f.signedUrl);
+  return urls;
 }

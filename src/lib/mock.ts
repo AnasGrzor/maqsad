@@ -6,7 +6,7 @@ import type { Connection, Extraction, Finding, Judgement, Report } from "./schem
 // Paste "high", "medium", "low", "incomplete" or "error" to pick a scenario. Only the first word
 // counts, so tests can paste extra text and check it is never stored.
 
-export const SCENARIOS = ["high", "medium", "low", "incomplete", "error"] as const;
+const SCENARIOS = ["high", "medium", "low", "incomplete", "error"] as const;
 type Scenario = (typeof SCENARIOS)[number];
 
 export function pickScenario(text: string, fileName: string): Scenario {

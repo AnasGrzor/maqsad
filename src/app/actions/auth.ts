@@ -1,20 +1,13 @@
 "use server";
 
-import { hasLocale } from "next-intl";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { firstError, Profile, SignIn, SignUp, type AuthError } from "@/lib/auth-schema";
+import { localeOf } from "@/lib/locale";
 import { createClient } from "@/lib/supabase/server";
-import { routing } from "@/i18n/routing";
 
 export type FormState = { error?: AuthError; done?: "confirm_email" | "saved" } | undefined;
-
-// Root params aren't available in Server Actions, so forms send the locale in a hidden field.
-function localeOf(form: FormData) {
-  const value = form.get("locale");
-  return typeof value === "string" && hasLocale(routing.locales, value) ? value : routing.defaultLocale;
-}
 
 function authError(code: string | undefined): AuthError {
   if (code === "user_already_exists" || code === "email_exists") return "email_taken";

@@ -1,11 +1,10 @@
 "use server";
 
-import { hasLocale } from "next-intl";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { routing } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/auth";
 import { UUID } from "@/lib/data";
+import { localeOf } from "@/lib/locale";
 import { createClient } from "@/lib/supabase/server";
 
 export type DeleteState = { error?: "not_available" } | undefined;
@@ -18,8 +17,7 @@ export async function deleteReport(_: DeleteState, form: FormData): Promise<Dele
   const supabase = await createClient();
   const { data } = await supabase.from("verification_reports").delete().eq("id", id).eq("owner_id", user.id).select("id");
   if (!data?.length) return { error: "not_available" };
-  const value = form.get("locale");
-  const locale = typeof value === "string" && hasLocale(routing.locales, value) ? value : routing.defaultLocale;
+  const locale = localeOf(form);
   revalidatePath(`/${locale}/student/reports`);
   redirect(`/${locale}/student/reports`);
 }

@@ -25,7 +25,7 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
   if (!UUID.test(id)) return <p className="text-slate">{t("notFound")}</p>;
 
   // Every read runs as the admin: RLS (is_admin()) allows it, and admin_user_email() checks is_admin() itself.
-  const [{ data: user }, { data: email }, student, agent, credentials, { data: connections }] = await Promise.all([
+  const [userRead, emailRead, student, agent, credentials, connectionsRead] = await Promise.all([
     supabase.from("profiles").select("id, display_name, role, status, created_at").eq("id", id).maybeSingle(),
     supabase.rpc("admin_user_email", { target: id }),
     getStudentProfile(id),
@@ -34,10 +34,13 @@ export default async function AdminUser({ params }: PageProps<"/[locale]/admin/u
     // id is a checked UUID, so it is safe inside this PostgREST filter string.
     supabase.from("connections").select("status").or(`student_id.eq.${id},agent_id.eq.${id}`),
   ]);
+  for (const read of [userRead, emailRead, connectionsRead]) if (read.error) throw read.error;
+  const { data: user } = userRead;
+  const { data: email } = emailRead;
   if (!user) return <p className="text-slate">{t("notFound")}</p>;
 
   const counts = (["pending", "accepted", "declined", "withdrawn"] as const).map(
-    (s) => [s, (connections ?? []).filter((c) => c.status === s).length] as const,
+    (s) => [s, (connectionsRead.data ?? []).filter((c) => c.status === s).length] as const,
   );
   const suspended = user.status === "suspended";
   const studentRows: [string, string][] = student

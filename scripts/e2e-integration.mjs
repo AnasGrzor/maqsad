@@ -44,6 +44,15 @@ check("admin approves the upgrade", !(await errorOf(admin.sb.rpc("decide_plan_re
 check("after the upgrade, the student can message", !(await errorOf(student.sb.rpc("send_message", { connection: conn, body: "Hello" }))));
 check("after the upgrade, fee records work", !(await errorOf(agent.sb.rpc("add_case_record", { target_case: caseId, kind: "fee_disclosed", summary: "Integration service fee", amount: 50000, currency: "PKR" }))));
 
+// Student Plus brings messaging to a connection with an Agent Basic agent.
+await agent2.sb.from("agent_profiles").upsert({ user_id: agent2.id, agency_name: "Basic Agency", kind: "education", destinations: ["GB"] });
+const { data: basicConn } = await agent2.sb.rpc("request_connection", { target: student.id });
+await student.sb.rpc("respond_connection", { connection: basicConn, accept: true });
+check("Agent Basic alone can't message", (await errorOf(agent2.sb.rpc("send_message", { connection: basicConn, body: "Hello" }))) === "plan_required");
+sql(`insert into public.subscriptions (user_id, plan_id) values ('${student.id}', 'student_plus')`);
+check("a Student Plus student can message an Agent Basic agent", !(await errorOf(student.sb.rpc("send_message", { connection: basicConn, body: "Hello" }))));
+sql(`delete from public.subscriptions where user_id = '${student.id}'`);
+
 // 2. Agent Basic gets a few checks a month.
 const { data: basicAllowance } = await agent2.sb.rpc("allowance", { kind: "verification_report" });
 check("Agent Basic includes 3 checks a month", basicAllowance?.plan === "agent_basic" && basicAllowance?.limit === 3, JSON.stringify(basicAllowance));

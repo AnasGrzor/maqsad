@@ -64,12 +64,14 @@ export async function listReports(ownerId: string): Promise<SavedReport[]> {
 export async function getReport(id: string): Promise<SavedReport | null> {
   if (!UUID.test(id)) return null;
   const supabase = await createClient();
-  const { data } = await supabase.from("verification_reports").select("*").eq("id", id).maybeSingle();
+  const { data, error } = await supabase.from("verification_reports").select("*").eq("id", id).maybeSingle();
+  if (error) throw error;
   return data ? toSaved(data) : null;
 }
 
 // Reports linked to a case. RLS returns only the caller's own (and all of them to admins).
 export async function reportsForCase(caseId: string): Promise<SavedReport[]> {
+  if (!UUID.test(caseId)) return [];
   const supabase = await createClient();
   const { data, error } = await supabase.from("verification_reports").select("*").eq("case_id", caseId).order("created_at", { ascending: false });
   if (error) throw error;

@@ -1,10 +1,10 @@
 import { PDFDocument } from "pdf-lib";
 import { getDomain, getDomainWithoutSuffix } from "tldts";
-import type { Extraction, Finding, FindingCode } from "./schema";
+import type { Extraction, Finding, FindingCode, Judgement } from "./schema";
 
 // Rule-based checks. The final risk level comes from scoring.ts, never from an LLM's
 // opinion, so text injected into a document cannot talk its way to "low risk".
-export { explainRisk, mergeFindings, riskLevel } from "./scoring.ts";
+export { mergeFindings, riskLevel } from "./scoring.ts";
 
 const PERSONAL_CHANNELS =
   /jazz\s*cash|easy\s*paisa|sada\s*pay|naya\s*pay|western\s*union|money\s*gram|\bria\b|crypto|bitcoin|usdt|binance|hawala|hundi|personal account/i;
@@ -244,7 +244,7 @@ export function checkFailed(check: CheckName, blocking = true): Finding {
 }
 
 // Levenshtein distance, for spotting one- or two-letter typos in domains.
-export function editDistance(a: string, b: string) {
+function editDistance(a: string, b: string) {
   let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
   for (let i = 1; i <= a.length; i++) {
     const cur = [i];
@@ -312,6 +312,17 @@ export function contactLookalikes(x: Extraction, contact: { url: string; email: 
     (f) => !flagged.has(f.params?.domain),
   );
 }
+
+// The judge model should copy the official contact from the research notes, but it can invent one,
+// and the verify email is sent to it. Keep it only when its page is in the notes and its email,
+// if any, is on that page's domain.
+export function officialContact(contact: Judgement["official_contact"] | null | undefined, notes: string) {
+  const site = contact?.url ? domainOf(contact.url) : "";
+  if (!contact || !site || !notes.includes(contact.url)) return null;
+  if (contact.email.trim() && domainOf(contact.email) !== site) return null;
+  return contact;
+}
+
 export async function pdfMetadataCheck(bytes: Uint8Array): Promise<Finding[]> {
   const pdf = await PDFDocument.load(bytes, { ignoreEncryption: true, updateMetadata: false });
   const tool = `${pdf.getProducer() ?? ""} ${pdf.getCreator() ?? ""}`.trim();
@@ -383,19 +394,32 @@ export async function domainAgeChecks(domains: string[]): Promise<Finding[]> {
 const UKVI_API = "https://www.gov.uk/api/content/government/publications/register-of-licensed-sponsors-students";
 let ukviCache: { at: number; names: string[]; url: string } | null = null;
 
+// A register that is down often answers with an HTML error page. Parsing and caching that would
+// make every issuer "not found" for a day, so a bad status or an empty list throws instead.
+async function fetchOk(url: string, ms: number) {
+  const res = await fetch(url, { signal: AbortSignal.timeout(ms) });
+  if (!res.ok) throw new Error(`${url} returned ${res.status}`);
+  return res;
+}
+
+function nonEmpty<T>(list: T[], what: string) {
+  if (!list.length) throw new Error(`${what} is empty`);
+  return list;
+}
+
 async function ukviSponsors() {
   if (ukviCache && Date.now() - ukviCache.at < 86_400_000) return ukviCache;
-  const meta = (await (await fetch(UKVI_API, { signal: AbortSignal.timeout(8000) })).json()) as {
+  const meta = (await (await fetchOk(UKVI_API, 8000)).json()) as {
     details: { attachments: { content_type: string; url: string }[] };
   };
   const url = meta.details.attachments.find((a) => a.content_type === "text/csv")!.url;
-  const csv = await (await fetch(url, { signal: AbortSignal.timeout(15000) })).text();
+  const csv = await (await fetchOk(url, 15000)).text();
   // Only the first column (sponsor name) is needed; it may be quoted and contain commas.
   const names = csv.split("\n").slice(1).map((line) => {
     const m = line.match(/^"([^"]*)"|^([^,]*)/);
     return (m?.[1] ?? m?.[2] ?? "").trim();
   }).filter(Boolean);
-  ukviCache = { at: Date.now(), names: [...new Set(names)], url };
+  ukviCache = { at: Date.now(), names: nonEmpty([...new Set(names)], "UKVI register"), url };
   return ukviCache;
 }
 
@@ -572,9 +596,8 @@ export function registerFindings(x: Extraction, reg: Register, lookupByName: boo
 const DLI_PAGE = "https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada/study-permit/prepare/designated-learning-institutions-list.html";
 const DLI_JSON = "https://www.canada.ca/content/dam/ircc/documents/json/dli/dli-full-list.json";
 const dliList = daily(async (): Promise<Listed[]> => {
-  const res = await fetch(DLI_JSON, { signal: AbortSignal.timeout(15000) });
-  const { data } = (await res.json()) as { data: Record<string, string>[] };
-  return data.map((r) => ({
+  const { data } = (await (await fetchOk(DLI_JSON, 15000)).json()) as { data: Record<string, string>[] };
+  return nonEmpty(data, "DLI list").map((r) => ({
     code: String(r["DLI #"] ?? "").trim().toUpperCase(),
     name: String(r.Institution ?? "").trim(),
     aliases: [],
@@ -586,9 +609,10 @@ const dliList = daily(async (): Promise<Listed[]> => {
 const CRICOS_PAGE = "https://data.gov.au/data/dataset/cricos";
 const CRICOS_CSV = "https://data.gov.au/data/dataset/e5ae7059-bfa8-4fa4-a5c0-c13cf3520193/resource/7f6941f3-5327-4db7-b556-5f16d77f63c1/download/cricos-institutions.csv";
 const cricosList = daily(async (): Promise<Listed[]> => {
-  const csv = await (await fetch(CRICOS_CSV, { signal: AbortSignal.timeout(15000) })).text();
+  const csv = await (await fetchOk(CRICOS_CSV, 15000)).text();
   // Columns: provider code, trading name, institution name, type, capacity, website, ...
-  return csv.replace(/^﻿/, "").split(/\r?\n/).slice(1).filter(Boolean).map(csvRow).map((c) => ({
+  const rows = csv.replace(/^﻿/, "").split(/\r?\n/).slice(1).filter(Boolean);
+  return nonEmpty(rows, "CRICOS register").map(csvRow).map((c) => ({
     code: c[0].trim().toUpperCase(),
     name: c[2]?.trim() ?? "",
     aliases: c[1]?.trim() ? [c[1].trim()] : [],
@@ -632,7 +656,7 @@ export function parsePkcert(html: string): FakeNotice[] {
 }
 
 const pkcertList = daily(async () =>
-  parsePkcert(await (await fetch(PKCERT_PAGE, { signal: AbortSignal.timeout(15000) })).text()),
+  nonEmpty(parsePkcert(await (await fetchOk(PKCERT_PAGE, 15000)).text()), "PKCERT list"),
 );
 
 const phoneDigits = (p: string) => p.replace(/\D/g, "").slice(-10);

@@ -3,7 +3,7 @@ import { PageHeading } from "@/components/feature-list";
 import { card, CredentialBadge } from "@/components/listings";
 import { ReviewForm } from "@/components/profile-forms";
 import { requireRole } from "@/lib/auth";
-import { credentialFileUrl, listCredentialsForReview, namesOf } from "@/lib/data";
+import { credentialFileUrls, listCredentialsForReview, namesOf } from "@/lib/data";
 
 export default async function CredentialReview() {
   await requireRole("admin");
@@ -14,10 +14,11 @@ export default async function CredentialReview() {
     getFormatter(),
     listCredentialsForReview(),
   ]);
-  const [names, files] = await Promise.all([
+  const [names, urls] = await Promise.all([
     namesOf([...new Set(credentials.map((c) => c.agent_id))]),
-    Promise.all(credentials.map((c) => (c.document_path ? credentialFileUrl(c.document_path) : null))),
+    credentialFileUrls(credentials.flatMap((c) => c.document_path ?? [])),
   ]);
+  const files = credentials.map((c) => (c.document_path && urls.get(c.document_path)) || null);
 
   return (
     <div className="space-y-6">

@@ -8,6 +8,7 @@ import {
   domainAgeChecks,
   domainOf,
   mergeFindings,
+  officialContact,
   pdfMetadataCheck,
   pkcertCheck,
   riskLevel,
@@ -133,17 +134,24 @@ export async function POST(req: Request) {
           warnings.push("The written summary could not be generated. The checks below are still valid.");
           findings.push(checkFailed("summary"));
         }
+        // The judge may cite pages it never saw: only sources the research notes contain are kept,
+        // and a "verified" web finding left without one does not count toward "low" (scoring.ts).
+        const contact = officialContact(judgement?.official_contact, notes);
         const merged = mergeFindings([
           ...findings,
-          ...(judgement?.findings ?? []).map((f) => ({ ...f, origin: "web" as const })),
-          ...contactLookalikes(x, judgement?.official_contact, findings),
+          ...(judgement?.findings ?? []).map((f) => ({
+            ...f,
+            sources: f.sources.filter((s) => s && notes.includes(s)),
+            origin: "web" as const,
+          })),
+          ...contactLookalikes(x, contact, findings),
         ]);
 
         const report: Report = {
           risk: riskLevel(merged, warnings.length === 0),
           extraction: x,
           findings: merged,
-          official_contact: judgement?.official_contact ?? null,
+          official_contact: contact,
           summary_en: judgement?.summary_en ?? "",
           summary_ur: judgement?.summary_ur ?? "",
           warnings,

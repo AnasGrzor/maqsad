@@ -16,14 +16,15 @@ const resetData = () => {
   sql(`delete from public.subscription_requests where user_id in (${ids})`);
   sql(`delete from public.subscriptions where user_id in (${ids})`);
 };
-// Seed values from the migrations (Agent Basic's 3 checks come from 20261019000005_integration.sql),
+// Seed values from the migrations (Agent Basic's 3 checks come from 20261019000005_integration.sql, prices from
+// 20261019000008_plan_prices.sql),
 // so a failed earlier run doesn't leak into this one.
 // (One line: on Windows the shell would cut the command at a newline.)
 const resetPlans = () =>
   sql(
     "update public.plans p set offered=v.o, price_monthly_pkr=v.price, verification_reports_per_month=v.r " +
-      "from (values ('student_free',true,0,3),('student_plus',false,null::int,20),('agent_basic',true,null,3)," +
-      "('agent_professional',true,null,30),('agency',false,null,null)) v(id,o,price,r) where p.id=v.id",
+      "from (values ('student_free',true,0,3),('student_plus',false,5000,20),('agent_basic',true,10000,3)," +
+      "('agent_professional',true,25000,30),('agency',false,50000,null)) v(id,o,price,r) where p.id=v.id",
   );
 resetData();
 resetPlans();
@@ -40,7 +41,12 @@ check("visitors can't update plans directly", !!(await errorOf(anonClient().from
 check("users can't insert plans", !!(await errorOf(student.sb.from("plans").insert({ id: "free_for_me", audience: "student", offered: true }))));
 check("update_plan refuses non-admins", (await rpc(student, "update_plan", { plan: "student_plus", price: 1, reports: 999, is_offered: true })) === "forbidden");
 check("update_plan refuses visitors", !!(await errorOf(anonClient().rpc("update_plan", { plan: "student_plus", price: 1, reports: 999, is_offered: true }))));
+const planAudits = async () => (await admin.sb.from("audit_log").select("id", { count: "exact", head: true }).eq("action", "plan.update").eq("target_id", "student_plus")).count;
+const auditsBefore = await planAudits();
 check("admin edits a plan", !(await rpc(admin, "update_plan", { plan: "student_plus", price: null, reports: 20, is_offered: true })));
+check("saving the same values again", !(await rpc(admin, "update_plan", { plan: "student_plus", price: null, reports: 20, is_offered: true })));
+const auditsAfter = await planAudits();
+check("only the real change is audited", auditsAfter - auditsBefore === 1, `added=${auditsAfter - auditsBefore}`);
 
 // 2. Subscriptions and usage can't be written by users.
 check("users can't grant themselves a plan", !!(await errorOf(student.sb.from("subscriptions").insert({ user_id: student.id, plan_id: "student_plus" }))));

@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
 
 const intl = createMiddleware(routing);
-const DASHBOARD = /^\/(en|ur)\/(student|agent|admin)(\/|$)/;
+const DASHBOARD = new RegExp(`^/(${routing.locales.join("|")})/(student|agent|admin)(/|$)`);
 
 // Adds the locale prefix and refreshes the Supabase session cookie.
 // The redirect below only saves a round trip; dashboards check the role on the server (src/lib/auth.ts).

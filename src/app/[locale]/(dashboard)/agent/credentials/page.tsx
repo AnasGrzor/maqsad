@@ -3,7 +3,7 @@ import { PageHeading } from "@/components/feature-list";
 import { card, CredentialBadge } from "@/components/listings";
 import { CredentialForm } from "@/components/profile-forms";
 import { requireRole } from "@/lib/auth";
-import { credentialFileUrl, listOwnCredentials } from "@/lib/data";
+import { credentialFileUrls, listOwnCredentials } from "@/lib/data";
 
 export default async function Credentials() {
   const user = await requireRole("agent");
@@ -13,7 +13,8 @@ export default async function Credentials() {
     getFormatter(),
     listOwnCredentials(user.id),
   ]);
-  const files = await Promise.all(credentials.map((c) => (c.document_path ? credentialFileUrl(c.document_path) : null)));
+  const urls = await credentialFileUrls(credentials.flatMap((c) => c.document_path ?? []));
+  const files = credentials.map((c) => (c.document_path && urls.get(c.document_path)) || null);
 
   return (
     <div className="space-y-8">

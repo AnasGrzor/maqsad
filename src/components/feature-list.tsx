@@ -1,15 +1,13 @@
 import { useTranslations } from "next-intl";
 import { FEATURES, type Feature } from "@/lib/features";
 
+// Only unbuilt features get a badge; working ones need no label.
 export function StatusBadge({ available }: { available: boolean }) {
   const t = useTranslations("status");
+  if (available) return null;
   return (
-    <span
-      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-        available ? "bg-mint text-navy-900" : "bg-fog text-slate"
-      }`}
-    >
-      {available ? t("available") : t("soon")}
+    <span className="inline-flex shrink-0 items-center rounded-full bg-fog px-2.5 py-0.5 text-xs font-medium text-slate">
+      {t("soon")}
     </span>
   );
 }

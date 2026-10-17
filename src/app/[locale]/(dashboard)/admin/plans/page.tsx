@@ -20,12 +20,14 @@ export default async function AdminPlans() {
   ]);
   const ids = [...new Set(requests.map((r) => r.user_id))];
   // Admin-only rows under RLS (is_admin()); decide_plan_request() checks the role again.
-  const [{ data: people }, { data: subs }] = ids.length
+  const [{ data: people, error }, { data: subs, error: subsError }] = ids.length
     ? await Promise.all([
         supabase.from("profiles").select("id, display_name, role").in("id", ids),
         supabase.from("subscriptions").select("user_id, plan_id").in("user_id", ids),
       ])
-    : [{ data: [] }, { data: [] }];
+    : [{ data: [], error: null }, { data: [], error: null }];
+  if (error) throw error;
+  if (subsError) throw subsError;
   const person = new Map((people ?? []).map((x) => [x.id, x]));
   const current = new Map((subs ?? []).map((s) => [s.user_id, s.plan_id]));
   const name = (id: string) => (p.has(id as "agency") ? p(id as "agency") : id);

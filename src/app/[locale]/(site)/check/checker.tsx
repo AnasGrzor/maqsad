@@ -74,6 +74,8 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
       }
       const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
       let buffer = "";
+      // The stream can end without a result, e.g. when the function hits its time limit.
+      let finished = false;
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -84,12 +86,17 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
           const ev = JSON.parse(line) as StreamEvent;
           if (ev.type === "step") setSteps((s) => [...s, ev.label]);
           if (ev.type === "result") {
+            finished = true;
             setReport(ev.report);
             setSaved(ev.saved);
           }
-          if (ev.type === "error") setError(ev.message);
+          if (ev.type === "error") {
+            finished = true;
+            setError(ev.message);
+          }
         }
       }
+      if (!finished) setError(t("genericError"));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("genericError"));
     } finally {

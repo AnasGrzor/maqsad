@@ -9,6 +9,7 @@ import {
   domainOf,
   matchSponsor,
   mergeFindings,
+  officialContact,
   parsePkcert,
   pdfMetadataCheck,
   pkcertFindings,
@@ -217,4 +218,32 @@ test("PKCERT: a shared domain or the same subject is a red flag; the org name al
   const same = pkcertFindings({ ...base, doc_type: "job_offer", programme_or_position: "relief allowance" }, notices);
   assert.equal(same[0].topic, "scam_reports");
   assert.deepEqual(pkcertFindings({ ...base, programme_or_position: "Allowance" }, notices), []);
+});
+
+test("a register outage rejects instead of caching an error page, and the next check retries", async () => {
+  const realFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls++;
+    return new Response("<html>Service Unavailable</html>", { status: 503 });
+  };
+  try {
+    const x = { ...base, reference_numbers: [{ kind: "dli", value: "O123456789012" }] };
+    await assert.rejects(dliCheck(x), /503/);
+    await assert.rejects(dliCheck(x), /503/);
+    assert.equal(calls, 2);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+test("official contact is kept only when the notes contain its page and the email is on that domain", () => {
+  const contact = { name: "Admissions", email: "intl@manchester.ac.uk", phone: "", url: "https://www.manchester.ac.uk/study/" };
+  const notes = "Found on https://www.manchester.ac.uk/study/ : email intl@manchester.ac.uk";
+  assert.equal(officialContact(contact, notes), contact);
+  assert.equal(officialContact(contact, "no pages found"), null);
+  assert.equal(officialContact({ ...contact, email: "admissions@manchester-uni.com" }, notes), null);
+  assert.equal(officialContact({ ...contact, email: "" }, notes).url, contact.url);
+  assert.equal(officialContact({ ...contact, url: "" }, notes), null);
+  assert.equal(officialContact(null, notes), null);
 });

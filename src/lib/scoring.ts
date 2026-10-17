@@ -4,12 +4,14 @@ import type { Finding, RiskLevel } from "./schema";
 // (through its findings) but never sets, lowers or explains away the risk.
 
 // "low" needs every check to have run and at least one fact confirmed by an official
-// source; otherwise a document that was barely checked would look safe.
+// source; otherwise a document that was barely checked would look safe. A model's "verified"
+// finding counts only if it cites a source the research found, so a model can't make a report "low".
 export function riskLevel(findings: Finding[], allChecksRan: boolean): RiskLevel {
   const flags = findings.filter((f) => f.status === "red_flag");
   if (flags.some((f) => f.severity === "high")) return "high";
   if (flags.some((f) => f.severity === "medium")) return "medium";
-  if (!allChecksRan || !findings.some((f) => f.status === "verified")) return "incomplete";
+  const confirmed = findings.some((f) => f.status === "verified" && (f.origin !== "web" || f.sources.length > 0));
+  if (!allChecksRan || !confirmed) return "incomplete";
   return "low";
 }
 

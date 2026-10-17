@@ -17,7 +17,6 @@ const verified = f("verified", "low", "Listed on the register");
 test("checks.ts still exports the scoring functions", () => {
   assert.equal(checks.riskLevel, riskLevel);
   assert.equal(checks.mergeFindings, mergeFindings);
-  assert.equal(checks.explainRisk, explainRisk);
 });
 
 test("high risk cites the serious red flags and counts them", () => {
@@ -82,4 +81,10 @@ test("every explanation renders in English and Urdu", () => {
     }
     if (locale === "en") assert.match(t("high_flags", { count: 2 }), /^High risk because 2 serious red flags/);
   }
+});
+
+test("a model's verified finding without a source can't make a report low", () => {
+  const web = { ...verified, origin: "web" };
+  assert.equal(riskLevel([web], true), "incomplete");
+  assert.equal(riskLevel([{ ...web, sources: ["https://www.gov.uk/student-visa"] }], true), "low");
 });

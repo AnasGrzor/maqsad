@@ -5,7 +5,8 @@ alter table public.verification_reports
 create index on public.verification_reports (case_id);
 
 -- Owners attach a report to one of their own applications, or detach it with null. The link stays private to the
--- owner: reports are saved with the student's own session, so the other party must not treat them as verified.
+-- owner: a report records the student's own check (the server saves it, see 20261019000007_server_saved_reports.sql),
+-- so the other party must not treat it as verified.
 create function public.link_report(report uuid, target_case uuid)
 returns void
 language plpgsql
