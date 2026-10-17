@@ -62,7 +62,8 @@ function NavItems({ role, pathname }: { role: Role; pathname: string }) {
           {FEATURES[feature] ? (
             <Link
               href={href}
-              aria-current={pathname === href ? "page" : undefined}
+              // Overview (/role) matches only itself; other items also cover their nested pages.
+              aria-current={pathname === href || (href !== `/${role}` && pathname.startsWith(`${href}/`)) ? "page" : undefined}
               className={`flex min-h-10 items-center rounded-xl px-3 text-sm transition-colors hover:bg-lavender-100 aria-[current=page]:bg-navy-900 aria-[current=page]:text-ice ${focusRing}`}
             >
               {t(`nav.${key}`)}

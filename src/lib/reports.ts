@@ -4,10 +4,12 @@ import { UUID } from "./data";
 import { fromRow, toRow, type ReportRow } from "./report-row";
 import type { Report } from "./schema";
 import type { Json } from "./supabase/database.types";
+import { createAdminClient } from "./supabase/admin";
 import { createClient } from "./supabase/server";
 
-// Saved verification reports. Every query runs as the signed-in user, so RLS decides: students
-// insert and delete their own, owners and admins read, nobody updates.
+// Saved verification reports. Reads and deletes run as the signed-in user, so RLS decides: owners and
+// admins read, owners delete, nobody updates. Inserts happen only here, with the server key, so a report
+// in the table is always one this server produced.
 
 export type SavedReport = { id: string; created_at: string; owner_id: string; case_id: string | null; report: Report };
 
@@ -18,8 +20,8 @@ export async function saveReport(report: Report): Promise<string | null> {
     const user = await getCurrentUser();
     if (!user?.active || user.role !== "student") return null;
     const row = toRow(report);
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    // The owner is the user checked above, never a value from the request.
+    const { data, error } = await createAdminClient()
       .from("verification_reports")
       .insert({
         ...row,

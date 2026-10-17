@@ -4,7 +4,7 @@
 // The checks that call /api/analyze need the dev server in test mode (MOCK_AI=1, `next dev`), so they only
 // run with E2E_MOCK=1. Without it the script never calls the checker, because a production server would
 // spend real Gemini and Groq quota; it inserts a report the way the API does (as the signed-in student).
-import { anonClient, APP, check, ensureUser, finish, get, session, sql } from "./e2e-lib.mjs";
+import { anonClient, APP, check, ensureUser, finish, get, serviceClient, session, sql } from "./e2e-lib.mjs";
 
 const MOCK = process.env.E2E_MOCK === "1";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -64,7 +64,8 @@ if (MOCK) {
   check("still exactly one report in total from these checks", countOf() === before);
 } else {
   console.log("SKIP API checks (set E2E_MOCK=1 against `next dev` with MOCK_AI=1 to run them)");
-  const { data, error } = await student.sb
+  // Saved like the API does: by the server, with the secret key.
+  const { data, error } = await serviceClient()
     .from("verification_reports")
     .insert({
       owner_id: student.id,
@@ -102,6 +103,7 @@ for (const [who, u] of [["another student", other], ["an agent", agent], ["an ad
   check(`${who} can't delete it`, countOf(`id='${id}'`) === 1);
 }
 const row = { doc_type: "other", risk: "low", findings: [], warnings: [] };
+check("students can't insert reports directly, even for themselves", !!(await errorOf(student.sb.from("verification_reports").insert({ ...row, owner_id: student.id }))));
 check("a student can't save a report into someone else's account", !!(await errorOf(student.sb.from("verification_reports").insert({ ...row, owner_id: other.id }))));
 check("users can't set case_id themselves", !!(await errorOf(student.sb.from("verification_reports").insert({ ...row, owner_id: student.id, case_id: other.id }))));
 check("agents can't save reports", !!(await errorOf(agent.sb.from("verification_reports").insert({ ...row, owner_id: agent.id }))));

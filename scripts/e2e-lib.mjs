@@ -20,6 +20,10 @@ export function finish() {
 
 export const sql = (q) => execSync(`docker exec supabase_db_bluegill psql -U postgres -tAc "${q}"`).toString().trim();
 
+// The server key bypasses RLS, like the app's src/lib/supabase/admin.ts. Use it only to set up test data the app
+// itself writes with that key (saved reports).
+export const serviceClient = () => createClient(URL, process.env.SUPABASE_SECRET_KEY, { auth: { persistSession: false } });
+
 // A client with no session. signUp() signs a client in, so make a fresh one per use.
 export const anonClient = () => createClient(URL, KEY, { auth: { persistSession: false } });
 

@@ -1,6 +1,6 @@
 // End-to-end checks for the pieces wired together after the parallel milestones were merged:
 // plan gating on cases and messages, admin handling of disputes, audit entries, and suspended accounts.
-import { check, ensureUser, finish, get, session, sql } from "./e2e-lib.mjs";
+import { check, ensureUser, finish, get, serviceClient, session, sql } from "./e2e-lib.mjs";
 
 await ensureUser("int-student@maqsad.test", "student", "Integration Student");
 await ensureUser("int-agent@maqsad.test", "agent", "Integration Agency");
@@ -72,7 +72,9 @@ check("granting the plan is audited", actions.includes("subscription.grant"));
 check("users can't read the audit log", ((await student.sb.from("audit_log").select("id")).data ?? []).length === 0);
 
 // 5. Saved reports linked to applications stay private to their owner.
-const { data: report, error: saveErr } = await student.sb
+// Saved the way the server does it (secret key); users can't insert reports themselves.
+check("students can't insert reports directly", !!(await errorOf(student.sb.from("verification_reports").insert({ owner_id: student.id, doc_type: "other", risk: "low" }))));
+const { data: report, error: saveErr } = await serviceClient()
   .from("verification_reports")
   .insert({ owner_id: student.id, doc_type: "university_offer", issuer_name: "Integration University", risk: "medium", findings: [], warnings: [] })
   .select("id")
