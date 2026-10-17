@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import type { Extraction, Finding, Report, StreamEvent } from "@/lib/schema";
 import { ActionPlan } from "./action-plan";
@@ -10,61 +11,25 @@ type Mode = "file" | "text";
 type Severity = Finding["severity"];
 
 const RISK = {
-  high: {
-    title: "High risk",
-    advice: "Do not pay anything yet.",
-    tone: "bg-danger-bg text-danger ring-1 ring-danger/15",
-    mark: "!",
-    markTone: "bg-danger text-white",
-  },
-  medium: {
-    title: "Some concerns",
-    advice: "Verify with the issuer before paying.",
-    tone: "bg-lemon text-navy-900",
-    mark: "!",
-    markTone: "bg-navy-900 text-lemon",
-  },
-  low: {
-    title: "No red flags found",
-    advice: "Still confirm with the issuer before paying.",
-    tone: "bg-mint text-navy-900",
-    mark: "✓",
-    markTone: "bg-navy-900 text-mint",
-  },
-  incomplete: {
-    title: "Checks incomplete",
-    advice: "Confirm with the issuer before paying.",
-    tone: "bg-fog text-navy-900",
-    mark: "?",
-    markTone: "bg-slate text-white",
-  },
+  high: { tone: "bg-danger-bg text-danger ring-1 ring-danger/15", mark: "!", markTone: "bg-danger text-white" },
+  medium: { tone: "bg-lemon text-navy-900", mark: "!", markTone: "bg-navy-900 text-lemon" },
+  low: { tone: "bg-mint text-navy-900", mark: "✓", markTone: "bg-navy-900 text-mint" },
+  incomplete: { tone: "bg-fog text-navy-900", mark: "?", markTone: "bg-slate text-white" },
 } as const;
 
-const SEVERITY: Record<Severity, { label: string; short: string; chip: string }> = {
-  high: { label: "Serious red flags", short: "serious", chip: "bg-danger text-white" },
-  medium: { label: "Warning signs", short: "warning", chip: "bg-lemon text-navy-900" },
-  low: { label: "Minor concerns", short: "minor", chip: "bg-fog text-navy-900" },
+const SEVERITY_CHIP: Record<Severity, string> = {
+  high: "bg-danger text-white",
+  medium: "bg-lemon text-navy-900",
+  low: "bg-fog text-navy-900",
 };
 const SEVERITY_ORDER: Severity[] = ["high", "medium", "low"];
 
 const MAX_BYTES = 4 * 1024 * 1024;
 
-const ORIGIN = { rules: "Rule check", registry: "Official register", web: "Web search" } as const;
-
-const DOC_TYPE: Record<Extraction["doc_type"], string> = {
-  university_offer: "University offer",
-  scholarship_offer: "Scholarship offer",
-  agent_message: "Agent message",
-  visa_letter: "Visa letter",
-  degree_or_transcript: "Degree or transcript",
-  job_offer: "Job offer",
-  internship: "Internship",
-  other: "Other",
-};
-
 const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-800";
 
-export default function Home() {
+export function Checker() {
+  const t = useTranslations("checker");
   const [mode, setMode] = useState<Mode>("file");
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
@@ -79,7 +44,7 @@ export default function Home() {
 
   function pick(f: File | null) {
     const tooBig = !!f && f.size > MAX_BYTES;
-    setError(tooBig ? "This file is larger than 4 MB. Take a smaller photo or a screenshot of the letter." : "");
+    setError(tooBig ? t("tooBig") : "");
     setFile(tooBig ? null : f);
   }
 
@@ -98,7 +63,7 @@ export default function Home() {
     setError("");
     setReport(null);
     setSteps([]);
-    setSubject(mode === "file" && file ? file.name : "Pasted message");
+    setSubject(mode === "file" && file ? file.name : t("pasted"));
 
     const body = new FormData();
     if (mode === "file" && file) body.append("file", file);
@@ -108,7 +73,7 @@ export default function Home() {
       const res = await fetch("/api/analyze", { method: "POST", body });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? "Something went wrong. Please try again.");
+        throw new Error(data.error ?? t("genericError"));
       }
       const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
       let buffer = "";
@@ -126,36 +91,29 @@ export default function Home() {
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : t("genericError"));
     } finally {
       setRunning(false);
     }
   }
 
   return (
-    <>
-      <header className="bg-navy-900 text-ice">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 lg:px-8">
-          <p className="text-lg font-semibold tracking-tight">Tasdeeq</p>
-          <p lang="ur" dir="rtl" className="font-urdu text-lg leading-[1.8] text-mist">
-            تصدیق
-          </p>
-        </div>
-      </header>
-
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-8 pb-16 sm:pt-12 lg:px-8">
+    <div>
         {report ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-lavender-100 py-3 pr-3 pl-5 ring-1 ring-lavender-200">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-lavender-100 py-3 ps-5 pe-3 ring-1 ring-lavender-200">
               <h1 className="min-w-0 text-sm text-slate">
-                Report for <span className="font-medium break-all text-navy-900">{subject}</span>
+                {t.rich("reportFor", {
+                  subject,
+                  b: (chunks) => <span className="font-medium break-all text-navy-900">{chunks}</span>,
+                })}
               </h1>
               <button
                 type="button"
                 onClick={reset}
                 className={`min-h-10 rounded-full bg-navy-900 px-4 text-sm font-medium text-ice transition-[background-color,transform] duration-100 hover:bg-navy-800 active:scale-[0.97] ${focusRing}`}
               >
-                Check another document
+                {t("another")}
               </button>
             </div>
             <ReportView report={report} />
@@ -164,23 +122,22 @@ export default function Home() {
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
             <div className="min-w-0">
               <h1 className="max-w-[22ch] text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-                Check a document before you pay anyone
+                {t("title")}
               </h1>
               <p className="mt-4 max-w-[62ch] text-pretty text-slate sm:text-lg">
-                Upload a university offer, scholarship or job offer, visa letter, degree, or paste an agent&apos;s
-                WhatsApp message. We check it against official registers and sources and show you the evidence.
+                {t("intro")}
               </p>
 
               <form onSubmit={submit} className="mt-8 rounded-2xl bg-lavender-100 p-4 ring-1 ring-lavender-200 sm:p-6">
                 <div
                   role="group"
-                  aria-label="Input type"
+                  aria-label={t("inputType")}
                   className="relative grid w-full grid-cols-2 rounded-full bg-lavender-200 p-1 sm:w-80"
                 >
                   <span
                     aria-hidden
-                    className={`absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-navy-900 shadow-[0_1px_3px_rgb(22_46_72/0.25)] transition-transform duration-250 ease-out-quart motion-reduce:transition-none ${
-                      mode === "text" ? "translate-x-full" : ""
+                    className={`absolute inset-y-1 start-1 w-[calc(50%-0.25rem)] rounded-full bg-navy-900 shadow-[0_1px_3px_rgb(22_46_72/0.25)] transition-transform duration-250 ease-out-quart motion-reduce:transition-none ${
+                      mode === "text" ? "translate-x-full rtl:-translate-x-full" : ""
                     }`}
                   />
                   {(["file", "text"] as const).map((m) => (
@@ -193,7 +150,7 @@ export default function Home() {
                         mode === m ? "text-ice" : "text-navy-800 hover:text-navy-900"
                       }`}
                     >
-                      {m === "file" ? "Upload a file" : "Paste a message"}
+                      {m === "file" ? t("modeFile") : t("modeText")}
                     </button>
                   ))}
                 </div>
@@ -209,7 +166,11 @@ export default function Home() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-medium">{file.name}</p>
-                        <p className="text-sm text-slate">{formatSize(file.size)}</p>
+                        <p className="text-sm text-slate">
+                          {file.size < 1024 * 1024
+                            ? t("kb", { n: Math.max(1, Math.round(file.size / 1024)) })
+                            : t("mb", { n: (file.size / 1024 / 1024).toFixed(1) })}
+                        </p>
                       </div>
                       <button
                         type="button"
@@ -217,7 +178,7 @@ export default function Home() {
                         disabled={running}
                         className={`min-h-10 rounded-full px-3 text-sm font-medium text-slate transition-colors hover:bg-lavender-100 hover:text-navy-900 disabled:opacity-50 ${focusRing}`}
                       >
-                        Remove
+                        {t("remove")}
                       </button>
                     </div>
                   ) : (
@@ -248,20 +209,20 @@ export default function Home() {
                         onChange={(e) => pick(e.target.files?.[0] ?? null)}
                       />
                       <span className="font-medium">
-                        {dragging ? "Drop to add it" : "Choose a PDF or photo, or drop it here"}
+                        {dragging ? t("drop") : t("choose")}
                       </span>
-                      <span className="mt-1 text-sm text-slate">PDF, JPG, PNG or WebP, up to 4 MB</span>
+                      <span className="mt-1 text-sm text-slate">{t("fileHint")}</span>
                     </label>
                   )
                 ) : (
                   <label className="mt-5 block">
-                    <span className="sr-only">Message text</span>
+                    <span className="sr-only">{t("messageLabel")}</span>
                     <textarea
                       value={text}
                       onChange={(e) => setText(e.target.value)}
                       rows={8}
                       maxLength={20000}
-                      placeholder="Paste the WhatsApp message or email here, including the sender's number or email address."
+                      placeholder={t("messagePlaceholder")}
                       className="block w-full resize-y rounded-xl border border-mist bg-card p-4 leading-relaxed placeholder:text-slate focus:border-navy-800 focus:ring-1 focus:ring-navy-800 focus:outline-none"
                     />
                   </label>
@@ -269,7 +230,7 @@ export default function Home() {
 
                 <div className="mt-5 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-slate sm:max-w-[40ch]">
-                    Your document is sent to Google Gemini and Groq for analysis. We don&apos;t store it.
+                    {t("privacy")}
                   </p>
                   <button
                     type="submit"
@@ -280,7 +241,7 @@ export default function Home() {
                     } ${focusRing}`}
                   >
                     {running && <Spinner />}
-                    {running ? "Checking…" : "Check document"}
+                    {running ? t("checking") : t("submit")}
                   </button>
                 </div>
               </form>
@@ -298,13 +259,13 @@ export default function Home() {
             <aside className="lg:sticky lg:top-6">
               {running ? (
                 <section
-                  aria-label="Progress"
+                  aria-label={t("progress")}
                   className="rounded-2xl bg-card p-5 ring-1 ring-fog motion-safe:animate-rise sm:p-6"
                 >
-                  <h2 className="font-semibold">Checking your document</h2>
-                  <p className="mt-1 text-sm text-slate">This usually takes under a minute.</p>
+                  <h2 className="font-semibold">{t("progressTitle")}</h2>
+                  <p className="mt-1 text-sm text-slate">{t("progressHint")}</p>
                   <ol aria-live="polite" className="mt-4 space-y-3">
-                    {(steps.length ? steps : ["Starting"]).map((s, i, all) => {
+                    {(steps.length ? steps : [t("starting")]).map((s, i, all) => {
                       const current = i === all.length - 1;
                       return (
                         <li key={s} className="flex items-center gap-3 text-sm">
@@ -318,7 +279,7 @@ export default function Home() {
                               ✓
                             </span>
                           )}
-                          <span className={current ? "font-medium" : "text-slate"}>{s}</span>
+                          <span dir="auto" className={current ? "font-medium" : "text-slate"}>{s}</span>
                         </li>
                       );
                     })}
@@ -330,19 +291,13 @@ export default function Home() {
             </aside>
           </div>
         )}
-      </main>
-
-      <footer className="border-t border-fog">
-        <p className="mx-auto max-w-6xl px-4 py-6 text-sm text-slate lg:px-8">
-          Tasdeeq flags risks. It cannot prove a document is genuine. Always confirm with the issuer through contact
-          details you find on their official website, never the ones in the document.
-        </p>
-      </footer>
-    </>
+    </div>
   );
 }
 
 function ReportView({ report }: { report: Report }) {
+  const t = useTranslations("checker");
+  const locale = useLocale();
   const heading = useRef<HTMLHeadingElement>(null);
   // Move focus to the verdict so keyboard and screen-reader users land on it.
   useEffect(() => heading.current?.focus(), []);
@@ -356,7 +311,7 @@ function ReportView({ report }: { report: Report }) {
 
   return (
     <div className="mt-6 grid items-start gap-8 motion-safe:animate-rise lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
-      <section aria-label="Report" className="min-w-0 space-y-8">
+      <section aria-label={t("report")} className="min-w-0 space-y-8">
         <div className={`rounded-2xl p-5 sm:p-6 ${risk.tone}`}>
           <div className="flex gap-4">
             <span
@@ -367,35 +322,35 @@ function ReportView({ report }: { report: Report }) {
             </span>
             <div className="min-w-0">
               <h2 ref={heading} tabIndex={-1} className="text-2xl font-semibold tracking-tight focus:outline-none">
-                {risk.title}
+                {t(`risk.${report.risk}.title`)}
               </h2>
-              <p className="mt-0.5 text-lg font-medium">{risk.advice}</p>
+              <p className="mt-0.5 text-lg font-medium">{t(`risk.${report.risk}.advice`)}</p>
               {report.extraction.issuer_name && (
-                <p className="mt-1 text-sm opacity-85">Issued in the name of {report.extraction.issuer_name}</p>
+                <p className="mt-1 text-sm opacity-85">{t("issuedBy", { issuer: report.extraction.issuer_name })}</p>
               )}
             </div>
           </div>
 
           {(flags.length > 0 || confirmed.length > 0) && (
-            <ul aria-label="Totals" className="mt-5 flex flex-wrap gap-2 text-sm text-navy-900">
+            <ul aria-label={t("totals")} className="mt-5 flex flex-wrap gap-2 text-sm text-navy-900">
               {bySeverity.map(([s, items]) =>
                 items.length ? (
-                  <li key={s} className="inline-flex items-center gap-2 rounded-full bg-white/70 py-1 pr-3 pl-1">
+                  <li key={s} className="inline-flex items-center gap-2 rounded-full bg-white/70 py-1 ps-1 pe-3">
                     <span
-                      className={`min-w-6 rounded-full px-1.5 text-center text-xs font-semibold tabular-nums ${SEVERITY[s].chip}`}
+                      className={`min-w-6 rounded-full px-1.5 text-center text-xs font-semibold tabular-nums ${SEVERITY_CHIP[s]}`}
                     >
                       {items.length}
                     </span>
-                    {SEVERITY[s].short}
+                    {t(`severity.${s}.short`)}
                   </li>
                 ) : null,
               )}
               {confirmed.length > 0 && (
-                <li className="inline-flex items-center gap-2 rounded-full bg-white/70 py-1 pr-3 pl-1">
+                <li className="inline-flex items-center gap-2 rounded-full bg-white/70 py-1 ps-1 pe-3">
                   <span className="min-w-6 rounded-full bg-mint px-1.5 text-center text-xs font-semibold tabular-nums">
                     {confirmed.length}
                   </span>
-                  confirmed
+                  {t("confirmedShort")}
                 </li>
               )}
             </ul>
@@ -403,8 +358,8 @@ function ReportView({ report }: { report: Report }) {
 
           {reasons.length > 0 && (
             <div className="mt-5 border-t border-current/15 pt-4">
-              <h3 className="text-sm font-semibold">Main reasons</h3>
-              <ul className="mt-2 space-y-1.5">
+              <h3 className="text-sm font-semibold">{t("mainReasons")}</h3>
+              <ul lang="en" dir="ltr" className="mt-2 space-y-1.5">
                 {reasons.map((f, i) => (
                   <li key={i} className="flex gap-2.5">
                     <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-current" />
@@ -418,7 +373,8 @@ function ReportView({ report }: { report: Report }) {
 
         {(report.summary_en || report.summary_ur) && (
           <div className="grid gap-5 rounded-2xl bg-card p-5 ring-1 ring-fog sm:p-6">
-            {report.summary_en && <p className="max-w-[68ch] leading-relaxed text-pretty">{report.summary_en}</p>}
+            {report.summary_en && <p lang="en" dir="ltr" className="max-w-[68ch] leading-relaxed text-pretty">{report.summary_en}</p>}
+            {locale !== "en" && <p className="text-sm text-slate">{t("summaryNote")}</p>}
             {report.summary_ur && (
               <p lang="ur" dir="rtl" className="border-t border-fog pt-5 font-urdu text-lg leading-[2.4]">
                 {report.summary_ur}
@@ -438,9 +394,9 @@ function ReportView({ report }: { report: Report }) {
           items.length ? (
             <Group
               key={s}
-              title={SEVERITY[s].label}
+              title={t(`severity.${s}.label`)}
               count={items.length}
-              chip={SEVERITY[s].chip}
+              chip={SEVERITY_CHIP[s]}
               collapsed={s === "low"}
             >
               <ul className="divide-y divide-fog overflow-hidden rounded-2xl bg-card ring-1 ring-fog">
@@ -453,7 +409,7 @@ function ReportView({ report }: { report: Report }) {
         )}
 
         {confirmed.length > 0 && (
-          <Group title="Confirmed by official sources" count={confirmed.length} chip="bg-mint text-navy-900">
+          <Group title={t("confirmedGroup")} count={confirmed.length} chip="bg-mint text-navy-900">
             <ul className="divide-y divide-mint overflow-hidden rounded-2xl bg-mint-soft ring-1 ring-mint">
               {confirmed.map((f, i) => (
                 <FindingRow key={i} f={f} />
@@ -463,7 +419,7 @@ function ReportView({ report }: { report: Report }) {
         )}
 
         {unchecked.length > 0 && (
-          <Group title="Could not check" count={unchecked.length} chip="bg-fog text-navy-900" collapsed>
+          <Group title={t("uncheckedGroup")} count={unchecked.length} chip="bg-fog text-navy-900" collapsed>
             <ul className="divide-y divide-fog overflow-hidden rounded-2xl bg-card ring-1 ring-fog">
               {unchecked.map((f, i) => (
                 <FindingRow key={i} f={f} />
@@ -485,8 +441,8 @@ function ReportView({ report }: { report: Report }) {
 
         {report.warnings.length > 0 && (
           <div className="rounded-2xl bg-lemon-soft p-5 ring-1 ring-lemon">
-            <h3 className="text-sm font-semibold">Notes about this check</h3>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-navy-800">
+            <h3 className="text-sm font-semibold">{t("notes")}</h3>
+            <ul lang="en" dir="ltr" className="mt-2 list-disc space-y-1 ps-5 text-sm text-navy-800">
               {report.warnings.map((w) => (
                 <li key={w}>{w}</li>
               ))}
@@ -498,7 +454,7 @@ function ReportView({ report }: { report: Report }) {
           <summary
             className={`flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 font-medium sm:px-6 [&::-webkit-details-marker]:hidden ${focusRing}`}
           >
-            What we read from the document
+            {t("extracted")}
             <Chevron />
           </summary>
           <ExtractionList x={report.extraction} />
@@ -509,62 +465,45 @@ function ReportView({ report }: { report: Report }) {
 }
 
 function ContactCard({ contact }: { contact: Report["official_contact"] }) {
+  const t = useTranslations("checker.contact");
   const hasContact = contact && (contact.email || contact.phone || contact.url);
   return (
     <div className="rounded-2xl bg-lavender-100 p-5 ring-1 ring-lavender-200 sm:p-6">
-      <h3 className="text-lg font-semibold tracking-tight">Confirm directly with the issuer</h3>
+      <h3 className="text-lg font-semibold tracking-tight">{t("title")}</h3>
       {hasContact ? (
         <>
           <dl className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-[max-content_minmax(0,1fr)]">
-            {contact.name && <Row k="Office" v={contact.name} />}
-            {contact.email && <Row k="Email" v={<Contact scheme="mailto" value={contact.email} />} />}
-            {contact.phone && <Row k="Phone" v={<Contact scheme="tel" value={contact.phone} />} />}
-            {contact.url && <Row k="Found on" v={<Link href={contact.url} />} />}
+            {contact.name && <Row k={t("office")} v={contact.name} />}
+            {contact.email && <Row k={t("email")} v={<Contact scheme="mailto" value={contact.email} />} />}
+            {contact.phone && <Row k={t("phone")} v={<Contact scheme="tel" value={contact.phone} />} />}
+            {contact.url && <Row k={t("foundOn")} v={<Link href={contact.url} />} />}
           </dl>
-          <p className="mt-4 text-sm text-slate">Found on the official website, not copied from your document.</p>
+          <p className="mt-4 text-sm text-slate">{t("source")}</p>
         </>
       ) : (
         <p className="mt-2 max-w-[68ch] text-slate">
-          We couldn&apos;t find an official contact. Search for the institution&apos;s website yourself and use the
-          contact details there, not the ones in the document.
+          {t("none")}
         </p>
       )}
     </div>
   );
 }
 
-const CHECKS: [string, string[]][] = [
-  [
-    "In the document",
-    [
-      "How you are asked to pay: JazzCash, Easypaisa, money transfer services or crypto",
-      "Whether the money goes to the issuer or to someone else",
-      "Gmail senders, and email domains that don't match the website",
-      "CAS, DLI, CRICOS and SEVIS number formats",
-      "Short deadlines, threats, and hidden text aimed at AI checkers",
-      "Which tool made the PDF and when it was last edited",
-    ],
-  ],
-  [
-    "Against official sources",
-    [
-      "How long the website's domain has existed",
-      "Student visa registers: the UK sponsor register, Canada's DLI list and Australia's CRICOS",
-      "Official websites, HEC, the Bureau of Emigration and approved agent lists",
-      "Published scam reports",
-    ],
-  ],
-];
+const CHECKS = [
+  ["inDocument", ["doc1", "doc2", "doc3", "doc4", "doc5", "doc6"]],
+  ["againstSources", ["src1", "src2", "src3", "src4"]],
+] as const;
 
 function WhatWeCheck() {
+  const t = useTranslations("checker.checks");
   return (
     <section aria-labelledby="checks-heading" className="rounded-2xl bg-card p-5 ring-1 ring-fog sm:p-6">
       <h2 id="checks-heading" className="text-lg font-semibold tracking-tight">
-        What we check
+        {t("title")}
       </h2>
       {CHECKS.map(([group, items]) => (
         <div key={group} className="mt-5">
-          <h3 className="text-sm font-semibold text-slate">{group}</h3>
+          <h3 className="text-sm font-semibold text-slate">{t(group)}</h3>
           <ul className="mt-2 space-y-2.5 text-sm">
             {items.map((item) => (
               <li key={item} className="flex gap-3">
@@ -574,15 +513,14 @@ function WhatWeCheck() {
                 >
                   ✓
                 </span>
-                {item}
+                {t(item)}
               </li>
             ))}
           </ul>
         </div>
       ))}
       <p className="mt-5 border-t border-fog pt-4 text-sm text-slate">
-        We never say a document is genuine. The best result is &ldquo;no red flags found&rdquo;, with an official
-        contact to confirm it.
+        {t("never")}
       </p>
     </section>
   );
@@ -601,6 +539,7 @@ function Group({
   collapsed?: boolean;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("checker");
   const label = (
     <span className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
       {title}
@@ -624,8 +563,8 @@ function Group({
       >
         <h3>{label}</h3>
         <span className="flex items-center gap-1.5 text-sm text-slate">
-          <span className="group-open:hidden">Show</span>
-          <span className="hidden group-open:inline">Hide</span>
+          <span className="group-open:hidden">{t("show")}</span>
+          <span className="hidden group-open:inline">{t("hide")}</span>
           <Chevron />
         </span>
       </summary>
@@ -635,12 +574,13 @@ function Group({
 }
 
 function FindingRow({ f }: { f: Finding }) {
+  const t = useTranslations("checker.origin");
   return (
-    <li className="px-4 py-4 sm:px-6">
+    <li lang="en" dir="ltr" className="px-4 py-4 sm:px-6">
       <h4 className="font-medium text-pretty">{f.title}</h4>
       <p className="mt-1 max-w-[68ch] text-sm leading-relaxed text-pretty text-slate">{f.detail}</p>
       <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate">
-        <span className="font-medium">{ORIGIN[f.origin]}</span>
+        <span className="font-medium">{t(f.origin)}</span>
         {f.sources.map((s) => (
           <Link key={s} href={s} />
         ))}
@@ -650,26 +590,27 @@ function FindingRow({ f }: { f: Finding }) {
 }
 
 function ExtractionList({ x }: { x: Extraction }) {
+  const t = useTranslations("checker");
   const rows: [string, string][] = (
     [
-      ["Document type", DOC_TYPE[x.doc_type]],
-      ["Issuer", [x.issuer_name, x.issuer_country].filter(Boolean).join(", ")],
-      ["Website", x.issuer_website],
-      ["Recipient", x.recipient_name],
-      ["Issue date", x.issue_date],
-      ["Programme or position", x.programme_or_position],
-      ["Amounts", x.amounts.map((a) => `${a.label}: ${a.amount} ${a.currency}`.trim()).join("; ")],
-      ["Payment method", x.payment.method],
-      ["Pay to", x.payment.payee_name],
-      ["Account", x.payment.account_details],
-      ["Emails", x.issuer_emails.join(", ")],
-      ["Phones", x.phones.join(", ")],
-      ["Reference numbers", x.reference_numbers.map((r) => `${r.kind.toUpperCase()} ${r.value}`).join(", ")],
-      ["Signed by", [x.signatory.name, x.signatory.title].filter(Boolean).join(", ")],
-      ["Agent", x.agent_or_intermediary],
-      ["Pressure to pay quickly", x.pressure_tactics.map((q) => `"${q}"`).join(" ")],
-      ["Contradictions", x.inconsistencies.join("; ")],
-      ["Text aimed at an AI checker", x.embedded_instructions.map((q) => `"${q}"`).join(" ")],
+      [t("fields.docType"), t(`docType.${x.doc_type}`)],
+      [t("fields.issuer"), [x.issuer_name, x.issuer_country].filter(Boolean).join(", ")],
+      [t("fields.website"), x.issuer_website],
+      [t("fields.recipient"), x.recipient_name],
+      [t("fields.issueDate"), x.issue_date],
+      [t("fields.programme"), x.programme_or_position],
+      [t("fields.amounts"), x.amounts.map((a) => `${a.label}: ${a.amount} ${a.currency}`.trim()).join("; ")],
+      [t("fields.paymentMethod"), x.payment.method],
+      [t("fields.payTo"), x.payment.payee_name],
+      [t("fields.account"), x.payment.account_details],
+      [t("fields.emails"), x.issuer_emails.join(", ")],
+      [t("fields.phones"), x.phones.join(", ")],
+      [t("fields.references"), x.reference_numbers.map((r) => `${r.kind.toUpperCase()} ${r.value}`).join(", ")],
+      [t("fields.signedBy"), [x.signatory.name, x.signatory.title].filter(Boolean).join(", ")],
+      [t("fields.agent"), x.agent_or_intermediary],
+      [t("fields.pressure"), x.pressure_tactics.map((q) => `"${q}"`).join(" ")],
+      [t("fields.contradictions"), x.inconsistencies.join("; ")],
+      [t("fields.aiText"), x.embedded_instructions.map((q) => `"${q}"`).join(" ")],
     ] as [string, string][]
   ).filter(([, v]) => v);
 
@@ -678,7 +619,7 @@ function ExtractionList({ x }: { x: Extraction }) {
       {rows.map(([k, v]) => (
         <div key={k}>
           <dt className="text-slate">{k}</dt>
-          <dd className="[overflow-wrap:anywhere]">{v}</dd>
+          <dd dir="auto" className="[overflow-wrap:anywhere]">{v}</dd>
         </div>
       ))}
     </dl>
@@ -753,8 +694,4 @@ function Spinner({ className = "" }: { className?: string }) {
       className={`size-4 shrink-0 rounded-full border-2 border-current border-r-transparent motion-safe:animate-spin motion-reduce:opacity-60 ${className}`}
     />
   );
-}
-
-function formatSize(bytes: number) {
-  return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }

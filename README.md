@@ -1,17 +1,34 @@
-# Tasdeeq
+# Maqsad
 
-Tasdeeq checks documents that Pakistani students and families receive before they pay anyone: foreign university offers, scholarship offers, visa letters, agent WhatsApp messages, degrees and transcripts, overseas job offers and internship offers. It reports red flags with the evidence behind each one and an Urdu summary for parents.
+Maqsad is a trust and case-management platform for students, job seekers, and overseas education and recruitment agents. It is being built in milestones. Today it has:
 
-It never says a document is genuine. The best result is "no red flags found", followed by an official contact the user can confirm with.
+- Student and agent registration, login and role-based dashboards (student, agent, admin), with roles checked on the server and in Postgres Row Level Security.
+- A public website in English and Urdu (right-to-left), with a pricing page read from `src/lib/plans.ts`.
+- The document checker at `/check`, described below.
+
+Features that are not built yet are listed in `src/lib/features.ts` as `false`. Public pages, pricing and dashboard menus read that file and label those features "Coming soon", so nothing is advertised before it works.
+
+The document checker covers what Pakistani students and families receive before they pay anyone: foreign university offers, scholarship offers, visa letters, agent WhatsApp messages, degrees and transcripts, overseas job offers and internship offers. It reports red flags with the evidence behind each one and an Urdu summary for parents. It never says a document is genuine. The best result is "no red flags found", followed by an official contact the user can confirm with.
 
 ## Run it
 
 ```bash
 cp .env.example .env.local   # add a free Gemini key and a free Groq key
 pnpm install
+supabase start               # local Postgres and Auth in Docker; copy its API URL and publishable key into .env.local
 pnpm dev                     # http://localhost:3000
-pnpm test                    # rule-check tests
+pnpm test                    # unit tests: rule checks, auth validation, translation keys
+pnpm test:e2e                # with supabase and pnpm dev running: auth, role routing and RLS checks
 ```
+
+`supabase start` applies the migrations in `supabase/migrations`. To start over, run `supabase db reset`. Nobody can sign up as an admin. Register a normal account, then promote it with the SQL in `supabase/seed.sql`.
+
+## Accounts, roles and languages
+
+- **Auth.** Supabase email and password, through server actions in `src/app/actions/auth.ts`. Input is validated with Zod (`src/lib/auth-schema.ts`).
+- **Roles.** Each user has a row in `public.profiles` with a role (`student`, `agent`, `admin`) and a status. The signup trigger only accepts student or agent. RLS lets users read and rename their own row, and lets active admins read every row. Column grants stop users changing their own role or status.
+- **Authorization.** `src/lib/auth.ts` reads the role from `profiles`, never from user metadata, which users can edit. Every dashboard layout and page calls `requireRole()`. `src/proxy.ts` refreshes the session and redirects signed-out users early, but it is not the security check.
+- **Languages.** URLs start with the locale (`/en/...`, `/ur/...`) so pages can be prerendered with Cache Components. Strings live in `messages/en.json` and `messages/ur.json`, loaded by next-intl from the `[locale]` root parameter. `pnpm test` fails if the two files have different keys. Report findings and the action plan steps from `src/lib` are still English only, and are marked `lang="en"` so they stay left-to-right on Urdu pages.
 
 To work on the UI without using model quota, set `MOCK_AI=1` in `.env.local`. The API then returns sample reports from `src/lib/mock.ts`, built with the real rule checks and risk level but no Gemini or Groq calls. Paste `high`, `medium`, `low`, `incomplete` or `error` to pick one. An uploaded file gives the high-risk report, or the low-risk one if its name contains "real" or "flinders". Production builds ignore the flag.
 
@@ -51,3 +68,4 @@ The risk level comes from `riskLevel()`, which counts red flags. A model can add
 - PKCERT's fake notifications page lists 8 notices with the text only inside images, and none are about education today, so that check will rarely fire. If the page can't be fetched, the report doesn't become "checks incomplete".
 - Helplines and opportunity links are hard-coded and can go stale.
 - Gemini's Google Search grounding is not on the free tier, which is why search runs on Groq.
+- The document checker is public and has no per-user limit yet. Plan limits from `src/lib/plans.ts` are shown on the pricing page but enforced only from milestone 5.

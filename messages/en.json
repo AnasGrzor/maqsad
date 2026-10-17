@@ -1,0 +1,420 @@
+{
+  "meta": {
+    "brand": "Maqsad",
+    "title": "Maqsad: your journey abroad, with more transparency",
+    "description": "Maqsad connects students and job seekers with education and recruitment agents, with verification, clear fee records and document checks before anyone pays."
+  },
+  "nav": {
+    "main": "Main",
+    "menu": "Menu",
+    "home": "Home",
+    "howItWorks": "How it works",
+    "students": "For students",
+    "agents": "For agents",
+    "trust": "Verification and trust",
+    "pricing": "Pricing",
+    "check": "Check a document",
+    "login": "Log in",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "signOut": "Sign out",
+    "language": "Language",
+    "switchTo": "اردو"
+  },
+  "footer": {
+    "disclaimer": "Maqsad flags risks. It cannot prove that a document, person, agent or opportunity is genuine or safe. Always confirm with the issuer through contact details you find on their official website, never the ones in a document.",
+    "notPayments": "Maqsad does not handle or hold money."
+  },
+  "status": {
+    "available": "Available now",
+    "soon": "Coming soon"
+  },
+  "features": {
+    "documentCheck": {
+      "title": "Document checks",
+      "body": "Check an offer letter, visa letter, job offer or agent message against official registers and sources, with the evidence for every finding."
+    },
+    "accounts": {
+      "title": "Student and agent accounts",
+      "body": "Register as a student or an agent, sign in and manage your account."
+    },
+    "studentProfile": {
+      "title": "Student profiles",
+      "body": "Your education, qualifications, goals and destination preferences in one place."
+    },
+    "profileVisibility": {
+      "title": "You control who sees you",
+      "body": "Agents only see your profile if you choose to appear in discovery."
+    },
+    "agentDirectory": {
+      "title": "Find agents",
+      "body": "Browse agents by destination and service, with their disclosed fees and verification status."
+    },
+    "agentProfile": {
+      "title": "Agent and agency profiles",
+      "body": "Business details, services, specialisations and disclosed fees."
+    },
+    "credentialSubmission": {
+      "title": "Credential verification",
+      "body": "Submit licences and registrations for review. The status you see is the real review status."
+    },
+    "studentDiscovery": {
+      "title": "Student discovery",
+      "body": "Find students who have chosen to be visible, filtered by destination, level and field."
+    },
+    "matching": {
+      "title": "Matching with reasons",
+      "body": "Suggested matches explain why they were suggested. A match is never a guarantee of admission or a job."
+    },
+    "connections": {
+      "title": "Connection requests",
+      "body": "An agent asks to connect; the student accepts or declines. Nothing is shared before that."
+    },
+    "messaging": {
+      "title": "Messages",
+      "body": "Talk to connected students or agents inside Maqsad, with a history both sides can see."
+    },
+    "caseTracking": {
+      "title": "Application tracking",
+      "body": "Requirements, documents, deadlines and milestones for each application, showing who updated what and when."
+    },
+    "feeRecords": {
+      "title": "Fee and commitment records",
+      "body": "Record agreed fees, promises and payment status. A recorded payment is what a party reported, not proof of a transfer."
+    },
+    "savedReports": {
+      "title": "Saved verification reports",
+      "body": "Keep your reports with each application and come back to them later."
+    },
+    "complaints": {
+      "title": "Reports and disputes",
+      "body": "Report suspicious behaviour or raise a dispute linked to the application it concerns."
+    },
+    "planLimits": {
+      "title": "Plan limits",
+      "body": "Report limits and plan features applied to your account."
+    },
+    "adminReview": {
+      "title": "Human review",
+      "body": "Maqsad staff review credentials, reports and disputes."
+    },
+    "auditLog": {
+      "title": "Activity history",
+      "body": "A record of important account and case activity."
+    },
+    "deepfakeDetection": {
+      "title": "Deepfake detection",
+      "body": "Planned. Maqsad does not check images or video for manipulation today, and will not show results until a tested detector exists."
+    }
+  },
+  "home": {
+    "title": "Your journey abroad, with greater transparency, verification and accountability",
+    "intro": "Maqsad connects students and job seekers with overseas education and recruitment agents. Check documents before you pay, see who you are dealing with, and keep a clear record of what was agreed.",
+    "ctaRegister": "Create an account",
+    "ctaCheck": "Check a document now",
+    "buildingTitle": "What Maqsad does",
+    "buildingIntro": "Maqsad is being built in stages. Each feature says whether you can use it today.",
+    "neverTitle": "What Maqsad will never do",
+    "never1": "Say a document, agent or opportunity is completely genuine or safe.",
+    "never2": "Mark an agent as verified because they pay for a subscription.",
+    "never3": "Read your Gmail, WhatsApp or other accounts. We only check what you choose to submit.",
+    "never4": "Handle, hold or transfer your money."
+  },
+  "howItWorks": {
+    "title": "How Maqsad works",
+    "intro": "Students and agents connect only when the student agrees, then track the application together.",
+    "step1": "A student creates a profile.",
+    "step2": "The student chooses whether agents can find them.",
+    "step3": "Agents find visible students or get matching suggestions.",
+    "step4": "An agent sends a connection request.",
+    "step5": "The student accepts or declines.",
+    "step6": "Once connected, they message and manage the application on Maqsad.",
+    "step7": "Both sides track fees, documents, deadlines and progress.",
+    "checkTitle": "Check documents at any step",
+    "checkBody": "Anyone can check an offer letter, visa letter, job offer or agent message today. The report shows what was checked, which source supports each finding and what could not be verified."
+  },
+  "students": {
+    "title": "For students and job seekers",
+    "intro": "Know more about an agent and an offer before you share documents or pay anything.",
+    "free": "The free student plan includes a set number of verification reports each month."
+  },
+  "agents": {
+    "title": "For education and recruitment agents",
+    "intro": "Show students your credentials and fees up front, and keep a clear record of every application.",
+    "paidNotVerified": "A paid plan gives you features. It never changes your verification status, which only comes from a completed review."
+  },
+  "trust": {
+    "title": "Verification and trust",
+    "intro": "How Maqsad checks things, and what it does not claim.",
+    "nowTitle": "What we check today",
+    "now1": "Payment channels: JazzCash, Easypaisa, money transfer services and crypto",
+    "now2": "Whether the payee matches the issuer",
+    "now3": "Free email senders and email domains that differ from the website",
+    "now4": "CAS, DLI, CRICOS and SEVIS number formats",
+    "now5": "Domain age, PDF producer and edit dates",
+    "now6": "Live student visa registers: UK sponsor register, Canada's DLI list and Australia's CRICOS",
+    "now7": "Web research for official sites, approved agent lists and scam reports",
+    "findingTitle": "Every finding explains",
+    "finding1": "What was checked",
+    "finding2": "What evidence was available, quoted where possible",
+    "finding3": "Which source supports it",
+    "finding4": "What could not be verified",
+    "finding5": "Why a warning was raised and what to do next",
+    "failTitle": "When a check fails",
+    "failBody": "If a source is down or a check cannot run, the report says the information could not be verified. A failed check is never treated as proof of fraud, and the result becomes \"checks incomplete\" rather than \"no red flags\".",
+    "scoreTitle": "How risk is scored",
+    "scoreBody": "The risk level is calculated in code from the red flags found. An AI model can add a red flag but can never remove one, so text hidden in a document cannot lower the risk.",
+    "plannedTitle": "Planned, not available yet"
+  },
+  "pricing": {
+    "title": "Pricing",
+    "intro": "Plans give access to features. Paying never makes an account verified.",
+    "students": "Students and job seekers",
+    "agents": "Agents and recruiters",
+    "free": "Free",
+    "perMonth": "PKR {price} a month",
+    "tbd": "Price not set yet",
+    "reports": "{count} verification reports a month",
+    "notOffered": "Planned plan",
+    "teamSoon": "Team management for agencies is planned.",
+    "limitsNote": "Plan limits apply once accounts are linked to verification reports. Until then, the public document check is free.",
+    "betaNote": "No payments are taken yet. When paid plans open, you will be able to request an upgrade from your dashboard.",
+    "plans": {
+      "student_free": "Student Free",
+      "student_plus": "Student Plus",
+      "agent_basic": "Agent Basic",
+      "agent_professional": "Agent Professional",
+      "agency": "Agency or Team"
+    }
+  },
+  "auth": {
+    "loginTitle": "Log in to Maqsad",
+    "registerTitle": "Create your Maqsad account",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters.",
+    "displayName": "Your name",
+    "role": "I am",
+    "roleStudent": "A student or job seeker",
+    "roleAgent": "An education or recruitment agent",
+    "login": "Log in",
+    "register": "Create account",
+    "working": "Please wait…",
+    "noAccount": "New to Maqsad?",
+    "haveAccount": "Already have an account?",
+    "confirmEmail": "Check your email for a link to confirm your account, then log in.",
+    "consent": "By creating an account you agree that Maqsad stores your name, email and role to run your account. Nothing is shown to other users until you choose to share it.",
+    "errors": {
+      "invalid_email": "Enter a valid email address.",
+      "invalid_password": "The password must be 8 to 72 characters.",
+      "invalid_displayName": "Enter a name of up to 80 characters.",
+      "invalid_role": "Choose student or agent.",
+      "invalid_credentials": "That email and password don't match an account.",
+      "email_taken": "An account with this email already exists. Try logging in.",
+      "rate_limited": "Too many attempts. Wait a minute and try again.",
+      "suspended": "This account is suspended. Contact Maqsad support.",
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "dashboard": {
+    "loading": "Loading…",
+    "soon": "Soon",
+    "roles": {
+      "student": "Student",
+      "agent": "Agent",
+      "admin": "Admin"
+    },
+    "nav": {
+      "overview": "Overview",
+      "findAgents": "Find agents",
+      "applications": "My applications",
+      "reports": "Verification reports",
+      "messages": "Messages",
+      "settings": "Profile and settings",
+      "studentDiscovery": "Student discovery",
+      "matching": "Matching recommendations",
+      "connections": "Connection requests",
+      "activeApplications": "Active applications",
+      "credentials": "Verification and credentials",
+      "subscription": "Subscription and settings",
+      "users": "Users",
+      "credentialReview": "Credentials",
+      "flagged": "Reports and findings",
+      "complaints": "Complaints and disputes",
+      "plans": "Plans and limits",
+      "audit": "Activity history"
+    },
+    "welcome": "Welcome, {name}",
+    "overviewIntro": "Here is what you can do on Maqsad today. Features marked Soon are being built.",
+    "checkCta": "Check a document",
+    "settings": {
+      "title": "Profile and settings",
+      "account": "Account",
+      "email": "Email",
+      "role": "Account type",
+      "save": "Save",
+      "saved": "Saved."
+    },
+    "admin": {
+      "usersTitle": "Users",
+      "usersIntro": "Every account and its role. Changing roles and status comes with the admin tools milestone.",
+      "name": "Name",
+      "role": "Role",
+      "status": "Status",
+      "joined": "Joined",
+      "active": "Active",
+      "suspended": "Suspended",
+      "empty": "No users yet."
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page doesn't exist or has moved.",
+    "home": "Go to the home page"
+  },
+  "checker": {
+    "metaTitle": "Check a document",
+    "title": "Check a document before you pay anyone",
+    "intro": "Upload a university offer, scholarship or job offer, visa letter, degree, or paste an agent's WhatsApp message. We check it against official registers and sources and show you the evidence.",
+    "inputType": "Input type",
+    "modeFile": "Upload a file",
+    "modeText": "Paste a message",
+    "remove": "Remove",
+    "drop": "Drop to add it",
+    "choose": "Choose a PDF or photo, or drop it here",
+    "fileHint": "PDF, JPG, PNG or WebP, up to 4 MB",
+    "messageLabel": "Message text",
+    "messagePlaceholder": "Paste the WhatsApp message or email here, including the sender's number or email address.",
+    "privacy": "Your document is sent to Google Gemini and Groq for analysis. We don't store it.",
+    "submit": "Check document",
+    "checking": "Checking…",
+    "tooBig": "This file is larger than 4 MB. Take a smaller photo or a screenshot of the letter.",
+    "genericError": "Something went wrong. Please try again.",
+    "pasted": "Pasted message",
+    "progress": "Progress",
+    "progressTitle": "Checking your document",
+    "progressHint": "This usually takes under a minute.",
+    "starting": "Starting",
+    "reportFor": "Report for <b>{subject}</b>",
+    "another": "Check another document",
+    "kb": "{n} KB",
+    "mb": "{n} MB",
+    "report": "Report",
+    "totals": "Totals",
+    "mainReasons": "Main reasons",
+    "issuedBy": "Issued in the name of {issuer}",
+    "confirmedShort": "confirmed",
+    "confirmedGroup": "Confirmed by official sources",
+    "uncheckedGroup": "Could not check",
+    "show": "Show",
+    "hide": "Hide",
+    "notes": "Notes about this check",
+    "extracted": "What we read from the document",
+    "summaryNote": "Report findings and summaries are written in English, with an Urdu summary.",
+    "risk": {
+      "high": { "title": "High risk", "advice": "Do not pay anything yet." },
+      "medium": { "title": "Some concerns", "advice": "Verify with the issuer before paying." },
+      "low": { "title": "No red flags found", "advice": "Still confirm with the issuer before paying." },
+      "incomplete": { "title": "Checks incomplete", "advice": "Confirm with the issuer before paying." }
+    },
+    "severity": {
+      "high": { "label": "Serious red flags", "short": "serious" },
+      "medium": { "label": "Warning signs", "short": "warning" },
+      "low": { "label": "Minor concerns", "short": "minor" }
+    },
+    "origin": {
+      "rules": "Rule check",
+      "registry": "Official register",
+      "web": "Web search"
+    },
+    "docType": {
+      "university_offer": "University offer",
+      "scholarship_offer": "Scholarship offer",
+      "agent_message": "Agent message",
+      "visa_letter": "Visa letter",
+      "degree_or_transcript": "Degree or transcript",
+      "job_offer": "Job offer",
+      "internship": "Internship",
+      "other": "Document"
+    },
+    "contact": {
+      "title": "Confirm directly with the issuer",
+      "office": "Office",
+      "email": "Email",
+      "phone": "Phone",
+      "foundOn": "Found on",
+      "source": "Found on the official website, not copied from your document.",
+      "none": "We couldn't find an official contact. Search for the institution's website yourself and use the contact details there, not the ones in the document."
+    },
+    "checks": {
+      "title": "What we check",
+      "inDocument": "In the document",
+      "againstSources": "Against official sources",
+      "doc1": "How you are asked to pay: JazzCash, Easypaisa, money transfer services or crypto",
+      "doc2": "Whether the money goes to the issuer or to someone else",
+      "doc3": "Gmail senders, and email domains that don't match the website",
+      "doc4": "CAS, DLI, CRICOS and SEVIS number formats",
+      "doc5": "Short deadlines, threats, and hidden text aimed at AI checkers",
+      "doc6": "Which tool made the PDF and when it was last edited",
+      "src1": "How long the website's domain has existed",
+      "src2": "Student visa registers: the UK sponsor register, Canada's DLI list and Australia's CRICOS",
+      "src3": "Official websites, HEC, the Bureau of Emigration and approved agent lists",
+      "src4": "Published scam reports",
+      "never": "We never say a document is genuine. The best result is \"no red flags found\", with an official contact to confirm it."
+    },
+    "fields": {
+      "docType": "Document type",
+      "issuer": "Issuer",
+      "website": "Website",
+      "recipient": "Recipient",
+      "issueDate": "Issue date",
+      "programme": "Programme or position",
+      "amounts": "Amounts",
+      "paymentMethod": "Payment method",
+      "payTo": "Pay to",
+      "account": "Account",
+      "emails": "Emails",
+      "phones": "Phones",
+      "references": "Reference numbers",
+      "signedBy": "Signed by",
+      "agent": "Agent",
+      "pressure": "Pressure to pay quickly",
+      "contradictions": "Contradictions",
+      "aiText": "Text aimed at an AI checker"
+    },
+    "actionPlan": {
+      "title": "Already paid or shared something?",
+      "tick": "Tick everything that applies",
+      "empty": "Tick what you paid or shared to see what to do first.",
+      "order": "Do these in order",
+      "complaintTitle": "Complaint for the cybercrime agency or your bank",
+      "complaintNote": "Fill in your details at the end before you send it.",
+      "verifyTitle": "Ask the issuer to confirm",
+      "verifyNote": "To {to}, the contact found on their official website. Nothing is sent until you send it.",
+      "noVerify": "We have no official email for the issuer, so there is no verification email. Find one on their official website, never in the document.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyFailed": "Couldn't copy. Select the text and copy it yourself.",
+      "openEmail": "Open in email app"
+    },
+    "alternatives": {
+      "title": "Look for this opportunity through official channels",
+      "note": "Official starting points, not an endorsement. They don't mean you're eligible.",
+      "newTab": "(opens in a new tab)"
+    },
+    "connections": {
+      "title": "Seen in earlier checks",
+      "intro": "These details also appeared in {count, plural, one {# earlier check} other {# earlier checks}}. A shared detail is a lead, not proof the sender is the same. It does not change the risk level above.",
+      "thisDocument": "This document",
+      "alsoIn": "Also in {count, plural, one {# earlier check} other {# earlier checks}}:",
+      "from": "from {issuer}",
+      "kind": {
+        "domain": "Website domain",
+        "email": "Email",
+        "phone": "Phone",
+        "payee": "Payee name",
+        "account": "Account number"
+      }
+    }
+  }
+}

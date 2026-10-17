@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { actionPlan, EXPOSURES, type Exposure } from "@/lib/actions";
 import type { Report } from "@/lib/schema";
@@ -11,6 +12,7 @@ const button = `inline-flex min-h-10 items-center rounded-full px-4 text-sm font
 export function ActionPlan({ report }: { report: Report }) {
   const [shared, setShared] = useState<Exposure[]>([]);
   const plan = actionPlan(report, shared);
+  const t = useTranslations("checker.actionPlan");
 
   function toggle(id: Exposure, on: boolean) {
     setShared((s) => (on ? [...s, id] : s.filter((e) => e !== id)));
@@ -21,7 +23,7 @@ export function ActionPlan({ report }: { report: Report }) {
       <summary
         className={`flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 sm:px-6 [&::-webkit-details-marker]:hidden ${focusRing}`}
       >
-        <h3 className="text-lg font-semibold tracking-tight">Already paid or shared something?</h3>
+        <h3 className="text-lg font-semibold tracking-tight">{t("title")}</h3>
         <span aria-hidden className="text-slate transition-transform duration-200 group-open:rotate-180">
           ▾
         </span>
@@ -29,7 +31,7 @@ export function ActionPlan({ report }: { report: Report }) {
 
       <div className="space-y-6 border-t border-fog px-5 py-5 sm:px-6">
         <fieldset>
-          <legend className="font-medium">Tick everything that applies</legend>
+          <legend className="font-medium">{t("tick")}</legend>
           <div className="mt-3 grid gap-1 sm:grid-cols-2">
             {EXPOSURES.map((e) => (
               <label
@@ -42,18 +44,18 @@ export function ActionPlan({ report }: { report: Report }) {
                   onChange={(ev) => toggle(e.id, ev.target.checked)}
                   className={`size-4 shrink-0 accent-navy-900 ${focusRing}`}
                 />
-                <span className="text-sm">{e.label}</span>
+                <span lang="en" dir="ltr" className="text-sm">{e.label}</span>
               </label>
             ))}
           </div>
         </fieldset>
 
         {plan.steps.length === 0 ? (
-          <p className="text-sm text-slate">Tick what you paid or shared to see what to do first.</p>
+          <p className="text-sm text-slate">{t("empty")}</p>
         ) : (
           <div>
-            <h4 className="font-semibold">Do these in order</h4>
-            <ol className="mt-3 space-y-4">
+            <h4 className="font-semibold">{t("order")}</h4>
+            <ol lang="en" dir="ltr" className="mt-3 space-y-4">
               {plan.steps.map((s, i) => (
                 <li key={s.title} className="flex gap-3">
                   <span
@@ -88,22 +90,21 @@ export function ActionPlan({ report }: { report: Report }) {
         )}
 
         <Draft
-          title="Complaint for the cybercrime agency or your bank"
-          note="Fill in your details at the end before you send it."
+          title={t("complaintTitle")}
+          note={t("complaintNote")}
           text={plan.complaint}
         />
 
         {plan.verifyEmail ? (
           <Draft
-            title="Ask the issuer to confirm"
-            note={`To ${plan.verifyEmail.to}, the contact found on their official website. Nothing is sent until you send it.`}
+            title={t("verifyTitle")}
+            note={t("verifyNote", { to: plan.verifyEmail.to })}
             text={`Subject: ${plan.verifyEmail.subject}\n\n${plan.verifyEmail.body}`}
             mailto={`mailto:${plan.verifyEmail.to}?subject=${encodeURIComponent(plan.verifyEmail.subject)}&body=${encodeURIComponent(plan.verifyEmail.body)}`}
           />
         ) : (
           <p className="text-sm text-slate">
-            We have no official email for the issuer, so there is no verification email. Find one on their official
-            website, never in the document.
+            {t("noVerify")}
           </p>
         )}
       </div>
@@ -113,13 +114,14 @@ export function ActionPlan({ report }: { report: Report }) {
 
 function Draft({ title, note, text, mailto }: { title: string; note: string; text: string; mailto?: string }) {
   const [status, setStatus] = useState("");
+  const t = useTranslations("checker.actionPlan");
 
   async function copy() {
     try {
       await navigator.clipboard.writeText(text);
-      setStatus("Copied");
+      setStatus(t("copied"));
     } catch {
-      setStatus("Couldn't copy. Select the text and copy it yourself.");
+      setStatus(t("copyFailed"));
     }
   }
 
@@ -127,17 +129,17 @@ function Draft({ title, note, text, mailto }: { title: string; note: string; tex
     <div>
       <h4 className="font-semibold">{title}</h4>
       <p className="mt-1 text-sm [overflow-wrap:anywhere] text-slate">{note}</p>
-      <pre className="mt-3 max-h-72 overflow-y-auto rounded-xl bg-lavender-50 p-4 font-sans text-sm leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere] ring-1 ring-lavender-200">
+      <pre lang="en" dir="ltr" className="mt-3 max-h-72 overflow-y-auto rounded-xl bg-lavender-50 p-4 font-sans text-sm leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere] ring-1 ring-lavender-200">
         {text}
       </pre>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <button type="button" onClick={copy} className={`${button} bg-navy-900 text-ice hover:bg-navy-800`}>
-          Copy
-          <span className="sr-only"> {title.toLowerCase()}</span>
+          {t("copy")}
+          <span className="sr-only"> {title}</span>
         </button>
         {mailto && (
           <a href={mailto} className={`${button} bg-lavender-100 text-navy-900 ring-1 ring-lavender-200 hover:bg-lavender-200`}>
-            Open in email app
+            {t("openEmail")}
           </a>
         )}
         <p aria-live="polite" className="text-sm text-slate">

@@ -1,20 +1,17 @@
+"use client";
+
+import { useFormatter, useTranslations } from "next-intl";
 import type { Connection, RiskLevel } from "@/lib/schema";
 
-// Same tones and wording as RISK in page.tsx.
-const RISK: Record<RiskLevel, { title: string; chip: string; fill: string; stroke: string; text: string }> = {
-  high: { title: "High risk", chip: "bg-danger text-white", fill: "fill-danger", stroke: "stroke-danger", text: "fill-white" },
-  medium: { title: "Some concerns", chip: "bg-lemon text-navy-900", fill: "fill-lemon", stroke: "stroke-lemon", text: "fill-navy-900" },
-  low: { title: "No red flags found", chip: "bg-mint text-navy-900", fill: "fill-mint", stroke: "stroke-mint", text: "fill-navy-900" },
-  incomplete: { title: "Checks incomplete", chip: "bg-fog text-navy-900", fill: "fill-fog", stroke: "stroke-fog", text: "fill-navy-900" },
+// Same tones as RISK in checker.tsx.
+const RISK: Record<RiskLevel, { chip: string; fill: string; stroke: string; text: string }> = {
+  high: { chip: "bg-danger text-white", fill: "fill-danger", stroke: "stroke-danger", text: "fill-white" },
+  medium: { chip: "bg-lemon text-navy-900", fill: "fill-lemon", stroke: "stroke-lemon", text: "fill-navy-900" },
+  low: { chip: "bg-mint text-navy-900", fill: "fill-mint", stroke: "stroke-mint", text: "fill-navy-900" },
+  incomplete: { chip: "bg-fog text-navy-900", fill: "fill-fog", stroke: "stroke-fog", text: "fill-navy-900" },
 };
 
-const KIND: Record<Connection["kind"], { label: string; short: string }> = {
-  domain: { label: "Website domain", short: "www" },
-  email: { label: "Email", short: "@" },
-  phone: { label: "Phone", short: "tel" },
-  payee: { label: "Payee name", short: "pay" },
-  account: { label: "Account number", short: "a/c" },
-};
+const KIND_SHORT: Record<Connection["kind"], string> = { domain: "www", email: "@", phone: "tel", payee: "pay", account: "a/c" };
 
 type Case = Connection["cases"][number];
 const caseKey = (c: Case) => `${c.checked_at}|${c.doc_type}|${c.issuer_name}|${c.risk}`;
@@ -29,6 +26,8 @@ const R_CASE = 108;
 const at = (r: number, a: number) => [CX + r * Math.cos(a), CY + r * Math.sin(a)] as const;
 
 export function Connections({ connections }: { connections: Connection[] }) {
+  const t = useTranslations("checker");
+  const format = useFormatter();
   if (!connections.length) return null;
 
   // Number each earlier check once, even when it shares several details with this document.
@@ -51,11 +50,10 @@ export function Connections({ connections }: { connections: Connection[] }) {
   return (
     <section aria-labelledby="connections-heading" className="rounded-2xl bg-card p-5 ring-1 ring-fog sm:p-6">
       <h3 id="connections-heading" className="text-lg font-semibold tracking-tight">
-        Seen in earlier checks
+        {t("connections.title")}
       </h3>
       <p className="mt-1 max-w-[68ch] text-sm text-pretty text-slate">
-        These details also appeared in {n} earlier {n === 1 ? "check" : "checks"}. A shared detail is a lead, not proof
-        the sender is the same. It does not change the risk level above.
+        {t("connections.intro", { count: n })}
       </p>
 
       <svg viewBox={`0 0 ${W} ${H}`} aria-hidden className="mx-auto mt-4 block h-auto w-full max-w-sm">
@@ -78,14 +76,14 @@ export function Connections({ connections }: { connections: Connection[] }) {
               <line x1={CX} y1={CY} x2={x} y2={y} strokeWidth={1.5} className="stroke-mist" />
               <circle cx={x} cy={y} r={14} strokeWidth={1.5} className="fill-lavender-200 stroke-navy-800" />
               <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize={9} className="fill-navy-900 font-semibold">
-                {KIND[c.kind].short}
+                {KIND_SHORT[c.kind]}
               </text>
             </g>
           );
         })}
         <rect x={CX - 44} y={CY - 13} width={88} height={26} rx={13} className="fill-navy-900" />
         <text x={CX} y={CY} textAnchor="middle" dominantBaseline="central" fontSize={10} className="fill-ice font-medium">
-          This document
+          {t("connections.thisDocument")}
         </text>
         {[...placed.values()].map((p) => (
           <g key={p.n}>
@@ -101,11 +99,11 @@ export function Connections({ connections }: { connections: Connection[] }) {
         {connections.map((c) => (
           <li key={c.kind + c.value} className="py-3 first:pt-0 last:pb-0">
             <p>
-              <span className="text-slate">{KIND[c.kind].label}: </span>
+              <span className="text-slate">{t(`connections.kind.${c.kind}`)}: </span>
               <span className="font-medium [overflow-wrap:anywhere]">{c.value}</span>
             </p>
             <p className="mt-1 text-slate">
-              Also in {c.cases.length} earlier {c.cases.length === 1 ? "check" : "checks"}:
+              {t("connections.alsoIn", { count: c.cases.length })}
             </p>
             <ul className="mt-1.5 space-y-1.5">
               {c.cases.map((k) => (
@@ -117,13 +115,13 @@ export function Connections({ connections }: { connections: Connection[] }) {
                     {number.get(caseKey(k))}
                   </span>
                   <span className="min-w-0 [overflow-wrap:anywhere]">
-                    <span className="font-medium">{RISK[k.risk].title}</span>
+                    <span className="font-medium">{t(`risk.${k.risk}.title`)}</span>
                     {" · "}
-                    {k.doc_type === "other" ? "Document" : k.doc_type.replace(/_/g, " ").replace(/^./, (s) => s.toUpperCase())}
-                    {k.issuer_name && ` from ${k.issuer_name}`}
+                    {t(`docType.${k.doc_type}`)}
+                    {k.issuer_name && ` ${t("connections.from", { issuer: k.issuer_name })}`}
                     {" · "}
                     <time dateTime={k.checked_at}>
-                      {new Date(k.checked_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                      {format.dateTime(new Date(k.checked_at), { day: "numeric", month: "short", year: "numeric" })}
                     </time>
                   </span>
                 </li>

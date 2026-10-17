@@ -1,0 +1,10 @@
+-- Local development only. `supabase db reset` runs this after the migrations.
+--
+-- Test accounts used for manual checks (create them through /register on localhost):
+--   student@maqsad.test  / maqsad-local-pass  (student)
+--   agent@maqsad.test    / maqsad-local-pass  (agent)
+--   admin@maqsad.test    / maqsad-local-pass  (registered as student, then promoted below)
+--
+-- Admin is never self-assignable. After registering admin@maqsad.test, promote it with:
+--   update public.profiles set role = 'admin'
+--   where id = (select id from auth.users where email = 'admin@maqsad.test');

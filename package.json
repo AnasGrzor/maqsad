@@ -1,5 +1,5 @@
 {
-  "name": "verifyfirst",
+  "name": "maqsad",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,16 +7,27 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test src/lib/*.test.mjs"
+    "test": "node --test src/lib/*.test.mjs",
+    "test:e2e": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/e2e-auth.mjs"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
     "@google/genai": "^2.30.0",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.118.0",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.5.0",
     "groq-sdk": "^1.6.0",
+    "lucide-react": "^1.58.0",
     "next": "16.4.2",
+    "next-intl": "4.14.9",
     "pdf-lib": "^1.17.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "shadcn": "^4.22.0",
     "tldts": "^7.4.18",
+    "tw-animate-css": "^1.4.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {

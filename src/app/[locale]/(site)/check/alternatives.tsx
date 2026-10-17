@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { useId } from "react";
 import { alternativesFor } from "@/lib/alternatives";
 import type { Report } from "@/lib/schema";
@@ -7,18 +8,19 @@ const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-
 export function Alternatives({ report }: { report: Report }) {
   // The page may render this twice (phone and sidebar layouts), so the heading id must be unique.
   const headingId = useId();
+  const t = useTranslations("checker.alternatives");
   const { tip, links } = alternativesFor(report.extraction.doc_type);
   if (report.risk === "low" || links.length === 0) return null;
 
   return (
     <section aria-labelledby={headingId} className="rounded-2xl bg-card p-5 ring-1 ring-fog sm:p-6">
       <h3 id={headingId} className="text-lg font-semibold tracking-tight text-balance">
-        Look for this opportunity through official channels
+        {t("title")}
       </h3>
       <p className="mt-2 text-sm text-slate">
-        Official starting points, not an endorsement. They don&apos;t mean you&apos;re eligible.
+        {t("note")}
       </p>
-      <ul className="mt-4 space-y-3">
+      <ul lang="en" dir="ltr" className="mt-4 space-y-3">
         {links.map((l) => (
           <li key={l.url} className="min-w-0">
             <a
@@ -28,7 +30,7 @@ export function Alternatives({ report }: { report: Report }) {
               className={`font-medium text-navy-900 underline decoration-mist underline-offset-4 hover:decoration-current ${focusRing}`}
             >
               {l.name}
-              <span className="sr-only"> (opens in a new tab)</span>
+              <span className="sr-only"> {t("newTab")}</span>
             </a>
             <p className="text-sm text-slate">{l.note}</p>
             {/* Showing the real domain teaches what the official address looks like. */}
@@ -36,7 +38,7 @@ export function Alternatives({ report }: { report: Report }) {
           </li>
         ))}
       </ul>
-      {tip && <p className="mt-4 border-t border-fog pt-4 text-sm text-navy-800">{tip}</p>}
+      {tip && <p lang="en" dir="ltr" className="mt-4 border-t border-fog pt-4 text-sm text-navy-800">{tip}</p>}
     </section>
   );
 }
