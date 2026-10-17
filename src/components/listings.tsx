@@ -211,7 +211,7 @@ export async function ConnectionList({ connections, me, names, labels }: { conne
                       </>
                     )}
                     {key === "outgoing" && <ConnectionActions id={c.id} actions={["withdraw"]} />}
-                    {key === "active" && <p className="text-xs text-slate">{t("connectedNote")}</p>}
+                    {key === "active" && <ConnectedLinks base={otherIsAgent ? "/student" : "/agent"} id={c.id} />}
                   </li>
                 );
               })}
@@ -220,5 +220,20 @@ export async function ConnectionList({ connections, me, names, labels }: { conne
         ) : null,
       )}
     </div>
+  );
+}
+
+// Where an accepted connection continues: its message thread and the applications page.
+async function ConnectedLinks({ base, id }: { base: string; id: string }) {
+  const t = await getTranslations("messaging");
+  return (
+    <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+      <Link href={`${base}/messages/${id}`} className={link}>
+        {t("openThread")}
+      </Link>
+      <Link href={`${base}/applications`} className={link}>
+        {t("openApplications")}
+      </Link>
+    </p>
   );
 }

@@ -3,6 +3,7 @@ import { Suspense, type ReactNode } from "react";
 import { signOut } from "@/app/actions/auth";
 import { Link } from "@/i18n/navigation";
 import { requireRole, type Role } from "@/lib/auth";
+import { NotificationLink } from "./case-pages";
 import { DashboardNav } from "./dashboard-nav";
 import { LanguageSwitch } from "./language-switch";
 import { focusRing } from "./styles";
@@ -23,6 +24,11 @@ export function DashboardShell({ role, children }: { role: Role; children: React
             <span className="rounded-full bg-navy-800 px-2.5 py-0.5 text-xs text-mist">{t(`roles.${role}`)}</span>
           </p>
           <div className="flex items-center gap-2">
+            {role !== "admin" && (
+              <Suspense fallback={null}>
+                <NotificationLink role={role} />
+              </Suspense>
+            )}
             <LanguageSwitch className={link} />
             <form action={signOut}>
               <input type="hidden" name="locale" value={useLocale()} />

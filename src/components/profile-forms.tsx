@@ -17,9 +17,9 @@ import type { AgentProfileRow, StudentProfileRow } from "@/lib/data";
 import { AGENT_KINDS, COUNTRIES, countryName, CREDENTIAL_KINDS, FIELDS, GOALS, LEVELS } from "@/lib/taxonomy";
 import { cta, focusRing } from "./styles";
 
-const control = "w-full rounded-lg border border-input bg-card px-3 text-base md:text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 outline-none";
-const submit = `${cta} bg-navy-900 text-ice hover:bg-navy-800 disabled:cursor-progress disabled:opacity-60`;
-const small = `inline-flex min-h-9 items-center rounded-full px-4 text-sm font-medium transition-colors disabled:opacity-60 ${focusRing}`;
+export const control = "w-full rounded-lg border border-input bg-card px-3 text-base md:text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 outline-none";
+export const submit = `${cta} bg-navy-900 text-ice hover:bg-navy-800 disabled:cursor-progress disabled:opacity-60`;
+export const small = `inline-flex min-h-9 items-center rounded-full px-4 text-sm font-medium transition-colors disabled:opacity-60 ${focusRing}`;
 
 export function FormMessage({ state, done }: { state: ActionState; done?: string }) {
   const t = useTranslations("forms");
@@ -42,7 +42,7 @@ export function FormMessage({ state, done }: { state: ActionState; done?: string
   return null;
 }
 
-function Field({ id, label, help, children }: { id: string; label: string; help?: string; children: ReactNode }) {
+export function Field({ id, label, help, children }: { id: string; label: string; help?: string; children: ReactNode }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
