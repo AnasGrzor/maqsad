@@ -1,0 +1,187 @@
+{
+  "cases": {
+    "title": {
+      "student": "My applications",
+      "agent": "Active applications"
+    },
+    "intro": "Each application is shared between you and one connected student or agent. Both of you see the same requirements, deadlines, fee records and history.",
+    "disputesLink": "My reports and disputes",
+    "open": "Open an application",
+    "titlePlaceholder": "For example: MSc Computing, Fall 2027",
+    "opened": "Application opened.",
+    "findConnections": "Find connections",
+    "needConnection": "Applications open once a connection request is accepted.",
+    "someone": "Someone",
+    "you": "You",
+    "with": "With {name}",
+    "kinds": {
+      "study": "Study",
+      "work": "Work"
+    },
+    "status": {
+      "active": "Active",
+      "completed": "Completed",
+      "closed": "Closed"
+    },
+    "markAs": {
+      "active": "Reopen",
+      "completed": "Mark completed",
+      "closed": "Close"
+    },
+    "openItems": "{count, plural, =0 {No open items} one {# open item} other {# open items}}",
+    "overdueCount": "{count} overdue",
+    "empty": "No applications yet.",
+    "notFound": "This application doesn't exist or isn't shared with you.",
+    "back": {
+      "student": "Back to my applications",
+      "agent": "Back to active applications"
+    },
+    "openedBy": "Opened by {name} on {date}",
+    "messagesLink": "Messages with this person",
+    "itemsTitle": "Requirements, milestones and deadlines",
+    "overdueBanner": "{count, plural, one {# item is past its due date and still open.} other {# items are past their due date and still open.}}",
+    "overdue": "Overdue",
+    "done": "Done",
+    "due": "Due {date}",
+    "addedBy": "Added by {name} on {date}",
+    "doneBy": "done by {name} on {date}",
+    "noItems": "No items yet.",
+    "addItem": "Add an item",
+    "itemAdded": "Item added.",
+    "markDone": "Mark done",
+    "reopen": "Reopen",
+    "itemKinds": {
+      "requirement": "Requirement",
+      "document_request": "Document request",
+      "milestone": "Milestone",
+      "deadline": "Deadline"
+    },
+    "recordsTitle": "Fees and commitments",
+    "recordsIntro": "Disclosed fees, agreed responsibilities, promises, expected dates and payments as reported by either of you. Records can't be edited or deleted: to correct one, add a new record that corrects it. Maqsad never handles money.",
+    "corrected": "Corrected by a later record",
+    "onDate": "Date: {date}",
+    "onDateHelp": "Optional. For example the payment date or the expected date.",
+    "amountHelp": "Optional. Numbers only, for example 50000.",
+    "summaryHelp": "What was disclosed, agreed, promised or paid, in your own words.",
+    "correctsRecord": "Corrects the record {name} added on {date}",
+    "paymentNote": "Reported by {name}. This is what a party reported, not proof that money moved. Maqsad never handles money and can't confirm payments.",
+    "recordedBy": "Recorded by {name} on {date}",
+    "noRecords": "No fee or commitment records yet.",
+    "addRecord": "Add a record",
+    "recordAdded": "Record added.",
+    "notACorrection": "Not a correction",
+    "recordKinds": {
+      "fee_disclosed": "Fee disclosed",
+      "responsibility": "Agreed responsibility",
+      "promise": "Promise",
+      "expected_date": "Expected date",
+      "terms_change": "Change to agreed terms",
+      "payment_reported": "Payment status (reported)"
+    },
+    "historyTitle": "History",
+    "events": {
+      "case_opened": "{name} opened this application.",
+      "status_changed": "{name} changed the status from {from} to {to}.",
+      "item_added": "{name} added “{title}”.",
+      "item_done": "{name} marked “{title}” done.",
+      "item_reopened": "{name} reopened “{title}”.",
+      "record_added": "{name} added a record: {kind}."
+    },
+    "fields": {
+      "connection": "With",
+      "title": "Title",
+      "kind": "Type",
+      "country": "Destination country",
+      "new_status": "status",
+      "due_on": "Due date (optional)",
+      "details": "Details",
+      "item": "item",
+      "on_date": "Date",
+      "amount": "Amount",
+      "currency": "Currency",
+      "summary": "What happened",
+      "correction_of": "Corrects an earlier record",
+      "body": "Message",
+      "target_case": "About application",
+      "reason": "Reason",
+      "target_record": "Related record",
+      "id": "item"
+    }
+  },
+  "messaging": {
+    "title": "Messages",
+    "intro": "Messages with your connected students and agents. Messages can't be edited or deleted.",
+    "someone": "Someone",
+    "you": "You",
+    "youPrefix": "You: ",
+    "noMessages": "No messages yet.",
+    "findConnections": "Find connections",
+    "needConnection": "Messages open once a connection request is accepted.",
+    "notFound": "This conversation doesn't exist or isn't open to you.",
+    "back": "All conversations",
+    "refreshNote": "This page checks for new messages every 10 seconds while it is open.",
+    "historyLabel": "Message history",
+    "empty": "No messages yet. Write the first one below.",
+    "placeholder": "Write a message (up to 4,000 characters)",
+    "noCase": "No application",
+    "send": "Send",
+    "openThread": "Messages",
+    "openApplications": "Applications"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "intro": "Updates from your connections and shared applications. Maqsad doesn't send email or push notifications.",
+    "link": "Notifications",
+    "unread": "{count} unread",
+    "unreadTag": "New",
+    "someone": "Someone",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet.",
+    "kinds": {
+      "case_opened": "{name} opened the application “{title}”",
+      "status_changed": "{name} changed the status of “{title}”",
+      "item_added": "{name} added an item to “{title}”",
+      "item_done": "{name} marked an item done in “{title}”",
+      "item_reopened": "{name} reopened an item in “{title}”",
+      "record_added": "{name} added a fee or commitment record to “{title}”",
+      "message": "{name} sent you a message",
+      "connection_request": "{name} sent you a connection request",
+      "connection_accepted": "{name} accepted your connection request"
+    }
+  },
+  "disputes": {
+    "title": "Report a problem",
+    "listTitle": "My reports and disputes",
+    "privacy": "Only you and Maqsad's admins can see what you send here. The other person is not shown your report.",
+    "open": "Report suspicious behaviour or raise a dispute",
+    "detailsHelp": "Describe what happened, with dates. Don't include passwords or bank card numbers.",
+    "noRecord": "None",
+    "submit": "Send to Maqsad",
+    "sent": "Sent. Maqsad's admins will review it. You can follow its status under My reports and disputes.",
+    "sentOn": "Sent on {date}",
+    "empty": "You haven't sent any reports or disputes.",
+    "kinds": {
+      "report": "Report suspicious behaviour",
+      "dispute": "Dispute"
+    },
+    "reasons": {
+      "misleading_information": "Misleading information",
+      "undisclosed_fees": "Fees that weren't disclosed",
+      "fee_dispute": "Disagreement about fees",
+      "missed_commitment": "A commitment wasn't kept",
+      "document_concern": "Concern about a document",
+      "pressure_tactics": "Pressure to pay or decide quickly",
+      "harassment": "Harassment or abuse",
+      "impersonation": "Pretending to be someone else",
+      "other": "Something else"
+    },
+    "status": {
+      "open": "Open",
+      "under_review": "Under review",
+      "resolved": "Resolved",
+      "dismissed": "Closed without action"
+    },
+    "resolution": "Maqsad's note"
+  }
+}

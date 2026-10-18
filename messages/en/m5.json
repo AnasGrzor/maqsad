@@ -1,0 +1,83 @@
+{
+  "pricingPlans": {
+    "notVerified": "Paying for a plan never makes an account verified. An agent is verified only when Maqsad reviews their credentials.",
+    "limitsNote": "Verification report limits are applied on our server and reset at the start of each calendar month, Pakistan time.",
+    "betaNote": "No payments are taken. You can request a plan from your dashboard, and nothing changes until Maqsad confirms."
+  },
+  "subscription": {
+    "title": "Your plan",
+    "intro": "Plans give access to features and monthly limits. Paying never makes an account verified.",
+    "current": "Current plan",
+    "defaultPlan": "The default plan for your account type",
+    "grantedOn": "Set by Maqsad on {date}",
+    "usageTitle": "This month",
+    "used": "{used} of {limit} verification reports used. Resets on {date}.",
+    "notIncluded": "Verification reports are not included in your plan.",
+    "lastRequest": "Latest request",
+    "requestLine": "{plan}, sent on {date}",
+    "decidedOn": "Decided on {date}",
+    "status": {
+      "pending": "Waiting for Maqsad",
+      "approved": "Approved",
+      "declined": "Declined"
+    },
+    "requestTitle": "Request a different plan",
+    "requestIntro": "This is a request, not a payment. No payment is taken here, and your plan stays the same until Maqsad confirms.",
+    "plan": "Plan",
+    "message": "Message (optional)",
+    "messagePlaceholder": "Anything Maqsad should know",
+    "submit": "Send request",
+    "sent": "Request sent. Your plan stays the same until Maqsad confirms.",
+    "noOther": "No other plan can be requested right now.",
+    "errors": {
+      "invalid": "Check the form and try again.",
+      "not_available": "This action isn't available. Refresh the page and try again.",
+      "already_pending": "You already have a request waiting for Maqsad.",
+      "already_on_plan": "You are already on this plan.",
+      "rate_limited": "You're doing that too often. Wait a minute and try again.",
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "usage": {
+    "loading": "Checking your plan…",
+    "signedOutTitle": "Log in to check a document",
+    "signedOutBody": "Each check uses one of your plan's monthly verification reports, so you need an account. The free student plan includes a few checks every month.",
+    "left": "{left} of {limit} checks left this month. Resets on {date}.",
+    "noneLeft": "You have used all {limit} checks for this month. They reset on {date}.",
+    "notIncluded": "Your plan doesn't include document checks.",
+    "unavailable": "This account has no plan, so it can't run document checks.",
+    "seePlan": "See your plan",
+    "errors": {
+      "sign_in_required": "Log in to check a document.",
+      "limit_reached": "You have used all {limit} checks for this month. They reset on {date}.",
+      "not_included": "Your plan doesn't include document checks. You can request a plan that does from your settings.",
+      "not_available": "This account can't run document checks.",
+      "rate_limited": "You're checking documents too fast. Wait a minute and try again.",
+      "hourly_limit": "You've run {limit} checks in the last hour. Try again later.",
+      "busy": "The checker is busy. Wait a minute and try again.",
+      "daily_limit": "The checker has reached today's limit. Try again tomorrow.",
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "adminPlans": {
+    "title": "Plans and limits",
+    "intro": "Edit prices, monthly limits and which plans users can request, and decide upgrade requests. No payment is taken or recorded here, and a plan never makes an account verified.",
+    "requestsTitle": "Pending upgrade requests",
+    "requestsEmpty": "No pending requests.",
+    "requestLine": "{name} ({role}) asked for {plan}",
+    "currentPlan": "Current plan: {plan}",
+    "sentOn": "sent on {date}",
+    "note": "Decision note (optional)",
+    "approve": "Approve",
+    "decline": "Decline",
+    "approveHelp": "Approving changes the user's plan now.",
+    "plansTitle": "Plans",
+    "updated": "last changed on {date}",
+    "price": "Price (PKR a month)",
+    "priceHelp": "Leave empty when the price isn't set yet.",
+    "reports": "Verification reports a month",
+    "reportsHelp": "Leave empty when the plan doesn't include them.",
+    "offered": "Users can request this plan",
+    "save": "Save plan"
+  }
+}
