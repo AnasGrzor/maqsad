@@ -1,15 +1,16 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { SPLASH_KEY } from "./brand";
 
-const WORD = "مقصد";
+const WORD = "ارادہ";
 
 // The Urdu calligraphy logo writes itself right to left. The head script sets data-splash on <html> only on the
 // first page load of a browser session, so the overlay is in the server HTML and never pops in after content.
 export function Splash() {
   const t = useTranslations("splash");
+  const ur = useLocale() === "ur";
   const root = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
 
@@ -82,9 +83,8 @@ export function Splash() {
             <use href="#mark" />
           </svg>
         </div>
-        <p lang="en" className="cap mt-3 font-mono text-[12.5px] tracking-[0.34em] text-soft uppercase">
-          {t("caption")}
-        </p>
+        {/* The tagline. Nastaliq can't be letter-spaced or uppercased, so Urdu gets its own size. */}
+        <p lang={ur ? "ur" : "en"} className={`cap mt-3 text-soft ${ur ? "text-xl" : "font-mono text-[12.5px] tracking-[0.34em] uppercase"}`}>{t("caption")}</p>
       </div>
       <button
         type="button"

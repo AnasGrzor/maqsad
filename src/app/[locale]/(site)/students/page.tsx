@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import { FeatureList, PageHeading } from "@/components/feature-list";
+import { PageHeading } from "@/components/feature-list";
+import { DocumentCheckFeature, Highlights } from "@/components/highlights";
 import { Link } from "@/i18n/navigation";
 import { cta } from "@/components/styles";
 
@@ -15,20 +16,8 @@ export default function Students() {
   return (
     <div className="space-y-10">
       <PageHeading title={t("title")} intro={t("intro")} />
-      <FeatureList
-        items={[
-          "documentCheck",
-          "accounts",
-          "studentProfile",
-          "profileVisibility",
-          "agentDirectory",
-          "connections",
-          "messaging",
-          "caseTracking",
-          "feeRecords",
-          "complaints",
-        ]}
-      />
+      <Highlights who="student" />
+      <DocumentCheckFeature />
       <p className="max-w-[68ch] text-soft">{t("free")}</p>
       <div className="flex flex-wrap gap-3">
         <Link href="/register" className={`${cta} bg-primary text-on-primary hover:bg-primary-hover`}>
@@ -36,6 +25,9 @@ export default function Students() {
         </Link>
         <Link href="/pricing" className={`${cta} text-ink ring-1 ring-line ring-inset hover:ring-ink`}>
           {nav("pricing")}
+        </Link>
+        <Link href="/how-it-works#students" className={`${cta} text-ink ring-1 ring-line ring-inset hover:ring-ink`}>
+          {nav("studentGuide")}
         </Link>
       </div>
     </div>

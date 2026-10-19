@@ -5,9 +5,10 @@ import { focusRing } from "@/components/styles";
 import { Link } from "@/i18n/navigation";
 
 const COLUMNS = [
-  ["studentsCol", [["check", "/check"], ["students", "/students"], ["howItWorks", "/how-it-works"]]],
-  ["agentsCol", [["agents", "/agents"], ["pricing", "/pricing"]]],
-  ["maqsadCol", [["trust", "/trust"], ["login", "/login"], ["register", "/register"]]],
+  ["studentsCol", [["students", "/students"], ["studentGuide", "/how-it-works#students"], ["check", "/check"]]],
+  ["agentsCol", [["agents", "/consultants"], ["agentGuide", "/how-it-works#consultants"]]],
+  ["brandCol", [["pricing", "/pricing"], ["trust", "/trust"], ["policies", "/policies"]]],
+  ["accountCol", [["login", "/login"], ["register", "/register"]]],
 ] as const;
 
 export default function SiteLayout({ children }: LayoutProps<"/[locale]">) {
@@ -17,13 +18,14 @@ export default function SiteLayout({ children }: LayoutProps<"/[locale]">) {
     <>
       <SiteHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-8 pb-20 sm:pt-12 lg:px-8">{children}</main>
-      <footer className="bg-band">
+      <footer className="bg-band print:hidden">
         <TileBand />
         <div className="mx-auto grid max-w-6xl gap-9 px-4 pt-12 pb-10 lg:px-8">
-          <div className="grid grid-cols-2 gap-7 md:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))]">
-            <div className="col-span-2 space-y-3.5 md:col-span-1">
+          <div className="grid grid-cols-2 gap-7 md:grid-cols-[minmax(0,1.5fr)_repeat(4,minmax(0,1fr))]">
+            <div className="col-span-2 space-y-3 md:col-span-1">
               <Wordmark label={nav("home")} />
-              <p className="max-w-[70ch] text-sm text-soft">{t("disclaimer")}</p>
+              <p className="text-lg font-bold">{t("tagline")}</p>
+              <p className="max-w-[40ch] text-sm text-soft">{t("about")}</p>
             </div>
             {COLUMNS.map(([col, links]) => (
               <div key={col}>
@@ -36,7 +38,7 @@ export default function SiteLayout({ children }: LayoutProps<"/[locale]">) {
               </div>
             ))}
           </div>
-          <p className="border-t border-band-line pt-5 text-sm text-soft">{t("notPayments")}</p>
+          <p className="border-t border-band-line pt-5 text-sm text-soft">{t("rights")}</p>
         </div>
       </footer>
     </>

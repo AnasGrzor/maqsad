@@ -3,13 +3,13 @@
 // MOCK_AI=1 to also run real (mock) checks through /api/analyze until the limit.
 import { anonClient, APP, check, ensureUser, finish, get, serviceClient, session, sql } from "./e2e-lib.mjs";
 
-await ensureUser("m5-student@maqsad.test", "student", "M5 Student");
-await ensureUser("m5-agent@maqsad.test", "agent", "M5 Agent");
-await ensureUser("m5-admin@maqsad.test", "student", "M5 Admin");
-sql("update public.profiles set role='admin' where id=(select id from auth.users where email='m5-admin@maqsad.test')");
-const student = await session("m5-student@maqsad.test");
-const agent = await session("m5-agent@maqsad.test");
-const admin = await session("m5-admin@maqsad.test");
+await ensureUser("m5-student@iraada.test", "student", "M5 Student");
+await ensureUser("m5-agent@iraada.test", "agent", "M5 Agent");
+await ensureUser("m5-admin@iraada.test", "student", "M5 Admin");
+sql("update public.profiles set role='admin' where id=(select id from auth.users where email='m5-admin@iraada.test')");
+const student = await session("m5-student@iraada.test");
+const agent = await session("m5-agent@iraada.test");
+const admin = await session("m5-admin@iraada.test");
 const ids = [student.id, agent.id, admin.id].map((id) => `'${id}'`).join(",");
 const resetData = () => {
   sql(`delete from public.usage_events where user_id in (${ids})`);
@@ -71,7 +71,7 @@ check("others can't see the request", ((await agent.sb.from("subscription_reques
 check("an agent can't request a student plan", (await rpc(agent, "request_plan", { plan: "student_plus" })) === "not_available");
 
 let page = await get("/en/student/settings", student.cookie);
-check("settings shows the plan, usage and pending request", page.body.includes("Your plan") && page.body.includes("Student Free") && page.body.includes("0 of 3 verification reports used") && page.body.includes("Waiting for Maqsad"));
+check("settings shows the plan, usage and pending request", page.body.includes("Your plan") && page.body.includes("Student Free") && page.body.includes("0 of 3 verification reports used") && page.body.includes("Waiting for Iraada"));
 page = await get("/en/admin/plans", student.cookie);
 check("students can't open the admin plans page", page.redirect === "/en/student", page.redirect);
 page = await get("/en/admin/plans", admin.cookie);
@@ -83,7 +83,7 @@ const sub = (await student.sb.from("subscriptions").select("*").maybeSingle()).d
 check("the subscription records who granted it", sub?.plan_id === "student_plus" && sub?.granted_by === admin.id);
 check("a decided request can't be decided again", (await rpc(admin, "decide_plan_request", { request: requestId, approve: false })) === "not_available");
 page = await get("/en/student/settings", student.cookie);
-check("settings shows the approved plan", page.body.includes("Student Plus") && page.body.includes("Approved for testing") && page.body.includes("Set by Maqsad on"));
+check("settings shows the approved plan", page.body.includes("Student Plus") && page.body.includes("Approved for testing") && page.body.includes("Set by Iraada on"));
 const { data: declineId } = await agent.sb.rpc("request_plan", { plan: "agent_professional" });
 check("admin declines a request", !!declineId && !(await rpc(admin, "decide_plan_request", { request: declineId, approve: false, note: "Not yet" })));
 check("a declined request leaves the plan", (await agent.sb.rpc("current_plan")).data === "agent_basic");

@@ -11,7 +11,7 @@ import { focusRing } from "./styles";
 export const LINKS = [
   ["howItWorks", "/how-it-works"],
   ["students", "/students"],
-  ["agents", "/agents"],
+  ["agents", "/consultants"],
   ["trust", "/trust"],
   ["pricing", "/pricing"],
   ["check", "/check"],
@@ -31,7 +31,7 @@ export function SiteHeader() {
   ));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-background/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-line bg-background/90 backdrop-blur-md print:hidden">
       <div className="mx-auto flex h-[68px] max-w-6xl items-center gap-3 px-4 lg:gap-4 lg:px-8">
         <Wordmark label={t("home")} />
 

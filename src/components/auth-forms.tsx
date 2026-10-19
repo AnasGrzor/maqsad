@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { useActionState } from "react";
 import { signIn, signUp, updateProfile, type FormState } from "@/app/actions/auth";
 import { Input } from "@/components/ui/input";
@@ -52,7 +53,12 @@ export function LoginForm() {
   );
 }
 
-export function RegisterForm() {
+// "Join as a consultant" links add ?as=consultant. Reading the query needs a Suspense boundary, which the page provides.
+export function RegisterFromLink() {
+  return <RegisterForm role={useSearchParams().get("as") === "consultant" ? "agent" : "student"} />;
+}
+
+export function RegisterForm({ role: initial = "student" }: { role?: "student" | "agent" }) {
   const t = useTranslations("auth");
   const [state, action, pending] = useActionState(signUp, undefined);
   const locale = useLocale();
@@ -63,12 +69,12 @@ export function RegisterForm() {
       <fieldset className="space-y-2">
         <legend className="mb-2 text-sm font-medium">{t("role")}</legend>
         <div className="grid gap-2 sm:grid-cols-2">
-          {(["student", "agent"] as const).map((role, i) => (
+          {(["student", "agent"] as const).map((role) => (
             <label
               key={role}
               className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl bg-card px-3 py-2 text-sm ring-1 ring-line-strong has-checked:ring-2 has-checked:ring-ink"
             >
-              <input type="radio" name="role" value={role} defaultChecked={i === 0} className="size-4 accent-ink" />
+              <input type="radio" name="role" value={role} defaultChecked={role === initial} className="size-4 accent-ink" />
               {t(role === "student" ? "roleStudent" : "roleAgent")}
             </label>
           ))}

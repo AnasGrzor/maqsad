@@ -28,6 +28,9 @@ export type AuthError =
   | "invalid_role"
   | "invalid_credentials"
   | "email_taken"
+  | "email_not_confirmed"
+  | "email_send_limit"
+  | "email_send_failed"
   | "rate_limited"
   | "suspended"
   | "unknown";

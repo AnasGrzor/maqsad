@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import { RegisterForm } from "@/components/auth-forms";
+import { Suspense } from "react";
+import { RegisterForm, RegisterFromLink } from "@/components/auth-forms";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,7 +14,9 @@ export default function Register() {
   return (
     <div className="mx-auto max-w-lg rounded-2xl bg-tint p-6 ring-1 ring-tint-strong sm:p-8">
       <h1 className="mb-6 text-2xl font-semibold tracking-tight">{t("registerTitle")}</h1>
-      <RegisterForm />
+      <Suspense fallback={<RegisterForm />}>
+        <RegisterFromLink />
+      </Suspense>
       <p className="mt-6 text-sm text-soft">
         {t("haveAccount")}{" "}
         <Link href="/login" className="font-medium text-ink underline underline-offset-4">

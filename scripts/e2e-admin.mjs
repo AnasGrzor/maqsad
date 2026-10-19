@@ -3,23 +3,23 @@
 // Uses its own m6-* accounts and resets their data first. Run with the app on APP_URL (production build for HSTS).
 import { anonClient, APP, check, ensureUser, finish, get, KEY, session, sql, URL } from "./e2e-lib.mjs";
 
-await ensureUser("m6-student@maqsad.test", "student", "Mehwish Student");
-await ensureUser("m6-agent@maqsad.test", "agent", "Kamran Agent");
-await ensureUser("m6-admin@maqsad.test", "student", "Ayesha Admin");
-await ensureUser("m6-admin2@maqsad.test", "student", "Bilal Admin");
-const emails = ["m6-student", "m6-agent", "m6-admin", "m6-admin2"].map((e) => `'${e}@maqsad.test'`).join(",");
+await ensureUser("m6-student@iraada.test", "student", "Mehwish Student");
+await ensureUser("m6-agent@iraada.test", "agent", "Kamran Agent");
+await ensureUser("m6-admin@iraada.test", "student", "Ayesha Admin");
+await ensureUser("m6-admin2@iraada.test", "student", "Bilal Admin");
+const emails = ["m6-student", "m6-agent", "m6-admin", "m6-admin2"].map((e) => `'${e}@iraada.test'`).join(",");
 const ids = `(select id from auth.users where email in (${emails}))`;
 sql(`update public.profiles set status='active' where id in ${ids} and status <> 'active'`);
-sql(`update public.profiles set role='admin' where id in (select id from auth.users where email in ('m6-admin@maqsad.test','m6-admin2@maqsad.test')) and role <> 'admin'`);
+sql(`update public.profiles set role='admin' where id in (select id from auth.users where email in ('m6-admin@iraada.test','m6-admin2@iraada.test')) and role <> 'admin'`);
 sql(`delete from public.connections where student_id in ${ids} or agent_id in ${ids}`);
 sql(`delete from public.credentials where agent_id in ${ids}`);
 sql(`delete from public.student_profiles where user_id in ${ids}`);
 sql(`delete from public.agent_profiles where user_id in ${ids}`);
 
-const student = await session("m6-student@maqsad.test");
-let agent = await session("m6-agent@maqsad.test");
-const admin = await session("m6-admin@maqsad.test");
-const admin2 = await session("m6-admin2@maqsad.test");
+const student = await session("m6-student@iraada.test");
+let agent = await session("m6-agent@iraada.test");
+const admin = await session("m6-admin@iraada.test");
+const admin2 = await session("m6-admin2@iraada.test");
 const errorOf = async (p) => (await p).error?.message;
 const rows = async (p) => (await p).data?.length ?? 0;
 const lastAudit = (action, target) =>
@@ -71,7 +71,7 @@ check("admins can't suspend themselves", (await suspend(admin.sb, admin.id, "tes
 check("admins can't suspend another admin", (await suspend(admin.sb, admin2.id, "testing")) === "cannot_suspend_admin");
 check("unknown accounts are refused", (await suspend(admin.sb, crypto.randomUUID(), "testing")) === "not_available");
 check("students can't read emails", (await errorOf(student.sb.rpc("admin_user_email", { target: agent.id }))) === "forbidden");
-check("admins read a user's email", (await admin.sb.rpc("admin_user_email", { target: agent.id })).data === "m6-agent@maqsad.test");
+check("admins read a user's email", (await admin.sb.rpc("admin_user_email", { target: agent.id })).data === "m6-agent@iraada.test");
 check("emails aren't readable from auth.users through the API", !!(await errorOf(admin.sb.schema("auth").from("users").select("email"))));
 
 const mark = sql("select coalesce(max(id), 0) from public.audit_log");
@@ -112,11 +112,11 @@ const wild = await get("/en/admin?q=%25", admin.cookie);
 check("search treats % literally", wild.status === 200 && !wild.body.includes("Kamran Agent"));
 const detail = await get(`/en/admin/users/${agent.id}`, admin.cookie);
 check("user page shows email, credentials, connections and the reactivate form",
-  detail.status === 200 && ["m6-agent@maqsad.test", "M6 Horizon Consultants", "M6-OEP-77", "Request pending", "Reactivate"].every((s) => detail.body.includes(s)));
+  detail.status === 200 && ["m6-agent@iraada.test", "M6 Horizon Consultants", "M6-OEP-77", "Request pending", "Reactivate"].every((s) => detail.body.includes(s)));
 check("user page in Urdu loads", (await get(`/ur/admin/users/${student.id}`, admin.cookie)).status === 200);
 check("an invalid user id shows not found", (await get("/en/admin/users/not-a-uuid", admin.cookie)).body.includes("No account with this id"));
 const studentTries = await get(`/en/admin/users/${agent.id}`, student.cookie);
-check("students are sent away from admin user pages", studentTries.redirect.endsWith("/en/student") && !studentTries.body.includes("m6-agent@maqsad.test"));
+check("students are sent away from admin user pages", studentTries.redirect.endsWith("/en/student") && !studentTries.body.includes("m6-agent@iraada.test"));
 const audit = await get("/en/admin/audit", admin.cookie);
 check("activity history lists the suspension with actor name and reason", audit.status === 200 && audit.body.includes("Account suspended") && audit.body.includes("Ayesha Admin") && audit.body.includes("Several fee complaints"));
 const filtered = await get("/en/admin/audit?action=credential.review", admin.cookie);
@@ -127,7 +127,7 @@ check("agents are sent away from activity history", (await get("/en/admin/audit"
 // Reactivation.
 check("admin reactivates the agent", !(await suspend(admin.sb, agent.id, "Complaints resolved", "active")));
 check("reactivation is logged with the reason", lastAudit("account.reactivate", agent.id).includes("Complaints resolved"));
-agent = await session("m6-agent@maqsad.test");
+agent = await session("m6-agent@iraada.test");
 check("a reactivated agent signs in and reads data again", (await rows(agent.sb.from("agent_profiles").select("user_id").eq("user_id", agent.id))) === 1);
 
 // 4. Security headers.

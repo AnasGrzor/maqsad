@@ -1,15 +1,15 @@
 {
   "pricingPlans": {
-    "notVerified": "Paying for a plan never makes an account verified. An agent is verified only when Maqsad reviews their credentials.",
+    "notVerified": "Paying for a plan never makes an account verified. A consultant is verified only when Iraada reviews their credentials.",
     "limitsNote": "Verification report limits are applied on our server and reset at the start of each calendar month, Pakistan time.",
-    "betaNote": "No payments are taken. You can request a plan from your dashboard, and nothing changes until Maqsad confirms."
+    "betaNote": "No payments are taken. You can request a plan from your dashboard, and nothing changes until Iraada confirms."
   },
   "subscription": {
     "title": "Your plan",
     "intro": "Plans give access to features and monthly limits. Paying never makes an account verified.",
     "current": "Current plan",
     "defaultPlan": "The default plan for your account type",
-    "grantedOn": "Set by Maqsad on {date}",
+    "grantedOn": "Set by Iraada on {date}",
     "usageTitle": "This month",
     "used": "{used} of {limit} verification reports used. Resets on {date}.",
     "notIncluded": "Verification reports are not included in your plan.",
@@ -17,22 +17,22 @@
     "requestLine": "{plan}, sent on {date}",
     "decidedOn": "Decided on {date}",
     "status": {
-      "pending": "Waiting for Maqsad",
+      "pending": "Waiting for Iraada",
       "approved": "Approved",
       "declined": "Declined"
     },
     "requestTitle": "Request a different plan",
-    "requestIntro": "This is a request, not a payment. No payment is taken here, and your plan stays the same until Maqsad confirms.",
+    "requestIntro": "This is a request, not a payment. No payment is taken here, and your plan stays the same until Iraada confirms.",
     "plan": "Plan",
     "message": "Message (optional)",
-    "messagePlaceholder": "Anything Maqsad should know",
+    "messagePlaceholder": "Anything Iraada should know",
     "submit": "Send request",
-    "sent": "Request sent. Your plan stays the same until Maqsad confirms.",
+    "sent": "Request sent. Your plan stays the same until Iraada confirms.",
     "noOther": "No other plan can be requested right now.",
     "errors": {
       "invalid": "Check the form and try again.",
       "not_available": "This action isn't available. Refresh the page and try again.",
-      "already_pending": "You already have a request waiting for Maqsad.",
+      "already_pending": "You already have a request waiting for Iraada.",
       "already_on_plan": "You are already on this plan.",
       "rate_limited": "You're doing that too often. Wait a minute and try again.",
       "unknown": "Something went wrong. Please try again."

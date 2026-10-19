@@ -1,8 +1,8 @@
 import { Link } from "@/i18n/navigation";
 import { focusRing } from "./styles";
 
-export const MODE_KEY = "maqsad-mode";
-export const SPLASH_KEY = "maqsad-splash";
+export const MODE_KEY = "iraada-mode";
+export const SPLASH_KEY = "iraada-splash";
 
 // Runs in <head> before paint so a saved dark choice never flashes light. Also starts the splash once per session.
 export const themeScript = `try{if(localStorage.getItem("${MODE_KEY}")==="dark")document.documentElement.dataset.mode="dark"}catch(e){}try{if(!sessionStorage.getItem("${SPLASH_KEY}"))document.documentElement.dataset.splash=""}catch(e){}`;
@@ -63,8 +63,8 @@ export function Wordmark({ label }: { label: string }) {
       lang="en"
       className={`inline-flex items-center gap-2.5 rounded-md font-heading text-2xl leading-none font-extrabold tracking-[-0.03em] text-primary ${focusRing}`}
     >
-      <Mark className="size-[30px]" />
-      Maqsad
+      <Mark className="logo-scroll size-[30px]" />
+      Iraada
       <span className="sr-only">{label}</span>
     </Link>
   );

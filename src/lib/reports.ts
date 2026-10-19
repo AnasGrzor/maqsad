@@ -1,5 +1,5 @@
 import "server-only";
-import { getCurrentUser } from "./auth";
+import type { CurrentUser } from "./auth";
 import { UUID } from "./data";
 import { fromRow, toRow, type ReportRow } from "./report-row";
 import type { Report } from "./schema";
@@ -15,9 +15,10 @@ export type SavedReport = { id: string; created_at: string; owner_id: string; ca
 
 // Returns the new id, or null when the user can't save (signed out, not a student) or the insert failed.
 // Never throws: a failed save must not turn a finished check into an error.
-export async function saveReport(report: Report): Promise<string | null> {
+// The caller looks the user up before its response starts streaming: reading the session here could renew the
+// login token, and a renewed token can't reach the browser once streaming has begun, which signs the user out.
+export async function saveReport(report: Report, user: CurrentUser | null): Promise<string | null> {
   try {
-    const user = await getCurrentUser();
     if (!user?.active || user.role !== "student") return null;
     const row = toRow(report);
     // The owner is the user checked above, never a value from the request.

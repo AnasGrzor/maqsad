@@ -3,20 +3,20 @@
 import { anonClient, check, ensureUser, finish, get, PASS, session, sql } from "./e2e-lib.mjs";
 
 // 1. Admin can't be self-assigned at signup, even calling Supabase directly.
-const evil = await anonClient().auth.signUp({ email: `evil${Date.now()}@maqsad.test`, password: PASS, options: { data: { role: "admin" } } });
+const evil = await anonClient().auth.signUp({ email: `evil${Date.now()}@iraada.test`, password: PASS, options: { data: { role: "admin" } } });
 check("signup with role=admin is rejected by the trigger", !!evil.error, evil.error?.message);
-const noRole = await anonClient().auth.signUp({ email: `norole${Date.now()}@maqsad.test`, password: PASS });
+const noRole = await anonClient().auth.signUp({ email: `norole${Date.now()}@iraada.test`, password: PASS });
 check("signup without a role is rejected", !!noRole.error);
 
 // 2. Test accounts. The admin registers as a student and is promoted by hand, as in production.
-await ensureUser("student@maqsad.test", "student", "Sara Khan");
-await ensureUser("agent@maqsad.test", "agent", "Test Agent");
-await ensureUser("admin@maqsad.test", "student", "Test Admin");
-sql("update public.profiles set role='admin' where id=(select id from auth.users where email='admin@maqsad.test')");
+await ensureUser("student@iraada.test", "student", "Sara Khan");
+await ensureUser("agent@iraada.test", "agent", "Test Agent");
+await ensureUser("admin@iraada.test", "student", "Test Admin");
+sql("update public.profiles set role='admin' where id=(select id from auth.users where email='admin@iraada.test')");
 
-const student = await session("student@maqsad.test");
-const agent = await session("agent@maqsad.test");
-const admin = await session("admin@maqsad.test");
+const student = await session("student@iraada.test");
+const agent = await session("agent@iraada.test");
+const admin = await session("admin@iraada.test");
 
 // 3. Server-side role routing in the app.
 const cases = [

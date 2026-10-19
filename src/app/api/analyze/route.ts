@@ -15,6 +15,7 @@ import {
   ruleChecks,
   ukviCheck,
 } from "@/lib/checks";
+import { getCurrentUser } from "@/lib/auth";
 import { extract } from "@/lib/gemini";
 import { judge, research } from "@/lib/groq";
 import { mockCheck, pickScenario } from "@/lib/mock";
@@ -70,6 +71,9 @@ export async function POST(req: Request) {
   if (refused) return refused;
   // End M5.
 
+  // Read before the stream starts: once it has, a renewed login token can't be sent back (see saveReport).
+  const owner = form?.get("save") === "1" ? await getCurrentUser() : null;
+
   const stream = new ReadableStream({
     async start(controller) {
       const send = (e: StreamEvent) => controller.enqueue(new TextEncoder().encode(JSON.stringify(e) + "\n"));
@@ -77,7 +81,7 @@ export async function POST(req: Request) {
       // ---- M4 save step: a signed-in student who ticked "Save this report" gets it stored (src/lib/reports.ts).
       // Anonymous and unticked checks are never stored. "saved" is the new id, or false if saving failed.
       const sendResult = async (report: Report) =>
-        send({ type: "result", report, ...(form?.get("save") === "1" ? { saved: (await saveReport(report)) ?? false } : {}) });
+        send({ type: "result", report, ...(form?.get("save") === "1" ? { saved: (await saveReport(report, owner)) ?? false } : {}) });
       // ---- end M4 save step
       try {
         if (MOCK) {

@@ -4,7 +4,7 @@
       "student": "My applications",
       "agent": "Active applications"
     },
-    "intro": "Each application is shared between you and one connected student or agent. Both of you see the same requirements, deadlines, fee records and history.",
+    "intro": "Each application is shared between you and one connected student or consultant. Both of you see the same requirements, deadlines, fee records and history.",
     "disputesLink": "My reports and disputes",
     "open": "Open an application",
     "titlePlaceholder": "For example: MSc Computing, Fall 2027",
@@ -57,14 +57,14 @@
       "deadline": "Deadline"
     },
     "recordsTitle": "Fees and commitments",
-    "recordsIntro": "Disclosed fees, agreed responsibilities, promises, expected dates and payments as reported by either of you. Records can't be edited or deleted: to correct one, add a new record that corrects it. Maqsad never handles money.",
+    "recordsIntro": "Disclosed fees, agreed responsibilities, promises, expected dates and payments as reported by either of you. Records can't be edited or deleted: to correct one, add a new record that corrects it. Iraada never handles money.",
     "corrected": "Corrected by a later record",
     "onDate": "Date: {date}",
     "onDateHelp": "Optional. For example the payment date or the expected date.",
     "amountHelp": "Optional. Numbers only, for example 50000.",
     "summaryHelp": "What was disclosed, agreed, promised or paid, in your own words.",
     "correctsRecord": "Corrects the record {name} added on {date}",
-    "paymentNote": "Reported by {name}. This is what a party reported, not proof that money moved. Maqsad never handles money and can't confirm payments.",
+    "paymentNote": "Reported by {name}. This is what a party reported, not proof that money moved. Iraada never handles money and can't confirm payments.",
     "recordedBy": "Recorded by {name} on {date}",
     "noRecords": "No fee or commitment records yet.",
     "addRecord": "Add a record",
@@ -110,7 +110,7 @@
   },
   "messaging": {
     "title": "Messages",
-    "intro": "Messages with your connected students and agents. Messages can't be edited or deleted.",
+    "intro": "Messages with your connected students and consultants. Messages can't be edited or deleted.",
     "someone": "Someone",
     "you": "You",
     "youPrefix": "You: ",
@@ -130,7 +130,7 @@
   },
   "notifications": {
     "title": "Notifications",
-    "intro": "Updates from your connections and shared applications. Maqsad doesn't send email or push notifications.",
+    "intro": "Updates from your connections and shared applications. Iraada doesn't send email or push notifications.",
     "link": "Notifications",
     "unread": "{count} unread",
     "unreadTag": "New",
@@ -153,12 +153,12 @@
   "disputes": {
     "title": "Report a problem",
     "listTitle": "My reports and disputes",
-    "privacy": "Only you and Maqsad's admins can see what you send here. The other person is not shown your report.",
+    "privacy": "Only you and Iraada's admins can see what you send here. The other person is not shown your report.",
     "open": "Report suspicious behaviour or raise a dispute",
     "detailsHelp": "Describe what happened, with dates. Don't include passwords or bank card numbers.",
     "noRecord": "None",
-    "submit": "Send to Maqsad",
-    "sent": "Sent. Maqsad's admins will review it. You can follow its status under My reports and disputes.",
+    "submit": "Send to Iraada",
+    "sent": "Sent. Iraada's admins will review it. You can follow its status under My reports and disputes.",
     "sentOn": "Sent on {date}",
     "empty": "You haven't sent any reports or disputes.",
     "kinds": {
@@ -182,6 +182,6 @@
       "resolved": "Resolved",
       "dismissed": "Closed without action"
     },
-    "resolution": "Maqsad's note"
+    "resolution": "Iraada's note"
   }
 }

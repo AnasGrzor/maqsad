@@ -1,23 +1,23 @@
 // End-to-end checks for cases, case items, history, fee and commitment records, messages, notifications
-// and disputes (milestone 3). Uses its own m3-*@maqsad.test accounts and resets their data first.
+// and disputes (milestone 3). Uses its own m3-*@iraada.test accounts and resets their data first.
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { APP, check, ensureUser, finish, get, session, sql } from "./e2e-lib.mjs";
 
-await ensureUser("m3-student@maqsad.test", "student", "Ayesha Malik");
-await ensureUser("m3-student2@maqsad.test", "student", "Outside Student");
-await ensureUser("m3-agent@maqsad.test", "agent", "Crescent Advisers");
-await ensureUser("m3-agent2@maqsad.test", "agent", "Declined Agent");
-await ensureUser("m3-admin@maqsad.test", "student", "M3 Admin");
+await ensureUser("m3-student@iraada.test", "student", "Ayesha Malik");
+await ensureUser("m3-student2@iraada.test", "student", "Outside Student");
+await ensureUser("m3-agent@iraada.test", "agent", "Crescent Advisers");
+await ensureUser("m3-agent2@iraada.test", "agent", "Declined Agent");
+await ensureUser("m3-admin@iraada.test", "student", "M3 Admin");
 // Messaging and fee records need Agent Professional on one side of the connection (integration migration).
-sql("insert into public.subscriptions (user_id, plan_id, note) select id, 'agent_professional', 'e2e' from auth.users where email = 'm3-agent@maqsad.test' on conflict (user_id) do update set plan_id = excluded.plan_id");
-sql("update public.profiles set role='admin' where id=(select id from auth.users where email='m3-admin@maqsad.test')");
+sql("insert into public.subscriptions (user_id, plan_id, note) select id, 'agent_professional', 'e2e' from auth.users where email = 'm3-agent@iraada.test' on conflict (user_id) do update set plan_id = excluded.plan_id");
+sql("update public.profiles set role='admin' where id=(select id from auth.users where email='m3-admin@iraada.test')");
 
-const student = await session("m3-student@maqsad.test");
-const outsider = await session("m3-student2@maqsad.test");
-const agent = await session("m3-agent@maqsad.test");
-const agent2 = await session("m3-agent2@maqsad.test");
-const admin = await session("m3-admin@maqsad.test");
+const student = await session("m3-student@iraada.test");
+const outsider = await session("m3-student2@iraada.test");
+const agent = await session("m3-agent@iraada.test");
+const agent2 = await session("m3-agent2@iraada.test");
+const admin = await session("m3-admin@iraada.test");
 const ids = [student.id, outsider.id, agent.id, agent2.id].map((id) => `'${id}'`).join(",");
 // Deleting connections cascades to cases, items, records, history, messages, notifications and disputes.
 sql(`delete from public.connections where student_id in (${ids}) or agent_id in (${ids})`);

@@ -1,0 +1,101 @@
+# Iraada: technical notes
+
+Iraada is a trust and case-management platform for students, job seekers, and overseas education and recruitment agents. Milestones 1 to 6 of the product brief are built. It has:
+
+- Student and agent registration, login and role-based dashboards (student, agent, admin), with roles checked on the server and in Postgres Row Level Security.
+- A public website in English and Urdu (right-to-left), with a pricing page read from the `plans` table.
+- Plans, upgrade requests (no payments) and monthly verification report limits, managed by admins.
+- Student and agent profiles, an agent directory, student discovery for agents, matching suggestions with reasons, and connection requests.
+- Agent credential submission with an optional document, and admin review that sets the status students see.
+- An admin area: user search and account suspension, credential review, saved reports by risk, complaints and disputes, plans and upgrade requests, and an append-only activity history.
+- Shared applications (cases) between a student and an agent whose connection is accepted: requirements, document requests, milestones and deadlines with overdue flags, an append-only history, append-only fee and commitment records, messages, in-app notifications, and user-side reports and disputes.
+- The document checker at `/check`, described below, which needs an account and counts against the plan's monthly limit. Students can save reports and keep them with an application.
+- A rules and policies page at `/policies`, with a PDF download (`/api/policies`, built from the English messages; the Urdu page offers print or save instead, because the PDF fonts can't shape Urdu).
+- An agent work dashboard on the agent overview (requests, overdue deadlines, active applications, matches, unread notifications) and a public trust card per agent at `/agents/[id]` that agents share by link.
+
+Features that are not built yet are listed in `src/lib/features.ts` as `false` (today none). Public pages, pricing and dashboard menus read that file and label those features "Coming soon", so nothing is advertised before it works.
+
+The document checker covers what Pakistani students and families receive before they pay anyone: foreign university offers, scholarship offers, visa letters, agent WhatsApp messages, degrees and transcripts, overseas job offers and internship offers. It reports red flags with the evidence behind each one and an Urdu summary for parents. It never says a document is genuine. The best result is "no red flags found", followed by an official contact the user can confirm with.
+
+## Run it
+
+```bash
+cp .env.example .env.local   # add a free Gemini key and a free Groq key
+pnpm install
+supabase start               # local Postgres and Auth in Docker; copy its API URL, publishable key and secret key into .env.local
+pnpm dev                     # http://localhost:3000
+pnpm test                    # unit tests: rule checks, scoring, findings, look-alike domains, validation, matching, translation keys
+pnpm test:e2e                # with supabase and the app running: every e2e script in scripts/, in order (scripts/e2e-all.mjs)
+```
+
+`pnpm test:e2e` targets `http://localhost:3000`; set `APP_URL` to test another server, such as `next start` on a different port. The checker tests that run mock checks need `next dev` with `MOCK_AI=1` and `E2E_MOCK=1`; against a production server they are skipped, so the suite never spends model quota.
+
+`SUPABASE_SECRET_KEY` is server-only. The app uses it for two things: storing saved verification reports, so a report in the database is always one the server produced, and reading an active agent's public fields for the trust card (`src/lib/trust-card.ts`), which signed-out viewers can open. Never give it a `NEXT_PUBLIC_` prefix.
+
+`supabase start` applies the migrations in `supabase/migrations`. To start over, run `supabase db reset`. Nobody can sign up as an admin. Register a normal account, then promote it with the SQL in `supabase/seed.sql`.
+
+## Accounts, roles and languages
+
+- **Auth.** Supabase email and password, through server actions in `src/app/actions/auth.ts`. Input is validated with Zod (`src/lib/auth-schema.ts`).
+- **Roles.** Each user has a row in `public.profiles` with a role (`student`, `agent`, `admin`) and a status. The signup trigger only accepts student or agent. RLS lets users read and rename their own row, and lets active admins read every row. Column grants stop users changing their own role or status.
+- **Authorization.** `src/lib/auth.ts` reads the role from `profiles`, never from user metadata, which users can edit. Every dashboard layout and page calls `requireRole()`. `src/proxy.ts` refreshes the session and redirects signed-out users early, but it is not the security check.
+- **Profiles and privacy.** Student profiles start hidden. Agents see a student only when the student turns on visibility, is connected to them, or asked to connect first. Discovery shows students as "Student · field" until they accept; their name reaches an agent only after that. Agent profiles and names are visible to every signed-in user.
+- **Connections.** Rows in `public.connections` change only through the database functions `request_connection`, `respond_connection` and `withdraw_connection`, because the Supabase API is reachable from the browser. They allow one open request per pair, only the recipient can accept, and an agent can have at most 20 requests waiting, as an anti-spam cap.
+- **Matching.** `src/lib/matching.ts` scores shared destinations, field, education level, goal and a verified credential, with fixed weights and no model. Agents see students at `/agent/matches` (Match with students) and students see agents at `/student/matches` (Match with agents). Every suggestion lists its reasons, and the page says a match is not a guarantee.
+- **Credentials.** Agents can insert credentials but cannot set their status (column grants). Only `review_credential()`, which checks `is_admin()`, changes it. "Verified" means an admin verified at least one credential; plans and payments play no part. Documents go to the private `credentials` storage bucket under the agent's own folder; only that agent and admins can read them, through 5-minute signed links.
+- **Plans and limits.** `public.plans` holds prices (PKR, null = not set yet), monthly verification reports (null = not included) and included feature keys; everyone can read it and only `update_plan()` (admins) changes it. The pricing page caches it with `"use cache"` and the `plans` tag, which the admin action refreshes. Users without a `subscriptions` row are on `student_free` or `agent_basic`. Users ask for another plan with `request_plan()` (one pending request, own audience, offered plans only); no payment is taken, and only `decide_plan_request()` (admins) changes the plan. `use_allowance('verification_report')` records one use if the plan allows it this calendar month (Asia/Karachi), under a per-user lock. `/api/analyze` requires sign-in and calls it before any model call, including in `MOCK_AI` mode. Other features can gate on `plan_allows('<feature key>')` in their database functions. Admins have no plan and run checks unmetered.
+- **Plan gating on applications.** `require_connection()` (every case, item, record and message function goes through it) allows an action when either party's plan includes the feature: case tracking is in Student Free, so any accepted connection can track an application; messaging and fee records need Agent Professional on the agent's side (or Student Plus). Otherwise the function raises `plan_required` and the form explains which plans include it. Reporting a problem never needs a plan. Agent Basic includes 3 checks a month (`20261019000005_integration.sql`).
+- **Admin review of disputes and reports.** `/admin/complaints` lists reports and disputes; `review_dispute()` (admins only) sets the status and a note the person who raised it can read, and writes the activity history. `/admin/reports` lists saved verification reports by risk. Plan edits, plan grants and request decisions are recorded in the activity history by triggers, but only when something actually changed.
+- **Suspension.** Admins suspend or reactivate non-admin accounts, with a reason, from `/admin/users/[id]` through `set_account_status()`, which checks `is_admin()` and refuses your own account and other admins. It also deletes the user's sessions so the refresh token stops working. An access token already issued stays valid until it expires, but `my_role()` returns null for it and restrictive RLS policies hide everything except the user's own `profiles` row. A suspended user's student or agent profile and credentials disappear for everyone except admins. Role changes are SQL-only.
+- **Activity history.** `public.audit_log` is append-only (a trigger rejects updates, deletes and truncates) and only active admins can read it, at `/admin/audit`. Triggers log role and status changes on `profiles` and status changes on `credentials`. `write_audit()` is the only writer, and API roles can't execute it. Other admin functions log their changes with one line: `perform public.write_audit('dispute.resolve', 'dispute', dispute_id::text, jsonb_build_object('outcome', outcome));`. Details hold codes and ids only, never personal data or document contents. Admins read a user's email only through `admin_user_email()`.
+- **Security headers.** `next.config.ts` sends a static Content-Security-Policy, `nosniff`, `Referrer-Policy`, `X-Frame-Options: DENY`, a restrictive `Permissions-Policy`, and HSTS in production. The CSP allows inline scripts because a nonce-based policy needs every page rendered per request, which would turn off partial prerendering.
+- **Cases, messages and disputes** (`supabase/migrations/20261019000001_cases_messaging.sql`). Tables only grant SELECT; every write goes through a security-definer function (`open_case`, `set_case_status`, `add_case_item`, `set_item_status`, `add_case_record`, `send_message`, `raise_dispute`), and all but `raise_dispute` pass through `require_connection()`, which checks that the caller is an active party of an accepted connection. Triggers write `case_events` (who did what, when) and `notifications`. History, records and messages are append-only: a trigger refuses updates and deletes for everyone, except deletes cascading from a removed account. A recorded payment is shown as what a party reported, never as proof. Disputes are visible to the person who raised them and to admins only. The message thread re-renders every 10 seconds while the tab is visible; there is no real-time channel, email or push.
+- **Languages.** URLs start with the locale (`/en/...`, `/ur/...`) so pages can be prerendered with Cache Components. Strings live in `messages/en.json` and `messages/ur.json`, loaded by next-intl from the `[locale]` root parameter. `pnpm test` fails if the two files have different keys. Findings made by code carry a stable `code` and parameters and are shown from `reportFindings` in `messages/<lang>/m4.json`. Findings written by the model, warnings and the action plan steps are still English only, and are marked `lang="en"` so they stay left-to-right on Urdu pages.
+
+To work on the UI without using model quota, set `MOCK_AI=1` in `.env.local`. The API then returns sample reports from `src/lib/mock.ts`, built with the real rule checks and risk level but no Gemini or Groq calls. Paste `high`, `medium`, `low`, `incomplete` or `error` to pick one (only the first word counts). `scripts/e2e-reports.mjs` tests saving reports through the API only with `E2E_MOCK=1` against such a dev server; without it, it never calls the checker. An uploaded file gives the high-risk report, or the low-risk one if its name contains "real" or "flinders". Production builds ignore the flag.
+
+## How a check works
+
+`POST /api/analyze` takes a PDF or image up to 4 MB (the Vercel request limit) or pasted text, and streams progress as NDJSON. A document that was already fully checked returns its cached report without calling any model.
+
+1. **Extract** (`src/lib/gemini.ts`). Gemini reads the file and returns typed fields: issuer, payment details, emails, reference numbers, pressure tactics, and any text that tries to instruct an AI. It uses `gemini-3.8-flash` and retries on `gemini-3.5-flash-lite` when the free quota returns 429 or the model is overloaded (5xx).
+2. **Rule checks** (`src/lib/checks.ts`). This step is plain code with no model involved. It checks:
+   - payment through JazzCash, Easypaisa, money transfer services or crypto
+   - a payee name that doesn't match the issuer
+   - Gmail or other free email senders, and email domains that differ from the website
+   - CAS, DLI, CRICOS and SEVIS number formats
+   - domain age through RDAP
+   - PDF producer and edit dates
+   - internships that give payment instructions (real internships don't charge fees)
+   - National CERT's [fake notifications](https://pkcert.gov.pk/fake-notifications.asp) list, matched on a shared domain or phone, or the same notice subject. A name match alone counts for nothing, because the notices name the real body being impersonated
+   - live student visa registers: the UKVI sponsor register (UK), the designated learning institutions list (Canada) and CRICOS (Australia). A DLI number or CRICOS code in the document must exist and belong to the issuer, and CRICOS also gives the official website to compare with the document's domains
+   - look-alike domains: once an official domain is known (the CRICOS website, or the official contact found by web research), a document domain that is one or two letters off, contains the official name, or has the same name with another ending is a red flag quoting both domains
+
+   Findings about the document quote the exact text they rest on (payment channel, payee, sender email, pressure, hidden instructions, reference numbers), taken only from the extraction. A check or source that fails is reported as "could not be verified", never as a red flag.
+3. **Web research** (`src/lib/groq.ts`). `openai/gpt-oss-120b` on Groq searches with `browser_search` for official sites, registers (HEC, Bureau of Emigration, approved agent lists) and scam reports.
+4. **Report**. A second Groq call, on `openai/gpt-oss-20b` so it uses a separate free quota, turns the research notes into findings with source URLs and writes the English and Urdu summary.
+
+The risk level comes from `riskLevel()` in `src/lib/scoring.ts`, which counts red flags, and `explainRisk()` there writes the "Why this result" line from the same findings (for example the serious red flags, or the checks that didn't run). A model can add red flags but cannot remove one. Text injected into a document therefore can't lower the risk. "No red flags found" needs every check to have run and at least one fact confirmed by an official source; otherwise the report says the checks are incomplete.
+
+## After the report
+
+- **Connections** (`src/lib/network.ts`). The domains, issuer emails, phones, payee and account numbers in each checked document are stored as SHA-256 hashes. A later document that shares one lists the earlier checks it matched (risk, type, issuer, date). Anyone can put a real university's phone in a fake letter, so connections never add red flags or change the risk.
+- **Already paid or shared something?** (`src/lib/actions.ts`). The student ticks what they already gave away (bank transfer, JazzCash or Easypaisa, card, password or OTP, CNIC, passport, transcripts) and gets steps in order of urgency: helplines (NCCIA 1799, wallets, Sunwai, PTA, DGI&P), a complaint draft built from the report, and a verification email addressed only to the official contact found by web research. Nothing is sent; the student copies the text or opens their own email app.
+- **Official channels** (`src/lib/alternatives.ts`). For any result other than "no red flags found", a fixed list of official places to find the same kind of opportunity (HEC, Chevening, USEFP, DAAD, UCAS, EduCanada, BEOE and others). The links were checked on 2026-10-17.
+- **Saved reports** (`src/lib/reports.ts`, `src/lib/report-row.ts`). A signed-in student can tick "Save this report to my account" before a check. The report goes to `verification_reports` with the findings, sources, summaries, official contact and warnings, never the document, the pasted text or the extraction, and with the recipient's name, payee, account numbers, phones and emails replaced by `[removed]`. Students see them under Verification reports and can delete them; admins can read them; nobody can edit them. Anonymous and unticked checks are never stored.
+
+## Known limits
+
+- Groq's free tier allows about 8K tokens per minute and 200K a day per model. A check uses roughly 10-15K tokens, so expect a few dozen fresh checks a day. When a limit is hit, the report still shows the rule checks, a warning and "checks incomplete".
+- The report cache lives in server memory, so a restart or another server instance starts empty.
+- RDAP returns no registration date for `.ac.uk` and `.pk` domains, so domain age is only checked for domains like `.com` and `.org`.
+- Live registers cover the UK, Canada and Australia. The UK is checked by name for university offers only; Canada and Australia also check any DLI number or CRICOS code the document quotes, whatever its type. A name must match the register's wording ("UCL" won't match "University College London"), so a miss is a medium flag, not high. Canada's list only has post-secondary institutions. The US publishes its SEVP school list only as a PDF, so the US and every other country rely on web research.
+- Connections live in server memory like the report cache, so they only link checks handled by the same server instance since its last restart. Links quoted in a scam letter (for example a gov.uk page) can link unrelated documents.
+- PKCERT's fake notifications page lists 8 notices with the text only inside images, and none are about education today, so that check will rarely fire. If the page can't be fetched, the report doesn't become "checks incomplete".
+- Helplines and opportunity links are hard-coded and can go stale.
+- Gemini's Google Search grounding is not on the free tier, which is why search runs on Groq.
+- Plan usage counts a check when it starts, so a check that fails later (model quota, unreadable file) or re-checks a cached document still uses one report.
+- Checks that may reach the models are rate limited in `ai_checks` (`take_ai_check()`, limits in `src/lib/plans.ts`): 2 a minute and 10 an hour per user, 5 a minute and 50 per rolling 24 hours across the app, admins included. Mock checks skip it, and a check the plan refuses doesn't count. Raise `app_per_day` if the providers' free quotas allow more.
+- Every server action calls `rateLimited()` (`src/lib/rate-limit.ts`, `take_rate_limit()` in the database) first: 30 a minute per signed-in user, 20 a minute per IP for sign-in and sign-up. It allows requests if the database call fails. Page loads aren't limited in the app; use a Vercel Firewall rate-limit rule for that.
+- Saved reports are written only by the server with `SUPABASE_SECRET_KEY`; users can't insert them through the API. A student can link a saved report to one of their applications (`link_report()`); the link and the report stay private to the student and admins, never shown to the agent. Names written in Urdu script in the Urdu summary are not removed.
+- The look-alike check only runs when an official domain is known, and an institution that really uses two domains with the same name (for example `.edu` and `.edu.au`) gets a medium flag.

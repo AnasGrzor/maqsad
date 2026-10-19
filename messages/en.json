@@ -1,8 +1,8 @@
 {
   "meta": {
-    "brand": "Maqsad",
-    "title": "Maqsad: your journey abroad, with more transparency",
-    "description": "Maqsad connects students and job seekers with education and recruitment agents, with verification, clear fee records and document checks before anyone pays."
+    "brand": "Iraada",
+    "title": "Iraada: the trusted way abroad",
+    "description": "Iraada brings students and job seekers together with verified education and recruitment consultants, with clear fees and every step on record."
   },
   "nav": {
     "main": "Main",
@@ -10,10 +10,10 @@
     "home": "Home",
     "howItWorks": "How it works",
     "students": "For students",
-    "agents": "For agents",
-    "trust": "Verification and trust",
+    "agents": "For consultants",
+    "trust": "Trust and safety",
     "pricing": "Pricing",
-    "check": "Check a document",
+    "check": "Verify a document",
     "login": "Log in",
     "register": "Register",
     "dashboard": "Dashboard",
@@ -22,14 +22,19 @@
     "switchTo": "اردو",
     "dark": "Dark",
     "light": "Light",
-    "darkTheme": "Dark theme"
+    "darkTheme": "Dark theme",
+    "policies": "Rules and policies",
+    "studentGuide": "Student guide",
+    "agentGuide": "Consultant guide"
   },
   "footer": {
-    "disclaimer": "Maqsad flags risks. It cannot prove that a document, person, agent or opportunity is genuine or safe. Always confirm with the issuer through contact details you find on their official website, never the ones in a document.",
-    "notPayments": "Maqsad does not handle or hold money.",
+    "tagline": "The trusted way abroad.",
+    "about": "Iraada brings students and verified consultants together, from the first message to the visa.",
     "studentsCol": "Students",
-    "agentsCol": "Agents",
-    "maqsadCol": "Maqsad"
+    "agentsCol": "Consultants",
+    "brandCol": "Iraada",
+    "accountCol": "Account",
+    "rights": "© 2026 Iraada"
   },
   "status": {
     "soon": "Coming soon"
@@ -37,11 +42,11 @@
   "features": {
     "documentCheck": {
       "title": "Document checks",
-      "body": "Check an offer letter, visa letter, job offer or agent message against official registers and sources, with the evidence for every finding."
+      "body": "Check an offer letter, visa letter, job offer or consultant message and see the evidence behind every finding."
     },
     "accounts": {
-      "title": "Student and agent accounts",
-      "body": "Register as a student or an agent, sign in and manage your account."
+      "title": "Student and consultant accounts",
+      "body": "Register as a student or a consultant, sign in and manage your account."
     },
     "studentProfile": {
       "title": "Student profiles",
@@ -49,19 +54,19 @@
     },
     "profileVisibility": {
       "title": "You control who sees you",
-      "body": "Agents only see your profile if you choose to appear in discovery."
+      "body": "Consultants only see your profile if you choose to appear in discovery."
     },
     "agentDirectory": {
-      "title": "Find agents",
-      "body": "Browse agents by destination and service, with their disclosed fees and verification status."
+      "title": "Find consultants",
+      "body": "Browse consultants by destination and service, with their disclosed fees and verification status."
     },
     "agentProfile": {
-      "title": "Agent and agency profiles",
+      "title": "Consultant and agency profiles",
       "body": "Business details, services, specialisations and disclosed fees."
     },
     "credentialSubmission": {
       "title": "Credential verification",
-      "body": "Submit licences and registrations for review. The status you see is the real review status."
+      "body": "Submit licences and registrations to earn the Verified badge."
     },
     "studentDiscovery": {
       "title": "Student discovery",
@@ -69,15 +74,15 @@
     },
     "matching": {
       "title": "Matching with reasons",
-      "body": "Suggested matches explain why they were suggested. A match is never a guarantee of admission or a job."
+      "body": "Every suggestion shows exactly why a student and a consultant fit together."
     },
     "connections": {
       "title": "Connection requests",
-      "body": "An agent asks to connect; the student accepts or declines. Nothing is shared before that."
+      "body": "A consultant asks to connect; the student accepts or declines. Nothing is shared before that."
     },
     "messaging": {
       "title": "Messages",
-      "body": "Talk to connected students or agents inside Maqsad, with a history both sides can see."
+      "body": "Talk to connected students or consultants inside Iraada, with a history both sides can see."
     },
     "caseTracking": {
       "title": "Application tracking",
@@ -85,7 +90,7 @@
     },
     "feeRecords": {
       "title": "Fee and commitment records",
-      "body": "Record agreed fees, promises and payment status. A recorded payment is what a party reported, not proof of a transfer."
+      "body": "Agreed fees, promises and payment status, recorded for both sides."
     },
     "savedReports": {
       "title": "Saved verification reports",
@@ -101,7 +106,7 @@
     },
     "adminReview": {
       "title": "Human review",
-      "body": "Maqsad staff review credentials, reports and disputes."
+      "body": "Iraada staff review credentials, reports and disputes."
     },
     "auditLog": {
       "title": "Activity history",
@@ -109,95 +114,114 @@
     }
   },
   "home": {
-    "title": "Check the offer letter <mark>before you pay</mark> anyone.",
-    "intro": "Maqsad connects students and job seekers with overseas education and recruitment agents. Check documents before you pay, see who you are dealing with, and keep a clear record of what was agreed.",
-    "ctaRegister": "Create an account",
-    "ctaCheck": "Check a document now",
-    "buildingTitle": "What Maqsad does",
-    "buildingIntro": "Check documents, find agents and track every application in one place.",
-    "neverTitle": "What Maqsad will never do",
-    "never1": "Say a document, agent or opportunity is completely genuine or safe.",
-    "never2": "Mark an agent as verified because they pay for a subscription.",
-    "never3": "Read your Gmail, WhatsApp or other accounts. We only check what you choose to submit.",
-    "never4": "Handle, hold or transfer your money.",
-    "eyebrow": "For students and job seekers going abroad",
-    "urduLine": "ادائیگی سے پہلے دستاویزات چیک کریں، اور جانیں کہ آپ کس سے معاملہ کر رہے ہیں۔",
-    "exampleLabel": "Example report",
-    "exampleRisk": "High risk",
-    "exampleTitle": "WhatsApp message · \"University of Westbridge\"",
-    "exampleBody": "<b>Do not pay anything yet.</b> The deposit goes to a personal JazzCash account, and the website was registered 23 days ago.",
-    "sourcesLabel": "Checked against",
-    "source1": "UK sponsor register",
-    "source2": "Canada DLI list",
-    "source3": "Australia CRICOS",
-    "source4": "SEVIS number formats",
-    "source5": "Domain age",
-    "howChecks": "How checks work",
-    "stepsTitle": "The student decides who gets in.",
-    "allSteps": "All seven steps",
-    "step1Title": "Create a profile",
-    "step1Body": "Your education, goals and destinations. You choose whether agents can find you.",
-    "step2Title": "Accept a connection",
-    "step2Body": "An agent asks to connect. Nothing is shared until you accept.",
-    "step3Title": "Track it together",
-    "step3Body": "Fees, documents, deadlines and messages, with who changed what and when.",
-    "neverEyebrow": "Our limits, in writing",
-    "neverBody": "Maqsad flags risks. It cannot prove that a document, person, agent or opportunity is genuine or safe."
+    "eyebrow": "Where students meet trusted consultants",
+    "title": "The trusted way <mark>abroad</mark>.",
+    "intro": "Iraada brings students together with verified education and recruitment consultants. Find the right consultant, agree on everything in writing, and follow your application from the first message to the visa.",
+    "urduLine": "بیرونِ ملک کا بھروسے مند راستہ",
+    "ctaStart": "Get started",
+    "ctaCheck": "Verify a document",
+    "studentsEyebrow": "For students",
+    "studentsTitle": "Go abroad with people you can trust.",
+    "student1Title": "Verified consultants to choose from",
+    "student1Body": "See which consultants our team has verified, what they charge and which countries they cover, before you reach out.",
+    "student2Title": "Consultants matched to your goals",
+    "student2Body": "We suggest consultants who work with your country, field and level, and show you why each one is a match.",
+    "student3Title": "Every agreement in writing",
+    "student3Body": "Fees, deadlines and documents are kept in one place you and your consultant both see, instead of scattered across WhatsApp.",
+    "student4Title": "You decide who sees you",
+    "student4Body": "Your profile stays private until you choose to let consultants find you, and nothing is shared before you accept.",
+    "studentsCta": "Join as a student",
+    "agentsEyebrow": "For consultants",
+    "agentsTitle": "Let your record do the talking.",
+    "agent1Title": "A verified badge for your agency",
+    "agent1Body": "Submit your licence once. After our team reviews it, students see the Verified badge on your profile.",
+    "agent2Title": "Students matched to your expertise",
+    "agent2Body": "Meet students whose countries, fields and goals line up with the work you do best.",
+    "agent3Title": "A trust card to share",
+    "agent3Body": "One link with your verified status, destinations and fees, ready for WhatsApp and Facebook.",
+    "agent4Title": "One dashboard for every student",
+    "agent4Body": "New requests, active applications and upcoming deadlines in one view, so no student slips through.",
+    "agentsCta": "Join as a consultant",
+    "guideLink": "Read the guide",
+    "stepsEyebrow": "How it comes together",
+    "stepsTitle": "Three steps from first hello to boarding pass.",
+    "step1Title": "Build your profile",
+    "step1Body": "Your studies, goals and dream destinations, shared only when you choose.",
+    "step2Title": "Connect with the right consultant",
+    "step2Body": "Pick from your matches or accept a request. You decide who comes in.",
+    "step3Title": "Move forward together",
+    "step3Body": "Track fees, documents and deadlines side by side, all the way to your visa.",
+    "allSteps": "See the full guide",
+    "closingTitle": "Your next chapter starts with the right people.",
+    "closingBody": "Join Iraada free and take the first step the trusted way.",
+    "checkEyebrow": "Document check",
+    "checkTitle": "Verify a letter on its own.",
+    "checkBody": "Fake offer letters and visa documents cost families their savings every year. Upload any letter or message and find out in minutes whether it can be trusted, before you pay anything. Each report comes with an Urdu summary for your family, and you don't need a consultant or an application to use it.",
+    "checkPoint1": "University and scholarship offers",
+    "checkPoint2": "Visa letters and job offers",
+    "checkPoint3": "Degrees, transcripts and consultant messages",
+    "checkCta": "Verify a document"
   },
   "howItWorks": {
-    "title": "How Maqsad works",
-    "intro": "Students and agents connect only when the student agrees, then track the application together.",
-    "step1": "A student creates a profile.",
-    "step2": "The student chooses whether agents can find them.",
-    "step3": "Agents find visible students or get matching suggestions.",
-    "step4": "An agent sends a connection request.",
-    "step5": "The student accepts or declines.",
-    "step6": "Once connected, they message and manage the application on Maqsad.",
-    "step7": "Both sides track fees, documents, deadlines and progress.",
-    "checkTitle": "Check documents at any step",
-    "checkBody": "Anyone can check an offer letter, visa letter, job offer or agent message today. The report shows what was checked, which source supports each finding and what could not be verified.",
-    "checkEyebrow": "At any step",
-    "whoStudent": "Student",
-    "whoAgent": "Agent",
-    "whoBoth": "Both"
+    "title": "How Iraada works",
+    "intro": "Two short guides, one for students and one for consultants.",
+    "studentsTitle": "For students",
+    "agentsTitle": "For consultants",
+    "s1Title": "Create your profile",
+    "s1Body": "Add your studies, goals and the countries you have in mind.",
+    "s2Title": "Choose who can find you",
+    "s2Body": "Stay private, or let verified consultants discover your profile.",
+    "s3Title": "Find your consultant",
+    "s3Body": "Browse consultants, or open Match with consultants to see who fits and why.",
+    "s4Title": "Say yes to the right one",
+    "s4Body": "Accept a connection when you're ready. Nothing is shared before that.",
+    "s5Title": "Track it together",
+    "s5Body": "Fees, documents, deadlines and messages live in one place until you fly.",
+    "a1Title": "Set up your agency",
+    "a1Body": "List your destinations, services, levels and fees.",
+    "a2Title": "Get verified",
+    "a2Body": "Submit a licence or registration. Our team reviews it and adds your badge.",
+    "a3Title": "Meet matching students",
+    "a3Body": "Open Match with students, or browse students who have chosen to be visible.",
+    "a4Title": "Connect and open an application",
+    "a4Body": "Once a student accepts, plan requirements, deadlines and fees together.",
+    "a5Title": "Share your trust card",
+    "a5Body": "Send your card on WhatsApp and run everything from your work dashboard.",
+    "checkEyebrow": "Any time",
+    "checkTitle": "Verify a document",
+    "checkBody": "You don't need a consultant or an application. Upload any letter or message and get a clear answer in minutes, with the evidence behind it."
   },
   "students": {
     "title": "For students and job seekers",
-    "intro": "Know more about an agent and an offer before you share documents or pay anything.",
-    "free": "The free student plan includes a set number of verification reports each month."
+    "intro": "Find a consultant you can trust, see every option clearly, and keep each step of your application in one place.",
+    "free": "Students start free, with document checks included every month."
   },
   "agents": {
-    "title": "For education and recruitment agents",
-    "intro": "Show students your credentials and fees up front, and keep a clear record of every application.",
-    "paidNotVerified": "A paid plan gives you features. It never changes your verification status, which only comes from a completed review."
+    "title": "For education and recruitment consultants",
+    "intro": "Show students who you are, meet the ones you can help, and run every application from one dashboard."
   },
   "trust": {
-    "title": "Verification and trust",
-    "intro": "How Maqsad checks things, and what it does not claim.",
-    "nowTitle": "What we check today",
-    "now1": "Payment channels: JazzCash, Easypaisa, money transfer services and crypto",
-    "now2": "Whether the payee matches the issuer",
-    "now3": "Free email senders and email domains that differ from the website",
-    "now4": "CAS, DLI, CRICOS and SEVIS number formats",
-    "now5": "Domain age, PDF producer and edit dates",
-    "now6": "Live student visa registers: UK sponsor register, Canada's DLI list and Australia's CRICOS",
-    "now7": "Web research for official sites, approved agent lists and scam reports",
-    "findingTitle": "Every finding explains",
-    "finding1": "What was checked",
-    "finding2": "What evidence was available, quoted where possible",
-    "finding3": "Which source supports it",
-    "finding4": "What could not be verified",
-    "finding5": "Why a warning was raised and what to do next",
-    "failTitle": "When a check fails",
-    "failBody": "If a source is down or a check cannot run, the report says the information could not be verified. A failed check is never treated as proof of fraud, and the result becomes \"checks incomplete\" rather than \"no red flags\".",
-    "scoreTitle": "How risk is scored",
-    "scoreBody": "The risk level is calculated in code from the red flags found. An AI model can add a red flag but can never remove one, so text hidden in a document cannot lower the risk."
+    "title": "Trust and safety",
+    "intro": "Going abroad is a big step. Here is how Iraada keeps it on solid ground.",
+    "verifiedTitle": "Verified consultants",
+    "verifiedBody": "Consultants earn the Verified badge only after our team reviews their licence or registration.",
+    "feesTitle": "Fees in the open",
+    "feesBody": "Consultants list what they charge up front, so there are no surprises later.",
+    "controlTitle": "You stay in control",
+    "controlBody": "Students choose who can see them and who they connect with.",
+    "recordTitle": "One shared record",
+    "recordBody": "Fees, promises and messages are kept in one place both sides can see.",
+    "checksTitle": "Careful document checks",
+    "checksBody": "Reports show the evidence behind every finding, with a summary in Urdu for your family.",
+    "peopleTitle": "Real people behind it",
+    "peopleBody": "Our team reviews credentials, reports and disputes, and acts on them.",
+    "policiesLink": "Read our rules and policies"
   },
   "pricing": {
     "title": "Pricing",
-    "intro": "Plans give access to features. Paying never makes an account verified.",
+    "intro": "Start free. Upgrade when you need more.",
     "students": "Students and job seekers",
-    "agents": "Agents and recruiters",
+    "agents": "Consultants and recruiters",
     "free": "Free",
     "perMonth": "PKR {price} a month",
     "tbd": "Price not set yet",
@@ -207,37 +231,40 @@
     "plans": {
       "student_free": "Student Free",
       "student_plus": "Student Plus",
-      "agent_basic": "Agent Basic",
-      "agent_professional": "Agent Professional",
+      "agent_basic": "Consultant Basic",
+      "agent_professional": "Consultant Professional",
       "agency": "Agency or Team"
     }
   },
   "auth": {
-    "loginTitle": "Log in to Maqsad",
-    "registerTitle": "Create your Maqsad account",
+    "loginTitle": "Log in to Iraada",
+    "registerTitle": "Create your Iraada account",
     "email": "Email",
     "password": "Password",
     "passwordHint": "At least 8 characters.",
     "displayName": "Your name",
     "role": "I am",
     "roleStudent": "A student or job seeker",
-    "roleAgent": "An education or recruitment agent",
+    "roleAgent": "An education or recruitment consultant",
     "login": "Log in",
     "register": "Create account",
     "working": "Please wait…",
-    "noAccount": "New to Maqsad?",
+    "noAccount": "New to Iraada?",
     "haveAccount": "Already have an account?",
     "confirmEmail": "Check your email for a link to confirm your account, then log in.",
-    "consent": "By creating an account you agree that Maqsad stores your name, email and role to run your account. Nothing is shown to other users until you choose to share it.",
+    "consent": "By creating an account you agree that Iraada stores your name, email and role to run your account. Nothing is shown to other users until you choose to share it.",
     "errors": {
       "invalid_email": "Enter a valid email address.",
       "invalid_password": "The password must be 8 to 72 characters.",
       "invalid_displayName": "Enter a name of up to 80 characters.",
-      "invalid_role": "Choose student or agent.",
+      "invalid_role": "Choose student or consultant.",
       "invalid_credentials": "That email and password don't match an account.",
       "email_taken": "An account with this email already exists. Try logging in.",
+      "email_not_confirmed": "Confirm your email first. Open the link we sent you (check your spam folder too), then log in.",
+      "email_send_limit": "We couldn't send the confirmation email because too many were sent in the last hour. Please try again later.",
+      "email_send_failed": "We couldn't send the confirmation email. Please try again in a few minutes.",
       "rate_limited": "Too many attempts. Wait a minute and try again.",
-      "suspended": "This account is suspended. Contact Maqsad support.",
+      "suspended": "This account is suspended. Contact Iraada support.",
       "unknown": "Something went wrong. Please try again."
     }
   },
@@ -246,18 +273,18 @@
     "soon": "Soon",
     "roles": {
       "student": "Student",
-      "agent": "Agent",
+      "agent": "Consultant",
       "admin": "Admin"
     },
     "nav": {
       "overview": "Overview",
-      "findAgents": "Find agents",
+      "findAgents": "Find consultants",
       "applications": "My applications",
       "reports": "Verification reports",
       "messages": "Messages",
       "settings": "Profile and settings",
       "studentDiscovery": "Student discovery",
-      "matching": "Matching recommendations",
+      "matching": "Match with students",
       "connections": "Connection requests",
       "activeApplications": "Active applications",
       "credentials": "Verification and credentials",
@@ -267,11 +294,12 @@
       "flagged": "Reports and findings",
       "complaints": "Complaints and disputes",
       "plans": "Plans and limits",
-      "audit": "Activity history"
+      "audit": "Activity history",
+      "studentMatching": "Match with consultants"
     },
     "welcome": "Welcome, {name}",
-    "overviewIntro": "Here is what you can do on Maqsad today. Features marked Soon are being built.",
-    "checkCta": "Check a document",
+    "overviewIntro": "Here is what you can do on Iraada today. Features marked Soon are being built.",
+    "checkCta": "Verify a document",
     "settings": {
       "title": "Profile and settings",
       "account": "Account",
@@ -287,9 +315,9 @@
     "home": "Go to the home page"
   },
   "checker": {
-    "metaTitle": "Check a document",
-    "title": "Check a document before you pay anyone",
-    "intro": "Upload a university offer, scholarship or job offer, visa letter, degree, or paste an agent's WhatsApp message. We check it against official registers and sources and show you the evidence.",
+    "metaTitle": "Verify a document",
+    "title": "Verify a document before you pay anyone",
+    "intro": "Upload a university offer, scholarship or job offer, visa letter, degree, or paste a consultant's WhatsApp message. We check it against official registers and sources and show you the evidence.",
     "inputType": "Input type",
     "modeFile": "Upload a file",
     "modeText": "Paste a message",
@@ -299,8 +327,8 @@
     "fileHint": "PDF, JPG, PNG or WebP, up to 4 MB",
     "messageLabel": "Message text",
     "messagePlaceholder": "Paste the WhatsApp message or email here, including the sender's number or email address.",
-    "privacy": "Your document is sent to Google Gemini and Groq for analysis. We don't store it.",
-    "submit": "Check document",
+    "privacy": "Your document is checked privately and isn't stored. <link>How we handle documents</link>",
+    "submit": "Verify document",
     "checking": "Checking…",
     "tooBig": "This file is larger than 4 MB. Take a smaller photo or a screenshot of the letter.",
     "genericError": "Something went wrong. Please try again.",
@@ -310,7 +338,7 @@
     "progressHint": "This usually takes under a minute.",
     "starting": "Starting",
     "reportFor": "Report for <b>{subject}</b>",
-    "another": "Check another document",
+    "another": "Verify another document",
     "kb": "{n} KB",
     "mb": "{n} MB",
     "report": "Report",
@@ -365,7 +393,7 @@
     "docType": {
       "university_offer": "University offer",
       "scholarship_offer": "Scholarship offer",
-      "agent_message": "Agent message",
+      "agent_message": "Consultant message",
       "visa_letter": "Visa letter",
       "degree_or_transcript": "Degree or transcript",
       "job_offer": "Job offer",
@@ -382,20 +410,16 @@
       "none": "We couldn't find an official contact. Search for the institution's website yourself and use the contact details there, not the ones in the document."
     },
     "checks": {
-      "title": "What we check",
+      "title": "What we look at",
       "inDocument": "In the document",
-      "againstSources": "Against official sources",
-      "doc1": "How you are asked to pay: JazzCash, Easypaisa, money transfer services or crypto",
-      "doc2": "Whether the money goes to the issuer or to someone else",
-      "doc3": "Gmail senders, and email domains that don't match the website",
-      "doc4": "CAS, DLI, CRICOS and SEVIS number formats",
-      "doc5": "Short deadlines, threats, and hidden text aimed at AI checkers",
-      "doc6": "Which tool made the PDF and when it was last edited",
-      "src1": "How long the website's domain has existed",
-      "src2": "Student visa registers: the UK sponsor register, Canada's DLI list and Australia's CRICOS",
-      "src3": "Official websites, HEC, the Bureau of Emigration and approved agent lists",
-      "src4": "Published scam reports",
-      "never": "We never say a document is genuine. The best result is \"no red flags found\", with an official contact to confirm it."
+      "againstSources": "Beyond the document",
+      "doc1": "How you're asked to pay, and who the money goes to",
+      "doc2": "Who really sent it",
+      "doc3": "Reference numbers and deadlines",
+      "doc4": "Signs the file was changed",
+      "src1": "Official university and visa registers",
+      "src2": "The sender's website and public records",
+      "evidence": "Every finding comes with its evidence, plus an Urdu summary for your family."
     },
     "fields": {
       "docType": "Document type",
@@ -412,7 +436,7 @@
       "phones": "Phones",
       "references": "Reference numbers",
       "signedBy": "Signed by",
-      "agent": "Agent",
+      "agent": "Consultant",
       "pressure": "Pressure to pay quickly",
       "contradictions": "Contradictions",
       "aiText": "Text aimed at an AI checker"
@@ -484,8 +508,8 @@
       "both": "Study and work"
     },
     "agentKinds": {
-      "education": "Education agent",
-      "recruitment": "Recruitment agent",
+      "education": "Education consultant",
+      "recruitment": "Recruitment consultant",
       "both": "Education and recruitment"
     },
     "credentialKinds": {
@@ -498,7 +522,7 @@
     "credentialStatus": {
       "submitted": "Submitted, waiting for review",
       "under_review": "Under review",
-      "verified": "Verified by Maqsad",
+      "verified": "Verified by Iraada",
       "rejected": "Not verified"
     }
   },
@@ -517,7 +541,7 @@
       "already_connected": "You already have an open request or connection with this person.",
       "too_many_pending": "You have 20 requests waiting for an answer. Wait for replies or withdraw some first.",
       "profile_required": "Add your agency profile before sending requests.",
-      "plan_required": "This needs a plan that includes it on your side or the other person's (Agent Professional for agents, Student Plus for students). Plans are under Profile and settings or Subscription and settings.",
+      "plan_required": "This needs a plan that includes it on your side or the other person's (Consultant Professional for consultants, Student Plus for students). Plans are under Profile and settings or Subscription and settings.",
       "rate_limited": "You're doing that too often. Wait a minute and try again.",
       "unknown": "Something went wrong. Please try again."
     },
@@ -548,7 +572,7 @@
   },
   "studentProfile": {
     "title": "Your profile",
-    "intro": "Agents use this to understand what you need. Nothing here is shared until you turn on visibility or accept a connection.",
+    "intro": "Consultants use this to understand what you need. Nothing here is shared until you turn on visibility or accept a connection.",
     "educationLevel": "Highest education",
     "field": "Field you want to study or work in",
     "qualifications": "Qualifications",
@@ -558,15 +582,15 @@
     "destinations": "Countries you are interested in",
     "goal": "What you want",
     "goalsNote": "Your goals",
-    "visible": "Let agents find my profile",
-    "visibleHelp": "When this is on, signed-in agents can see your education, field, destinations, goals, skills and experience, but not your name or email. They see your name only after you accept their request.",
-    "missing": "You haven't added a profile yet. Agents can't find you, and agent suggestions need it."
+    "visible": "Let consultants find my profile",
+    "visibleHelp": "When this is on, signed-in consultants can see your education, field, destinations, goals, skills and experience, but not your name or email. They see your name only after you accept their request.",
+    "missing": "You haven't added a profile yet. Consultants can't find you, and consultant suggestions need it."
   },
   "agentProfile": {
     "title": "Agency profile",
     "intro": "Students see this before they connect with you. Disclose your fees clearly.",
     "agencyName": "Agency or business name",
-    "kind": "Type of agent",
+    "kind": "Type of consultant",
     "city": "City",
     "website": "Website",
     "destinations": "Countries you place students or workers in",
@@ -578,25 +602,25 @@
     "missing": "Add your agency profile so students can find you and you can send connection requests."
   },
   "directory": {
-    "title": "Find agents",
-    "intro": "Agents on Maqsad, with their disclosed fees and verification status. A listing is not an endorsement.",
+    "title": "Find consultants",
+    "intro": "Consultants on Iraada, with their disclosed fees and verification status. A listing is not an endorsement.",
     "destination": "Destination",
     "service": "Service",
-    "verifiedOnly": "Only agents with a verified credential",
-    "results": "{count, plural, =0 {No agents match} one {# agent} other {# agents}}",
+    "verifiedOnly": "Only consultants with a verified credential",
+    "results": "{count, plural, =0 {No consultants match} one {# consultant} other {# consultants}}",
     "verified": "Verified credential",
     "notVerified": "No verified credentials yet",
     "noFees": "No fees disclosed",
     "view": "View profile",
-    "suggested": "Why this agent may suit you",
-    "profileHint": "Add your profile in Profile and settings to see why an agent may suit you."
+    "suggested": "Why this consultant may suit you",
+    "profileHint": "Add your profile in Profile and settings to see why a consultant may suit you."
   },
   "agentDetail": {
     "about": "About",
     "fees": "Fees and service terms",
     "credentials": "Credentials",
-    "credentialsNone": "This agent hasn't submitted any credentials.",
-    "credentialsNote": "\"Verified by Maqsad\" means our staff checked the document against its issuer. It is not a guarantee about the agent's conduct. Paid plans never affect this status.",
+    "credentialsNone": "This consultant hasn't submitted any credentials.",
+    "credentialsNote": "Verified credentials were checked by our team with the issuer.",
     "details": "Details",
     "website": "Website",
     "city": "City",
@@ -618,9 +642,8 @@
     "notFound": "This student isn't visible to you."
   },
   "matching": {
-    "title": "Matching recommendations",
+    "title": "Match with students",
     "intro": "Visible students whose profile overlaps with yours, with the reasons for each suggestion.",
-    "disclaimer": "A suggestion is based only on what both profiles say. It is not a guarantee of suitability, legitimacy, admission or employment.",
     "empty": "No suggestions yet. Suggestions need a shared destination and appear as students make their profiles visible.",
     "profileFirst": "Add your agency profile to get suggestions.",
     "reasons": {
@@ -628,8 +651,13 @@
       "field": "Field match: {field}",
       "level": "Level match: {level}",
       "goal": "Goal match: {goal}",
-      "verified": "Has a credential verified by Maqsad"
-    }
+      "verified": "Has a credential verified by Iraada"
+    },
+    "studentTitle": "Match with consultants",
+    "studentIntro": "Consultants whose destinations, fields and services fit your profile, with the reasons for each match.",
+    "studentEmpty": "No matches yet. A match needs at least one destination you share with a consultant.",
+    "studentProfileFirst": "Add your profile to see consultants who match you.",
+    "browseAll": "Browse all consultants"
   },
   "connections": {
     "title": "Connection requests",
@@ -651,16 +679,16 @@
     "statusDeclined": "Declined",
     "statusWithdrawn": "Withdrawn",
     "connectedNote": "Messages and application tracking for connections arrive in the next milestone.",
-    "acceptNote": "Accepting shares your name and profile with this agent."
+    "acceptNote": "Accepting shares your name and profile with this consultant."
   },
   "credentials": {
     "title": "Verification and credentials",
-    "intro": "Submit licences and registrations for review. The status shown is the real review status. Paying for a plan never changes it.",
+    "intro": "Submit licences and registrations for review. Once our team verifies one, you get the Verified badge.",
     "kind": "Credential type",
     "issuer": "Issued by",
     "reference": "Licence or registration number",
     "document": "Document (optional)",
-    "documentHelp": "PDF, JPG, PNG or WebP, up to 4 MB. Only you and Maqsad staff can open it.",
+    "documentHelp": "PDF, JPG, PNG or WebP, up to 4 MB. Only you and Iraada staff can open it.",
     "submit": "Submit for review",
     "submitted": "Submitted.",
     "yours": "Your credentials",
@@ -670,17 +698,138 @@
   },
   "review": {
     "title": "Credential review",
-    "intro": "Check each document with its issuer before marking it verified. Agents and students see the status you set.",
-    "agent": "Agent",
+    "intro": "Check each document with its issuer before marking it verified. Consultants and students see the status you set.",
+    "agent": "Consultant",
     "underReview": "Mark under review",
     "verify": "Mark verified",
     "reject": "Reject",
-    "note": "Note to the agent",
+    "note": "Note to the consultant",
     "noFile": "No document uploaded",
     "empty": "No credentials submitted."
   },
   "splash": {
-    "caption": "Maqsad · purpose",
+    "caption": "The trusted way abroad",
     "skip": "Skip intro"
+  },
+  "policies": {
+    "title": "Rules and policies",
+    "intro": "What Iraada does, what it will never do, and the rules every student and consultant on Iraada works under. Written plainly, so you can hold us to them.",
+    "updated": "Last updated 19 October 2026",
+    "download": "Download PDF",
+    "downloadEn": "Download PDF (English)",
+    "print": "Print or save this page",
+    "contents": "On this page",
+    "sections": [
+      {
+        "id": "never",
+        "title": "What Iraada will never do",
+        "items": [
+          "Say a document, consultant or opportunity is completely genuine or safe. The best result we give is \"no red flags found\".",
+          "Mark a consultant as verified because they pay for a plan. Only a completed review by Iraada staff verifies a consultant.",
+          "Read your Gmail, WhatsApp or any other account. We only check what you choose to submit.",
+          "Handle, hold or transfer your money.",
+          "Show your name to a consultant before you accept their connection.",
+          "Let an AI model lower a risk level. A model can add a red flag but can never remove one."
+        ]
+      },
+      {
+        "id": "checks",
+        "title": "How document checks work",
+        "items": [
+          "Every finding says what was checked, the evidence behind it and the source that supports it.",
+          "The risk level is calculated in code from the red flags found, not decided by an AI model.",
+          "If a source is down or a check can't run, the report says so. A failed check is never treated as proof of fraud, and the result becomes \"checks incomplete\".",
+          "Always confirm with the issuer through contact details on their official website, never the ones printed in the document."
+        ]
+      },
+      {
+        "id": "reports",
+        "title": "Your documents and reports",
+        "items": [
+          "Documents you check are read by our AI partners, Google Gemini and Groq, to prepare your report. We don't keep them.",
+          "A report is saved only if you tick \"Save this report to my account\" before the check. Anonymous and unticked checks are never stored.",
+          "A saved report never contains your document or the text you pasted. Names, payee details, account numbers, phones and emails are replaced with [removed].",
+          "You can delete your saved reports at any time. Nobody can edit them.",
+          "A report you link to an application stays private to you and Iraada staff. The consultant never sees it."
+        ]
+      },
+      {
+        "id": "students",
+        "title": "Students' privacy and control",
+        "items": [
+          "Your profile starts hidden. Consultants only find you if you turn on visibility.",
+          "Until you accept a connection, a consultant sees you only as \"Student\" and your field, never your name.",
+          "You decide which connection requests to accept. An application can only be opened after you accept.",
+          "Matches are suggestions based on what both profiles say. They aren't a promise of admission or a job."
+        ]
+      },
+      {
+        "id": "consultants",
+        "title": "Rules for consultants",
+        "items": [
+          "\"Verified\" appears only after Iraada staff review a licence or registration you submit. A paid plan never changes it.",
+          "The fees you list on your profile are shown to every signed-in student.",
+          "You can have at most 20 connection requests waiting at a time, so students aren't spammed.",
+          "Fee records, promises and the history of an application can't be edited or deleted once added.",
+          "Students can report misleading information, hidden fees, pressure tactics, harassment or impersonation. Iraada staff review every report and can suspend an account.",
+          "A trust card shows what a consultant told Iraada and whether our team verified a credential. It doesn't prove that every offer they send is genuine."
+        ]
+      },
+      {
+        "id": "disputes",
+        "title": "Reports, disputes and suspension",
+        "items": [
+          "Anyone can report a problem or raise a dispute about an application, on any plan.",
+          "A dispute is seen only by the person who raised it and Iraada staff.",
+          "Staff can suspend an account and must give a reason. A suspended account's profile disappears for everyone else.",
+          "Important account and application activity is kept in a history that can't be changed."
+        ]
+      },
+      {
+        "id": "plans",
+        "title": "Plans and payments",
+        "items": [
+          "Iraada takes no payments on the site. Asking for a plan costs nothing, and staff approve each request.",
+          "Each plan includes a number of checks a month. A check counts when it starts.",
+          "A recorded payment in an application is what one side reported, not proof that money moved.",
+          "Plans add features. They never change a verification status or a risk level."
+        ]
+      }
+    ]
+  },
+  "agentWork": {
+    "title": "Your work today",
+    "incoming": "Students asking to connect",
+    "sent": "Your requests waiting for a reply",
+    "active": "Active applications",
+    "overdue": "Overdue deadlines",
+    "matches": "Students who match your profile",
+    "unread": "Unread notifications",
+    "cardTitle": "Your trust card",
+    "cardBody": "A public page with your verified status, destinations and fees. Share it on WhatsApp or Facebook so students can see you're on Iraada before they talk to you.",
+    "cardOpen": "Open trust card",
+    "cardShare": "Share on WhatsApp",
+    "cardShareText": "See my verified consultant profile on Iraada:",
+    "cardCopy": "Copy link",
+    "cardCopied": "Link copied",
+    "cardProfileFirst": "Add your agency profile to get a trust card."
+  },
+  "trustCard": {
+    "eyebrow": "Consultant trust card",
+    "verified": "Verified by Iraada",
+    "notVerified": "Not verified yet",
+    "verifiedNote": "Iraada staff reviewed and verified at least one licence or registration from this consultant.",
+    "notVerifiedNote": "Iraada staff haven't verified a licence or registration from this consultant yet.",
+    "since": "On Iraada since {date}",
+    "city": "City",
+    "destinations": "Destinations",
+    "services": "Services",
+    "levels": "Levels",
+    "fees": "Fees they disclosed",
+    "noFees": "This consultant hasn't listed their fees.",
+    "website": "Website",
+    "check": "Verify a document",
+    "connect": "Create an account to connect",
+    "notFound": "This trust card doesn't exist or is no longer active."
   }
 }

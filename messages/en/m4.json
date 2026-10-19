@@ -126,7 +126,7 @@
     "title": "Verification reports",
     "intro": "Reports you chose to save from the document checker. Each one shows what was found when you ran the check.",
     "empty": "You haven’t saved any reports yet. When you check a document, tick “Save this report to my account”.",
-    "checkCta": "Check a document",
+    "checkCta": "Verify a document",
     "checkedOn": "Checked {date}",
     "back": "All saved reports",
     "notFound": "This report doesn’t exist, or it isn’t yours.",
@@ -140,7 +140,7 @@
     "linkSave": "Save link",
     "linkSaved": "Saved.",
     "linkFailed": "Couldn't save the link. Refresh the page and try again.",
-    "linkHelp": "Only you see this link. The agent on the application can't see your saved reports.",
+    "linkHelp": "Only you see this link. The consultant on the application can't see your saved reports.",
     "linkedTitle": "Your linked verification reports",
     "linkedPrivate": "Only you can see these. The other party is not shown your reports."
   }

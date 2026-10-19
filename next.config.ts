@@ -35,6 +35,12 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      { source: "/:locale(en|ur)/agents/:path*", destination: "/:locale/consultants/:path*", permanent: true },
+      { source: "/agents/:path*", destination: "/consultants/:path*", permanent: true },
+    ];
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

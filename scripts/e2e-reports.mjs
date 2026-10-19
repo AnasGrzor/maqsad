@@ -9,16 +9,16 @@ import { anonClient, APP, check, ensureUser, finish, get, serviceClient, session
 const MOCK = process.env.E2E_MOCK === "1";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
-await ensureUser("m4-student@maqsad.test", "student", "M4 Student");
-await ensureUser("m4-student2@maqsad.test", "student", "M4 Other Student");
-await ensureUser("m4-agent@maqsad.test", "agent", "M4 Agent");
-await ensureUser("m4-admin@maqsad.test", "student", "M4 Admin");
-sql("update public.profiles set role='admin' where id=(select id from auth.users where email='m4-admin@maqsad.test')");
+await ensureUser("m4-student@iraada.test", "student", "M4 Student");
+await ensureUser("m4-student2@iraada.test", "student", "M4 Other Student");
+await ensureUser("m4-agent@iraada.test", "agent", "M4 Agent");
+await ensureUser("m4-admin@iraada.test", "student", "M4 Admin");
+sql("update public.profiles set role='admin' where id=(select id from auth.users where email='m4-admin@iraada.test')");
 
-const student = await session("m4-student@maqsad.test");
-const other = await session("m4-student2@maqsad.test");
-const agent = await session("m4-agent@maqsad.test");
-const admin = await session("m4-admin@maqsad.test");
+const student = await session("m4-student@iraada.test");
+const other = await session("m4-student2@iraada.test");
+const agent = await session("m4-agent@iraada.test");
+const admin = await session("m4-admin@iraada.test");
 const mine = [student, other, agent, admin].map((u) => `'${u.id}'`).join(",");
 sql(`delete from public.verification_reports where owner_id in (${mine})`);
 // Each mock check uses one of the monthly verification reports (milestone 5), so start every run with none used.

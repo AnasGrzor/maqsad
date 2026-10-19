@@ -260,7 +260,13 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
 
                 <div className="mt-5 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-soft sm:max-w-[40ch]">
-                    {t("privacy")}
+                    {t.rich("privacy", {
+                      link: (c) => (
+                        <Link href="/policies#reports" className={`underline underline-offset-4 hover:text-ink ${focusRing}`}>
+                          {c}
+                        </Link>
+                      ),
+                    })}
                   </p>
                   <button
                     type="submit"
@@ -327,8 +333,8 @@ export function Checker({ notice, blocked = false, saveOption }: { notice?: Reac
 }
 
 const CHECKS = [
-  ["inDocument", ["doc1", "doc2", "doc3", "doc4", "doc5", "doc6"]],
-  ["againstSources", ["src1", "src2", "src3", "src4"]],
+  ["inDocument", ["doc1", "doc2", "doc3", "doc4"]],
+  ["againstSources", ["src1", "src2"]],
 ] as const;
 
 function WhatWeCheck() {
@@ -357,7 +363,7 @@ function WhatWeCheck() {
         </div>
       ))}
       <p className="mt-5 border-t border-line pt-4 text-sm text-soft">
-        {t("never")}
+        {t("evidence")}
       </p>
     </section>
   );

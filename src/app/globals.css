@@ -381,6 +381,32 @@
   }
 }
 
+/* Scroll-linked logo motion. Browsers without scroll timelines, and anyone who prefers less motion, see a still logo. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .logo-scroll {
+      animation: logo-turn linear both;
+      animation-timeline: scroll(root);
+    }
+    .roundel-scroll {
+      animation: roundel-turn linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+  }
+}
+@keyframes logo-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes roundel-turn {
+  to {
+    transform: rotate(60deg) scale(0.86);
+    opacity: 0.35;
+  }
+}
+
 @keyframes stamp {
   from {
     transform: rotate(-90deg) scale(0.5);

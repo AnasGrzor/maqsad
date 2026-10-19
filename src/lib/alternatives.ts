@@ -7,7 +7,7 @@ export type Alternative = { name: string; url: string; note: string };
 // official in October 2026; re-check them when editing this list.
 const ALTERNATIVES: Record<Extraction["doc_type"], { tip: string; links: Alternative[] }> = {
   scholarship_offer: {
-    tip: "Apply on the scholarship's own website, and never pay an agent or a person's account to secure one.",
+    tip: "Apply on the scholarship's own website, and never pay a consultant or a person's account to secure one.",
     links: [
       {
         name: "HEC scholarships",
@@ -56,10 +56,10 @@ const ALTERNATIVES: Record<Extraction["doc_type"], { tip: string; links: Alterna
     ],
   },
   agent_message: {
-    tip: "Universities that work with agents list them on their own international pages. Open the university's site yourself, not from the agent's link, and check the agent is named there.",
+    tip: "Universities that work with consultants list them on their own international pages. Open the university's site yourself, not from the consultant's link, and check the consultant is named there.",
     links: [
       { name: "Fulbright (USEFP)", url: "https://www.usefp.org/", note: "Free EducationUSA advising in Pakistan" },
-      { name: "UCAS", url: "https://www.ucas.com/", note: "Apply to UK universities yourself, no agent needed" },
+      { name: "UCAS", url: "https://www.ucas.com/", note: "Apply to UK universities yourself, no consultant needed" },
       { name: "EduCanada", url: "https://www.educanada.ca/", note: "Government of Canada guide to studying in Canada" },
       { name: "Study Australia", url: "https://www.studyaustralia.gov.au/", note: "Australian government course search" },
     ],

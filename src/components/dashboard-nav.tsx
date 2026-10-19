@@ -15,6 +15,7 @@ export const NAV: Record<Role, { key: NavKey; href: string; feature: Feature }[]
   student: [
     { key: "overview", href: "/student", feature: "accounts" },
     { key: "findAgents", href: "/student/agents", feature: "agentDirectory" },
+    { key: "studentMatching", href: "/student/matches", feature: "matching" },
     { key: "applications", href: "/student/applications", feature: "caseTracking" },
     { key: "reports", href: "/student/reports", feature: "savedReports" },
     { key: "messages", href: "/student/messages", feature: "messaging" },

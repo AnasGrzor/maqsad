@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { requireRole, type Role } from "@/lib/auth";
 import { getAgentProfile, getStudentProfile, listConnections, namesOf } from "@/lib/data";
 import type { Feature } from "@/lib/features";
+import { AgentWork } from "./agent-work";
 import { ProfileForm } from "./auth-forms";
 import { FeatureList } from "./feature-list";
 import { ConnectionList } from "./listings";
@@ -55,6 +56,7 @@ export async function Overview({ role }: { role: "student" | "agent" }) {
           <ConnectionList connections={connections} me={user.id} names={names} labels={new Map()} />
         </section>
       )}
+      {role === "agent" && <AgentWork agentId={user.id} />}
       <Link href="/check" className={`${cta} bg-primary text-on-primary hover:bg-primary-hover`}>
         {t("dashboard.checkCta")}
       </Link>

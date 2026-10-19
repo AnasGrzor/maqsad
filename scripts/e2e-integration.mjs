@@ -2,16 +2,16 @@
 // plan gating on cases and messages, admin handling of disputes, audit entries, and suspended accounts.
 import { check, ensureUser, finish, get, serviceClient, session, sql } from "./e2e-lib.mjs";
 
-await ensureUser("int-student@maqsad.test", "student", "Integration Student");
-await ensureUser("int-agent@maqsad.test", "agent", "Integration Agency");
-await ensureUser("int-agent2@maqsad.test", "agent", "Basic Agency");
-await ensureUser("int-admin@maqsad.test", "student", "Integration Admin");
-sql("update public.profiles set role='admin' where id=(select id from auth.users where email='int-admin@maqsad.test')");
+await ensureUser("int-student@iraada.test", "student", "Integration Student");
+await ensureUser("int-agent@iraada.test", "agent", "Integration Agency");
+await ensureUser("int-agent2@iraada.test", "agent", "Basic Agency");
+await ensureUser("int-admin@iraada.test", "student", "Integration Admin");
+sql("update public.profiles set role='admin' where id=(select id from auth.users where email='int-admin@iraada.test')");
 
-const student = await session("int-student@maqsad.test");
-const agent = await session("int-agent@maqsad.test");
-const agent2 = await session("int-agent2@maqsad.test");
-const admin = await session("int-admin@maqsad.test");
+const student = await session("int-student@iraada.test");
+const agent = await session("int-agent@iraada.test");
+const agent2 = await session("int-agent2@iraada.test");
+const admin = await session("int-admin@iraada.test");
 
 // Start from Agent Basic and a clean slate for these accounts.
 const ids = [student.id, agent.id, agent2.id].map((id) => `'${id}'`).join(",");
@@ -70,7 +70,7 @@ check("disputes can't be edited directly", !!(await errorOf(student.sb.from("dis
 const adminPage = await get("/en/admin/complaints", admin.cookie);
 check("admin complaints page lists it", adminPage.body.includes("Asked for an extra fee") && adminPage.body.includes("Integration Student"));
 const studentPage = await get("/en/student/disputes", student.cookie);
-check("student disputes page shows Maqsad's note", studentPage.body.includes("The agent refunded the fee."));
+check("student disputes page shows Iraada's note", studentPage.body.includes("The agent refunded the fee."));
 check("non-admins are kept out of the complaints page", (await get("/en/admin/complaints", student.cookie)).redirect.endsWith("/en/student"));
 
 // 4. Audit entries for admin actions on plans and disputes.

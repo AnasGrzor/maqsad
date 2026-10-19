@@ -2,11 +2,11 @@
 // Run after e2e-auth.mjs (pnpm test:e2e runs both). Resets the M2 data of the test accounts first.
 import { check, ensureUser, finish, get, session, sql } from "./e2e-lib.mjs";
 
-await ensureUser("student2@maqsad.test", "student", "Hidden Student");
-const student = await session("student@maqsad.test");
-const student2 = await session("student2@maqsad.test");
-const agent = await session("agent@maqsad.test");
-const admin = await session("admin@maqsad.test");
+await ensureUser("student2@iraada.test", "student", "Hidden Student");
+const student = await session("student@iraada.test");
+const student2 = await session("student2@iraada.test");
+const agent = await session("agent@iraada.test");
+const admin = await session("admin@iraada.test");
 const ids = [student.id, student2.id, agent.id].map((id) => `'${id}'`).join(",");
 sql(`delete from public.connections where student_id in (${ids}) or agent_id in (${ids})`);
 sql(`delete from public.credentials where agent_id in (${ids})`);
@@ -79,7 +79,7 @@ let card = await get(`/en/student/agents/${agent.id}`, student.cookie);
 check("agent page shows 'waiting for review', not verified", card.body.includes("Submitted, waiting for review") && card.body.includes("No verified credentials yet"));
 check("admin verifies the credential", !(await errorOf(admin.sb.rpc("review_credential", { credential: cred.id, verdict: "verified", note: "Checked on the BEOE list" }))));
 card = await get(`/en/student/agents/${agent.id}`, student.cookie);
-check("agent page now shows the verified credential", card.body.includes("Verified by Maqsad"));
+check("agent page now shows the verified credential", card.body.includes("Verified by Iraada"));
 check("admin review page loads", (await get("/en/admin/credentials", admin.cookie)).body.includes("OEP-1234"));
 
 // 5. Credential files are private to the agent and admins.

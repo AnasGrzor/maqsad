@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 export const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 export const KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 export const APP = process.env.APP_URL ?? "http://localhost:3000";
-export const PASS = "maqsad-local-pass";
+export const PASS = "iraada-local-pass";
 
 let failures = 0;
 export function check(name, ok, extra = "") {
