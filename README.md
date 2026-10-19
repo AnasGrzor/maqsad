@@ -92,8 +92,8 @@ Everything runs on free tiers, with per-user and app-wide rate limits so the dai
 You'll need Node.js 20+, pnpm and Docker (for the local Supabase database).
 
 ```bash
-git clone https://github.com/AnasGrzor/maqsad.git
-cd maqsad
+git clone https://github.com/mh-1005/iraada.git
+cd iraada
 pnpm install
 cp .env.example .env.local     # add free Gemini and Groq keys
 supabase start                 # copy the URL and keys it prints into .env.local
