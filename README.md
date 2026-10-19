@@ -6,7 +6,7 @@
 
 Iraada connects Pakistani students and job seekers with verified education and recruitment consultants, keeps every agreement on record, and lets anyone verify an offer letter or visa document before making a payment.
 
-[Live demo](https://maqsad-seven.vercel.app) · Works in English and اردو
+[Live demo](https://iraada-azure.vercel.app) · Works in English and اردو
 
 </div>
 
@@ -30,7 +30,7 @@ Going abroad is one of the biggest financial decisions a Pakistani family makes,
 | Students get contacted by anyone with their number | Profiles stay **private** until the student chooses to be visible, and nothing is shared before they accept a connection. |
 | Honest consultants look the same as everyone else | Verified consultants get a public **trust card** to share, and **matching** sends them students who fit their expertise. |
 
-The whole site works in English and Urdu, and the rules both sides agree to are on one [policies page](https://maqsad-seven.vercel.app/en/policies) that downloads as a PDF.
+The whole site works in English and Urdu, and the rules both sides agree to are on one [policies page](https://iraada-azure.vercel.app/en/policies) that downloads as a PDF.
 
 ## Inside Iraada
 
